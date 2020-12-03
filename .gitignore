@@ -1,0 +1,7 @@
+# libs
+shared_libs/tensorflow2
+
+# examples
+example_*/bin
+example_*/obj
+example_*/model

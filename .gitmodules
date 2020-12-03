@@ -1,0 +1,8 @@
+[submodule "libs/cppflow"]
+	path = libs/cppflow
+	url = https://github.com/serizba/cppflow
+	branch = cppflow2
+[submodule "third_party/cppflow"]
+	path = third_party/cppflow
+	url = https://github.com/serizba/cppflow
+	branch = cppflow2
