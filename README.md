@@ -15,13 +15,17 @@ Installation
 ### Installation
 ##### Ubuntu with GPU support
 - Install Drivers for GPU support (https://www.tensorflow.org/install/gpu)
+- Pull the third party library cppflow->cppflow2
+```
+git submodule update --init --recursive
+```
 - Download TensorFlow2 C API (https://www.tensorflow.org/install/lang_c)
 - Extract:
   - include/ --> shared_libs/tensorflow2/include
   - lib/ --> shared_libs/tensorflow2/lib/linux64
 - add the tensorflow2 lib folder to the LD_LIBRARY_PATH 
 ```
-export LD_LIBRARY_PATH=/home/foo//OFx/addons/ofxTensorFlow2/shared_libs/tensorflow2/lib/linux64/:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/home/foo/OFx/addons/ofxTensorFlow2/shared_libs/tensorflow2/lib/linux64/:$LD_LIBRARY_PATH
 ```
 - compile and execute an example 
 - if everything works fine you can write the line for editing the LD_LIBRARY_PATH to ~/.bashrc

@@ -1,5 +1,6 @@
 # libs
-shared_libs/tensorflow2
+shared_libs/tensorflow2/lib
+shared_libs/tensorflow2/include
 
 # examples
 example_*/bin
