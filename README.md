@@ -2,8 +2,8 @@ ofxTensorFlow2
 =====================================
 
 This is an openFrameworks addon for TensorFlow 2.
-The code base has been developed by Hertz-Lab as part of the project [»The Intelligent Museum«](#the-intelligent-museum). 
-We make use of [cppFlow2](https://github.com/serizba/cppflow/tree/cppflow2), which is a C++ wrapper around TensorFlows C API. Unfortunately, TensorFlow doesnt ship an C++ Library, because of ABI incompatabilities.
+The code base has been developed by Hertz-Lab as part of the project [»The Intelligent Museum«](#the-intelligent-museum).
+We make use of [cppFlow2](https://github.com/serizba/cppflow/tree/cppflow2), which is a C++ wrapper around TensorFlows C API. Unfortunately, TensorFlow does not ship a C++ Library, because of ABI incompatibilities.
 
 
 ### License
@@ -11,8 +11,6 @@ We make use of [cppFlow2](https://github.com/serizba/cppflow/tree/cppflow2), whi
 
 
 ### Installation
-##### Ubuntu with GPU support
-- Install driver and packages for GPU support (https://www.tensorflow.org/install/gpu)
 - Pull the third party library cppflow->cppflow2
 ```
 git submodule update --init --recursive
@@ -20,11 +18,31 @@ git submodule update --init --recursive
 - Download TensorFlow2 C API (https://www.tensorflow.org/install/lang_c)
 - Extract the following folder to their destination:
   - include/ --> shared_libs/tensorflow2/include
-  - lib/ --> shared_libs/tensorflow2/lib/linux64
-- add the tensorflow2/ folder to the LD_LIBRARY_PATH 
+  - lib/ --> shared_libs/tensorflow2/lib/[macOS/linux64]
+
+##### Ubuntu
+- add the lib folder to the LD_LIBRARY_PATH
 ```
-export LD_LIBRARY_PATH=/home/foo/OFx/addons/ofxTensorFlow2/shared_libs/tensorflow2/lib/linux64/:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=OF_ROOT/addons/ofxTensorFlow2/shared_libs/tensorflow2/lib/linux64/:$LD_LIBRARY_PATH
 ```
+- write the previous line to ~/.bashrc for permanent modification of LD_LIBRARY_PATH
+- modify the linker flag: insert your lib install path the following line in addon_config.mk:
+```
+ADDON_LDFLAGS = -L OF_ROOT/addons/ofxTensorFlow2/shared_libs/tensorflow2/lib/linux64
+```
+for GPU support
+- Refer to https://www.tensorflow.org/install/gpu and install driver and packages
+
+##### macOS
+- modify the linker flag: insert your lib install path the following line in addon_config.mk:
+```
+ADDON_LDFLAGS = OF_ROOT/addons/ofxTensorFlow2/shared_libs/tensorflow2/lib/macOS/libtensorflow.dylib
+```
+- enable c++14 features. Change line 132 in OF_ROOT/libs/openFrameworksCompiled/project/osx/config.osx.default.mk:
+```
+PLATFORM_CXXFLAGS += -std=c++14
+```
+
 
 ### Usage
 - compile and execute an example
@@ -32,18 +50,11 @@ export LD_LIBRARY_PATH=/home/foo/OFx/addons/ofxTensorFlow2/shared_libs/tensorflo
 cd example_basic
 make
 ```
-- run the python script to create the model (requires a tensorflow2 python installation)
+- run the python script to create the model (requires a TensorFlow2 python installation)
 ```
 conda activate myEnv
 python3 create_model.py
 ```
-
-### Next
-- if everything works fine you can write the line for editing the LD_LIBRARY_PATH to ~/.bashrc
-
-
-### Compatibility
-Which versions of OF does this addon work with?
 
 
 ### Known issues
@@ -58,4 +69,3 @@ The [ZKM | Center for Art and Media](https://zkm.de/en) and the [Deutsches Museu
 As part of the project, digital curating will be critically examined using various approaches of digital art. Experimenting with new digital aesthetics and forms of expression enables new museum experiences and thus new ways of museum communication and visitor participation. The museum is transformed to a place of experience and critical exchange.
 
 ![Logo](media/Logo_ZKM_DMN_KSB.png)
-

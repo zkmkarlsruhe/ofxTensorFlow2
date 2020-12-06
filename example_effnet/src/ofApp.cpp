@@ -1,13 +1,13 @@
 #include "ofApp.h"
-#include "cppflow.h"
+#include "cppflow/cppflow.h"
 
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-    auto input = cppflow::decode_jpeg(cppflow::read_file(std::string("../my_cat.jpg")));
+    auto input = cppflow::decode_jpeg(cppflow::read_file(std::string(this->file)));
     input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
     input = cppflow::expand_dims(input, 0);
-    cppflow::model model("../model");
+    cppflow::model model(this->model);
     auto output = model(input);
 
     std::cout << "It's a tiger cat: " << cppflow::arg_max(output, 1) << std::endl;
