@@ -90,8 +90,8 @@ common:
 
 linux64:
 
-	ADDON_LDFLAGS += -ltensorflow
-	ADDON_LDFLAGS = -L/home/foo/Projects/OFx/addons/ofxTensorFlow2/shared_libs/tensorflow2/lib/linux64
+	ADDON_LDFLAGS = -ltensorflow
+	ADDON_LDFLAGS += -L/home/paul/Projects/ofx/addons/ofxTensorFlow2/shared_libs/tensorflow2/lib/linux64
 
 vs:
 linuxarmv6l:
