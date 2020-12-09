@@ -6,3 +6,4 @@ shared_libs/tensorflow2/include
 example_*/bin
 example_*/obj
 example_*/model
+example_*/python/*model*

@@ -12,6 +12,11 @@ void ofApp::setup(){
 
     std::cout << "It's a tiger cat: " << cppflow::arg_max(output, 1) << std::endl;
 
+    auto output_vector = output.get_data<float>();
+    for(auto it = std::begin(output_vector); it != std::end(output_vector); ++it) {
+              std::cout << *it  << std::endl;
+    }
+
 }
 
 //--------------------------------------------------------------

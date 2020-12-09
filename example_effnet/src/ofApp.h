@@ -15,8 +15,8 @@ public:
     void draw();
 
     ofApp() :
-      file("/Users/bethge/Projects/of_v0.11.0_osx_release/addons/ofxTensorFlow2/example_effnet/my_cat.jpg"),
-      model("/Users/bethge/Projects/of_v0.11.0_osx_release/addons/ofxTensorFlow2/example_effnet/model/")
+      file("/home/foo/Projects/OFx/addons/ofxTensorFlow2/example_effnet/my_cat.jpg"),
+      model("/home/foo/Projects/OFx/addons/ofxTensorFlow2/example_effnet/model/")
       {
     }
 
