@@ -136,6 +136,10 @@ def train(
 
     fit(train_dataset, test_dataset, EPOCHS)
 
-    save_model(generator, 'trained_model_facades')
+    @tf.function(input_signature=[tf.TensorSpec([None, 256,256,3], dtype=tf.float32)])
+    def model_predict(input_1):
+        return {'outputs': generator(input_1, training=True)}
+
+    generator.save("model", signatures={'serving_default': model_predict})
 
     return generator_loss_history, discriminator_loss_history

@@ -37,14 +37,14 @@ def visualize(image_file, augment = False):
         input_image, real_image = augmentation(input_image, real_image)
     fig, axes = plt.subplots(nrows = 1, ncols = 2, figsize = (16, 16))
     plt.setp(axes.flat, xticks = [], yticks = [])
-    for i, ax in enumerate(axes.flat):
-        if i % 2 == 0:
-            ax.imshow(input_image.numpy() / 255.0)
-            ax.set_xlabel('Input_Image')
-        else:
-            ax.imshow(real_image.numpy() / 255.0)
-            ax.set_xlabel('Real_Image')
-    plt.show()
+    # for i, ax in enumerate(axes.flat):
+    #     if i % 2 == 0:
+    #         ax.imshow(input_image.numpy() / 255.0)
+    #         ax.set_xlabel('Input_Image')
+    #     else:
+    #         ax.imshow(real_image.numpy() / 255.0)
+    #         ax.set_xlabel('Real_Image')
+    # plt.show()
 
 
 def resize(input_image, real_image, height, width):
