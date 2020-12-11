@@ -8,7 +8,6 @@
 #include "cppflow/cppflow.h"
 
 
-
 class ofApp : public ofBaseApp{
 
 public:
