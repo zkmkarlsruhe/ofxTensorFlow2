@@ -25,20 +25,12 @@ git submodule update --init --recursive
 ```
 export LD_LIBRARY_PATH=OF_ROOT/addons/ofxTensorFlow2/shared_libs/tensorflow2/lib/linux64/:$LD_LIBRARY_PATH
 ```
-- write the previous line to ~/.bashrc for permanent modification of LD_LIBRARY_PATH
-- modify the linker flag: insert your lib install path the following line in addon_config.mk:
-```
-ADDON_LDFLAGS = -L OF_ROOT/addons/ofxTensorFlow2/shared_libs/tensorflow2/lib/linux64
-```
-for GPU support
-- Refer to https://www.tensorflow.org/install/gpu and install driver and packages
+- [optional] write the previous line to ~/.bashrc for permanent modification of LD_LIBRARY_PATH
+
+- [optional] for GPU support: refer to https://www.tensorflow.org/install/gpu and install driver and packages
 
 ##### macOS
-- modify the linker flag: insert your lib install path the following line in addon_config.mk:
-```
-ADDON_LDFLAGS = OF_ROOT/addons/ofxTensorFlow2/shared_libs/tensorflow2/lib/macOS/libtensorflow.dylib
-```
-- enable c++14 features. Change line 132 in OF_ROOT/libs/openFrameworksCompiled/project/osx/config.osx.default.mk:
+- enable c++14 features: Change line 132 in OF_ROOT/libs/openFrameworksCompiled/project/osx/config.osx.default.mk:
 ```
 PLATFORM_CXXFLAGS += -std=c++14
 ```
