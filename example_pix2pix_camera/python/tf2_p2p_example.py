@@ -347,7 +347,7 @@ def fit(train_ds, epochs, test_ds):
 fit(train_dataset, EPOCHS, test_dataset)
 
 
-@tf.function(input_signature=[tf.TensorSpec([None, 256,256,3], dtype=tf.float32)])
+@tf.function(input_signature=[tf.TensorSpec([None, 256, 256, 3], dtype=tf.float32)])
 def model_predict1(input_1):
   return {'outputs': generator(input_1, training=True)}
 

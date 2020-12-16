@@ -7,3 +7,4 @@ example_*/bin
 example_*/obj
 example_*/model
 example_*/python/*model*
+example_*/python/*datasets*

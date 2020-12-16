@@ -5,8 +5,8 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-	auto input = cppflow::fill({10, 5}, 1.0f);
-	cppflow::model model("../model");
+	auto input = cppflow::fill({10, 9, 17, 3}, 1.0f);
+	cppflow::model model("model");
 	auto output = model(input);
 	std::cout << output << std::endl;
 

@@ -65,7 +65,7 @@ def train(
     generator_optimizer,
     train_dataset, test_dataset,
     checkpoint, checkpoint_prefix,
-    checkpoint_step = 10, save_checkpoints = False):
+    checkpoint_step = 1, save_checkpoints = False):
 
     '''Training Function
     Params:
@@ -117,6 +117,10 @@ def train(
         )
 
 
+    @tf.function(input_signature=[tf.TensorSpec([None, None, None, 3], dtype=tf.float32)])
+    def model_predict(input_1):
+        return {'outputs': generator(input_1, training=True)}
+
     def fit(train_ds, test_ds, epochs):
         for epoch in range(epochs):
             start = time.time()
@@ -125,21 +129,14 @@ def train(
             for input_image, target in tqdm(train_ds):
                 train_step(input_image, target)
             print('Completed.')
-            # saving (checkpoint) the model and sample prediction every 20 epochs
+
+            # saving the model
             if (epoch + 1) % checkpoint_step == 0:
-                if save_checkpoints:
-                    checkpoint.save(file_prefix = checkpoint_prefix)
-                for example_input, example_target in test_ds.take(1):
-                    generate_images(generator, example_input, example_target)
+                generator.save("model", signatures={'serving_default': model_predict})
+
             print ('Time taken for epoch {} is {} sec\n'.format(epoch + 1, time.time() - start))
 
 
     fit(train_dataset, test_dataset, EPOCHS)
-
-    @tf.function(input_signature=[tf.TensorSpec([None, 256,256,3], dtype=tf.float32)])
-    def model_predict(input_1):
-        return {'outputs': generator(input_1, training=True)}
-
-    generator.save("model", signatures={'serving_default': model_predict})
 
     return generator_loss_history, discriminator_loss_history

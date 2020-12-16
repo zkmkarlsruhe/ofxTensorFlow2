@@ -65,7 +65,7 @@ def train(
     generator_optimizer,
     train_dataset, test_dataset,
     checkpoint, checkpoint_prefix,
-    checkpoint_step = 5, save_checkpoints = False):
+    checkpoint_step = 1, save_checkpoints = False):
 
     '''Training Function
     Params:
@@ -116,10 +116,9 @@ def train(
             )
         )
 
-    @tf.function(input_signature=[tf.TensorSpec([None, 256,256,3], dtype=tf.float32)])
+    @tf.function(input_signature=[tf.TensorSpec([None, 256, 256, 3], dtype=tf.float32)])
     def model_predict(input_1):
-        return {'outputs': generator(input_1, training=True)}
-
+        return {'outputs': generator(input_1, training=False)}
 
     def fit(train_ds, test_ds, epochs):
         for epoch in range(epochs):

@@ -38,8 +38,8 @@ public:
       camWidth = 640;  // try to grab at this size.
       camHeight = 480;
 
-      nnWidth = 256;
-      nnHeight = 256;
+      nnWidth = 512;
+      nnHeight = 512;
 
       nn_input_size = nnWidth * nnHeight * 3;
 
