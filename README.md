@@ -58,7 +58,7 @@ make RunRelease
 #### SavedModel related
 ##### Different Signature
 when a SavedModel has a different signature than expected, inspect it using the CLI tool:
-```
+```bash
 saved_model_cli show --dir model/ --tag_set serve --signature_def serving_default
 ```
 by default it should look something like this (dtype and shape may vary):
