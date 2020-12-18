@@ -22,8 +22,8 @@ git submodule update --init --recursive
   - lib/ --> shared_libs/tensorflow2/lib/[macOS/linux64]
 
 #### Ubuntu
-- add the lib folder to the LD_LIBRARY_PATH
-```
+- add the lib folder to the LD_LIBRARY_PATH (replace OF_ROOT with the full path to the ofx installation)
+```bash
 export LD_LIBRARY_PATH=OF_ROOT/addons/ofxTensorFlow2/shared_libs/tensorflow2/lib/linux64/:$LD_LIBRARY_PATH
 ```
 - [optional] write the previous line to ~/.bashrc for permanent modification of LD_LIBRARY_PATH
@@ -32,7 +32,7 @@ export LD_LIBRARY_PATH=OF_ROOT/addons/ofxTensorFlow2/shared_libs/tensorflow2/lib
 
 #### macOS
 - enable c++14 features: Change line 132 in OF_ROOT/libs/openFrameworksCompiled/project/osx/config.osx.default.mk:
-```
+```bash
 PLATFORM_CXXFLAGS += -std=c++14
 ```
 
