@@ -55,63 +55,7 @@ make RunRelease
 
 
 ### Known issues
-#### SavedModel related
-##### Different Signature
-when a SavedModel has a different signature than expected, inspect it using the CLI tool:
-```bash
-saved_model_cli show --dir model/ --tag_set serve --signature_def serving_default
-```
-by default it should look something like this (dtype and shape may vary):
-```
-The given SavedModel SignatureDef contains the following input(s):
-  inputs['input_1'] tensor_info:
-      dtype: DT_FLOAT
-      shape: (-1, -1)
-      name: serving_default_input_1:0
-The given SavedModel SignatureDef contains the following output(s):
-  outputs['outputs'] tensor_info:
-      dtype: DT_FLOAT
-      shape: (-1, 10)
-      name: StatefulPartitionedCall:0
-```
-else use the appropriate name when calling the model:
-```c++
-auto input = cppflow::fill({1, 16000}, 1.0f);
-auto output = model({{"serving_default_som3_0therN4me:0", input}}, {"StatefulPartitionedCall:0"});
-```
-
-##### Execution Dependant Behavior
-Some architectures make use of layers that have execution dependant behavior such as Dropout. Regularly saving a model will lead to NANs in the output! The following fix will be very helpful:
-```python
-@tf.function(input_signature=[tf.TensorSpec([None, None], dtype=tf.float32)])
-def model_predict(input_1):
-  return {'outputs': model(input_1, training=True)}
-model.save("model", signatures={'serving_default': model_predict})
-```
-The input dimensions (here: [None, None]) include the batch size and are dependant on your model! Usually the batch size will be left None... Also please note that this is a way to define the model's signature names.
-
-##### Fixed Size Necessity
-For example in the style transfer example a layer is used which depends on the shape of the layer. Apperently, saving the model and executing it in python is no problem but executing the same model in C++ will give lead to an error. In case of an colorized image as input define the input shapes as follows:
-``` python
-@tf.function(input_signature=[tf.TensorSpec([None, 256, 256, 3], dtype=tf.float32)])
-def model_predict(input_1):
-  return {'outputs': model(input_1, training=True)}
-model.save("model", signatures={'serving_default': model_predict})
-```
-
-#### GPU support related
-Sometimes u may receive the following error while exectuting a SavedModel:
-```
-E tensorflow/stream_executor/cuda/cuda_dnn.cc:328] Could not create cudnn handle: CUDNN_STATUS_INTERNAL_ERROR
-...
-Failed to get convolution algorithm. This is probably because cuDNN failed to initialize
-``` 
-Closing any application that uses GPU resources may help!
-
-If the problem occurs in python you may want to set this at the beginning of your code:
-```python
-tf.config.experimental.set_memory_growth(gpu, True)
-```
+please take a look at the [issues](https://hertz-gitlab.zkm.de/Hertz-Lab/Research/intelligent-museum/ofxTensorFlow2/-/issues?scope=all&utf8=%E2%9C%93&state=all)
 
 ## The Intelligent Museum
 An artistic-curatorial field of experimentation for deep learning and visitor participation
