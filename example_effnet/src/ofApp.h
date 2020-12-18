@@ -6,19 +6,13 @@
 
 class ofApp : public ofBaseApp{
 
-  std::string file;
-  std::string model;
 
 public:
     void setup();
     void update();
     void draw();
 
-    ofApp() :
-      file("/home/foo/Projects/OFx/addons/ofxTensorFlow2/example_effnet/my_cat.jpg"),
-      model("/home/foo/Projects/OFx/addons/ofxTensorFlow2/example_effnet/model/")
-      {
-    }
+    ofApp() {}
 
     void keyPressed(int key);
     void keyReleased(int key);
