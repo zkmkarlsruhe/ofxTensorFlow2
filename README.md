@@ -13,10 +13,10 @@ The code has been developed by Hertz-Lab as part of the project [»The Intellige
 
 ### Installation
 - Pull the third party library cppflow->cppflow2
-```
+```bash
 git submodule update --init --recursive
 ```
-- Download TensorFlow2 C API (https://www.tensorflow.org/install/lang_c)
+- Download [TensorFlow2 C API](https://www.tensorflow.org/install/lang_c)
 - Extract the following folder to their destination:
   - include/ --> shared_libs/tensorflow2/include
   - lib/ --> shared_libs/tensorflow2/lib/[macOS/linux64]
@@ -38,8 +38,8 @@ PLATFORM_CXXFLAGS += -std=c++14
 
 
 ### Usage
-run the python script to create the model (requires a TensorFlow2 python installation [e.g. in an virtual environment])
-```
+run the python script to create the model (requires a TensorFlow2 python installation, e.g. in an virtual environment)
+```bash
 cd example_XXXX/python
 conda create -n myEnv python=3.7
 conda activate myEnv
@@ -47,7 +47,7 @@ pip3 install -r requirements.txt
 python3 main.py
 ```
 now that we have a TensorFlow SavedModel, compile the ofxExample:
-```
+```bash
 cd ..
 make
 make RunRelease
