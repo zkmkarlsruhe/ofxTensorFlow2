@@ -41,8 +41,9 @@ PLATFORM_CXXFLAGS += -std=c++14
 run the python script to create the model (requires a TensorFlow2 python installation [e.g. in an virtual environment])
 ```
 cd example_XXXX/python
+conda create -n myEnv python=3.7
 conda activate myEnv
-pip install requirements.txt
+pip3 install -r requirements.txt
 python3 main.py
 ```
 now that we have a TensorFlow SavedModel, compile the ofxExample:
