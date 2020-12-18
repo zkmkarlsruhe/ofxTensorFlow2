@@ -65,7 +65,8 @@ def train(
     generator_optimizer,
     train_dataset, test_dataset,
     checkpoint, checkpoint_prefix,
-    checkpoint_step = 1, save_checkpoints = False):
+    checkpoint_step = BATCHES_PER_SAVE,
+    save_checkpoints = False):
 
     '''Training Function
     Params:
@@ -133,6 +134,8 @@ def train(
             # saving the model
             if (epoch + 1) % checkpoint_step == 0:
                 generator.save("model", signatures={'serving_default': model_predict})
+                if save_checkpoints:
+                    checkpoint.save(file_prefix = checkpoint_prefix)
 
             print ('Time taken for epoch {} is {} sec\n'.format(epoch + 1, time.time() - start))
 

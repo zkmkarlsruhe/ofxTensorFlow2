@@ -38,7 +38,7 @@ def Generator():
         kernel_initializer=initializer, activation='tanh'
     )
     concat = Concatenate()
-    inputs = Input(shape=[None,None,3])
+    inputs = Input(shape=[None, None, 3])
     x = inputs
     skips = []
     for down in down_stack:

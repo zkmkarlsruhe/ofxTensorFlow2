@@ -18,9 +18,6 @@ public:
     int nnWidth;
     int nnHeight;
 
-    ofFbo fbo;
-
-
     ofImage img_out;
     ofImage img_in;
 
@@ -30,12 +27,6 @@ public:
       {}
 
     void setup(){
-
-        fbo.allocate(ofGetWidth(), ofGetHeight());
-        fbo.begin();
-        ofClear(255);
-        fbo.end();
-
 
 		nnWidth = 512;
 		nnHeight = 512;
@@ -56,7 +47,7 @@ public:
 
         // start neural network and time measurement
         auto start = std::chrono::system_clock::now();
-        auto output = this->model(input);
+        output = this->model(input);
         auto end = std::chrono::system_clock::now();
         std::chrono::duration<double> diff = end-start;
         std::cout << "Time: " << diff.count() << std::endl;
@@ -72,17 +63,9 @@ public:
 
         img_out.update();
         img_in.update();
-
-//        int radius = i % 10000;
-//        fbo.begin();
-//        ofDrawCircle(0, 0, radius);
-//        img_out.draw(0, 0);
-//        fbo.end();
-//        i++;
     }
 
     void draw() {
-//        fbo.draw(0, 0);
         img_in.draw(0, 0);
         img_out.draw(nnWidth, nnHeight, nnWidth * 2, nnHeight * 2);
     }

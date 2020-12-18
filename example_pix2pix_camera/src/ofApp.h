@@ -16,8 +16,6 @@ public:
     int nnHeight;
     int nn_input_size;
 
-
-
     ofPixels frame_processed;
     ofVideoGrabber video_grabber;
     ofTexture video_nn_input;
@@ -41,8 +39,6 @@ public:
       nnWidth = 512;
       nnHeight = 512;
 
-      nn_input_size = nnWidth * nnHeight * 3;
-
       video_grabber.setDeviceID(0);
       video_grabber.setDesiredFrameRate(30);
       video_grabber.initGrabber(camWidth, camHeight);
@@ -62,23 +58,16 @@ public:
 
         // get the frame
         ofPixels & pixels = video_grabber.getPixels();
-        // std::cout << "pixels: " << pixels.size() << std::endl;
 
         // resize pixels
         ofPixels pixels_resized(pixels);
         pixels_resized.resize(nnWidth, nnHeight);
 
-        // copy to std vector
-        // std::vector<float> v(nn_input_size, 1);
-        // for(size_t i = 0; i < nn_input_size; i++){
-        //     pixels_resized[i] = (pixels_resized[i] / 127.5) - 1;
-        // }
-
         // copy to tensor
         cppflow::tensor input(
               std::vector<float>(pixels_resized.begin(),
                                   pixels_resized.end()),
-                                  {256, 256, 3});
+                                  {nnWidth, nnHeight, 3});
 
         // cast data type and expand to batch size of 1
         input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
@@ -111,8 +100,8 @@ public:
     void draw() {
         ofSetHexColor(0xffffff);
         video_grabber.draw(20, 20);
-        video_texture.draw(20 + camWidth, 20, nnHeight * 2, nnHeight * 2);
-        video_nn_input.draw(20, 20 + camHeight, nnHeight, nnHeight);
+        video_texture.draw(20 + camWidth, 20, nnWidth, nnHeight);
+        video_nn_input.draw(20, 20 + camHeight, nnWidth, nnHeight);
     }
 
     void keyPressed(int key){

@@ -5,7 +5,8 @@ IMG_WIDTH = 256
 IMG_HEIGHT = 256
 OUTPUT_CHANNELS = 3
 LAMBDA = 100 # Recommended By Authors of the paper
-EPOCHS = 30
+EPOCHS = 1
+BATCHES_PER_SAVE = 1
 ACTIVATION = 'Mish' # Use '' for Default Activations and 'Mish' otherwise
 GENERATOR_ACTIVATION_INDEX = [
     False, False, False, False, False, False, False, False, # Generator Downsampling Blocks

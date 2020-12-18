@@ -6,7 +6,7 @@
 void ofApp::setup(){
 
 	auto input = cppflow::fill({10, 9, 17, 3}, 1.0f);
-	cppflow::model model("model");
+	cppflow::model model("python/model");
 	auto output = model(input);
 	std::cout << output << std::endl;
 
