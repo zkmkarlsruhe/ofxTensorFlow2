@@ -4,19 +4,28 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
+    // use TensorFlow ops through the cppflow wrappers
+    // load a jpeg picture cast it to float and add a dimension for batches
     auto input = cppflow::decode_jpeg(cppflow::read_file(std::string("my_cat.jpg")));
     input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
     input = cppflow::expand_dims(input, 0);
+
+    //  load and infer the model
     cppflow::model model("python/model");
     auto output = model(input);
 
-    std::cout << "It's a tiger cat: " << cppflow::arg_max(output, 1) << std::endl;
+    // interpret the output
+    auto max_label = cppflow::arg_max(output, 1);
+    std::cout << "Maximum likelihood: " << max_label << std::endl;
 
+    // access each element via the internal vector
     auto output_vector = output.get_data<float>();
-    for(auto it = std::begin(output_vector); it != std::end(output_vector); ++it) {
-              std::cout << *it  << std::endl;
-    }
-
+    
+    std::cout << "[281] tabby cat: " << output_vector[281] << std::endl;
+    std::cout << "[282] tiger cat: " << output_vector[282]  << std::endl;
+    std::cout << "[283] persian cat: " << output_vector[283]  << std::endl;
+    std::cout << "[284] siamese cat: " << output_vector[284]  << std::endl;
+    std::cout << "[285] egyptian cat: " << output_vector[285]  << std::endl;
 }
 
 //--------------------------------------------------------------
