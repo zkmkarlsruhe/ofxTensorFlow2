@@ -8,3 +8,8 @@ example_*/obj
 example_*/model
 example_*/python/*model*
 example_*/python/*datasets*
+example_*/python/__pycache__/
+example_*/python/src/__pycache__/
+
+# ide folders
+.idea
