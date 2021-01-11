@@ -2,7 +2,6 @@
 
 #include <string>
 #include <vector>
-
 #include <cstdlib>
 
 #include "ofMain.h"
@@ -25,8 +24,8 @@ public:
 		ofSoundStream soundStream;
  
     //--------------------------------------------------------------
-    ofApp(std::string model_path)
-    : model(model_path)
+    ofApp(std::string modelPath)
+    : model(modelPath)
       {}
 
     //--------------------------------------------------------------
@@ -56,28 +55,27 @@ public:
 
       settings.setInListener(this);
       settings.sampleRate = 16000;
-      settings.numOutputChannels = 0;
+      settings.numOutputChannels = 2;
       settings.numInputChannels = 1;
       settings.bufferSize = bufferSize;
       soundStream.setup(settings);
 
-      // warm up 
+      // neural network warm up 
       input = cppflow::fill({1, 16000}, 1.0f);
       output = model(input);
-      auto output_vector = output.get_data<float>();
-
-      int argMax = std::distance(output_vector.begin(), std::max_element(output_vector.begin(), output_vector.end()));
-      std::cout << "Label: " << labels_map[argMax] << std::endl;
     }
 
+    //--------------------------------------------------------------
     void update(){
 
     }
 
+    //--------------------------------------------------------------
     void draw() {
 
     }
 
+    //--------------------------------------------------------------
     void keyPressed(int key){
       if( key == 's' ){
         soundStream.start();
@@ -93,15 +91,19 @@ public:
 
       // std::cout << "ms: " << buffer.getDurationMS() << std::endl;
       // std::cout << "frame: " << buffer.getNumFrames() << std::endl;
-      auto frames = buffer.getBuffer();
-      // for (size_t i = 0; i < input.size(); i++){
-      //   input[i] = frames[i];
-      // }
 
-      cppflow::tensor audio(frames, {1, 16384});
+      // convert raw data to a single batch
+      cppflow::tensor audio(buffer.getBuffer(), {1, 16384});
+
+      // inference
       auto output_vector = model(audio).get_data<float>();
-      int argMax = std::distance(output_vector.begin(), std::max_element(output_vector.begin(), output_vector.end()));
-      std::cout << "Label: " << labels_map[argMax] << std::endl;
+
+      // postprocessing
+      auto maxElem = std::max_element(output_vector.begin(), output_vector.end());
+      int argMax = std::distance(output_vector.begin(), maxElem);
+
+      // label look up
+      std::cout << "Label: " << labelsMap[argMax] << std::endl;
       std::cout.flush();
 
     }

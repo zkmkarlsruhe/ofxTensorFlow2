@@ -5,7 +5,7 @@
 
 typedef std::map<int, std::string> Labels;
 
-Labels labels_map = {
+Labels labelsMap = {
     {0, "nothing"},
     {1, "nine"},
     {2, "yes"},

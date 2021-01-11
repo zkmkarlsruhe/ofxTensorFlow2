@@ -3,7 +3,7 @@ import numpy as np
 
 # create a model
 # the input dimensions of e.g. an image can be unknown
-# though for the Conv2D layer the channels must be known 
+# though for the Conv2D layer the number of channels must be known 
 input = tf.keras.Input(shape=(None, None, 3))
 output = tf.keras.layers.Conv2D(1, (2,2), padding='same')(input)
 model = tf.keras.Model(inputs=input, outputs=output)

@@ -18,24 +18,24 @@ public:
     int nnWidth;
     int nnHeight;
 
-    ofImage img_out;
-    ofImage img_in;
+    ofImage imgOut;
+    ofImage imgIn;
 
 
-    ofApp(std::string model_path)
-    : model(model_path)
+    //--------------------------------------------------------------
+    ofApp(std::string modelPath)
+    : model(modelPath)
       {}
 
+    //--------------------------------------------------------------
     void setup(){
-
         nnWidth = 256;
         nnHeight = 256;
-
-        img_in.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
-        img_out.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
-
+        imgIn.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
+        imgOut.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
     }
 
+    //--------------------------------------------------------------
     void update(){
 
         // create tensor from image file
@@ -44,6 +44,8 @@ public:
         // cast data type and expand to batch size of 1
         input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
         input = cppflow::expand_dims(input, 0);
+
+        // apply preprocessing as in python
         input = cppflow::div(input, cppflow::tensor({127.5f}));
         input = cppflow::add(input, cppflow::tensor({-1.0f}));
 
@@ -57,25 +59,26 @@ public:
         std::cout << "Time: " << diff.count() << std::endl;
 
         // copy output to image
-        auto output_vector = output.get_data<float>();
-        auto & pixels = img_out.getPixels();
-        for(int i=0; i<pixels.size(); i++) pixels[i] = (output_vector[i] + 1) * 127.5;
+        auto outputVector = output.get_data<float>();
+        auto & pixels = imgOut.getPixels();
+        for(int i=0; i<pixels.size(); i++) pixels[i] = (outputVector[i] + 1) * 127.5;
 
         // copy input to image
-        auto input_vector = input.get_data<float>();
-        auto & pixels_in = img_in.getPixels();
-        for(int i=0; i<pixels_in.size(); i++) pixels_in[i] = input_vector[i];
+        auto inputVector = input.get_data<float>();
+        auto & inputPixels = imgIn.getPixels();
+        for(int i=0; i<inputPixels.size(); i++) inputPixels[i] = inputVector[i];
 
-        img_out.update();
-        img_in.update();
-
+        imgOut.update();
+        imgIn.update();
     }
 
+    //--------------------------------------------------------------
     void draw() {
-        img_out.draw(0, 0);
-        img_in.draw(0, nnHeight);
+        imgOut.draw(0, 0);
+        imgIn.draw(0, nnHeight);
     }
 
+    //--------------------------------------------------------------
     void keyPressed(int key){
     }
 

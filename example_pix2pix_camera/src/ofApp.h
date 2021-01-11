@@ -14,59 +14,55 @@ public:
     cppflow::model model;
     int nnWidth;
     int nnHeight;
-    int nn_input_size;
 
-    ofPixels frame_processed;
-    ofVideoGrabber video_grabber;
-    ofTexture video_nn_input;
-    ofTexture video_texture;
+    ofPixels frameProcessed;
+    ofVideoGrabber videoGrabber;
+    ofTexture inputTexture;
+    ofTexture outputTexture;
     int camWidth;
     int camHeight;
 
-    ofApp(std::string model_path)
-    : model(model_path)
-      {
-
-      }
+    //--------------------------------------------------------------
+    ofApp(std::string modelPath)
+    : model(modelPath)
+      {}
 
     void setup(){
-
-      // ===== Camera ===== //
-
+    
       camWidth = 640;  // try to grab at this size.
       camHeight = 480;
 
       nnWidth = 512;
       nnHeight = 512;
 
-      video_grabber.setDeviceID(0);
-      video_grabber.setDesiredFrameRate(30);
-      video_grabber.initGrabber(camWidth, camHeight);
+      videoGrabber.setDeviceID(0);
+      videoGrabber.setDesiredFrameRate(30);
+      videoGrabber.initGrabber(camWidth, camHeight);
 
-      frame_processed.allocate(nnWidth, nnHeight, OF_PIXELS_RGB);
-      video_nn_input.allocate(frame_processed);
-      video_texture.allocate(frame_processed);
+      frameProcessed.allocate(nnWidth, nnHeight, OF_PIXELS_RGB);
+      inputTexture.allocate(frameProcessed);
+      outputTexture.allocate(frameProcessed);
       ofSetVerticalSync(true);
     }
 
     void update(){
       ofBackground(100, 100, 100);
-      video_grabber.update();
+      videoGrabber.update();
 
       // check for new frame
-      if(video_grabber.isFrameNew()){
+      if(videoGrabber.isFrameNew()){
 
         // get the frame
-        ofPixels & pixels = video_grabber.getPixels();
+        ofPixels & pixels = videoGrabber.getPixels();
 
         // resize pixels
-        ofPixels pixels_resized(pixels);
-        pixels_resized.resize(nnWidth, nnHeight);
+        ofPixels resizedPixels(pixels);
+        resizedPixels.resize(nnWidth, nnHeight);
 
         // copy to tensor
         cppflow::tensor input(
-              std::vector<float>(pixels_resized.begin(),
-                                  pixels_resized.end()),
+              std::vector<float>(resizedPixels.begin(),
+                                  resizedPixels.end()),
                                   {nnWidth, nnHeight, 3});
 
         // cast data type and expand to batch size of 1
@@ -87,26 +83,25 @@ public:
         // std::cout << output << std::endl;
         std::cout << "Time: " << diff.count() << std::endl;
 
-        // copy to output frame
-        auto output_vector = output.get_data<float>();
-        for(int i=0; i<output_vector.size(); i++) frame_processed[i] = (output_vector[i] + 1) * 127.5;
+        // copy to output frame and postprocessing
+        auto outputVector = output.get_data<float>();
+        for(int i=0; i<outputVector.size(); i++) frameProcessed[i] = (outputVector[i] + 1) * 127.5;
 
-        //load the inverted pixels
-        video_texture.loadData(frame_processed);
-        video_nn_input.loadData(pixels_resized);
+        outputTexture.loadData(frameProcessed);
+        inputTexture.loadData(resizedPixels);
         }
     }
 
     void draw() {
         ofSetHexColor(0xffffff);
-        video_grabber.draw(20, 20);
-        video_texture.draw(20 + camWidth, 20, nnWidth, nnHeight);
-        video_nn_input.draw(20, 20 + camHeight, nnWidth, nnHeight);
+        videoGrabber.draw(20, 20);
+        outputTexture.draw(20 + camWidth, 20, nnWidth, nnHeight);
+        inputTexture.draw(20, 20 + camHeight, nnWidth, nnHeight);
     }
 
     void keyPressed(int key){
       if(key == 's' || key == 'S'){
-          video_grabber.videoSettings();
+          videoGrabber.videoSettings();
       }
     }
 

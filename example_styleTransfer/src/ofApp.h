@@ -18,23 +18,27 @@ public:
     int nnWidth;
     int nnHeight;
 
-    ofImage img_out;
-    ofImage img_in;
+    ofImage imgOut;
+    ofImage imgIn;
 
 
-    ofApp(std::string model_path)
-    : model(model_path)
+    //--------------------------------------------------------------
+    ofApp(std::string modelPath)
+    : model(modelPath)
       {}
 
+
+    //--------------------------------------------------------------
     void setup(){
 
 		nnWidth = 512;
 		nnHeight = 512;
         
-		img_in.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
-        img_out.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
+		imgIn.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
+        imgOut.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
     }
 
+    //--------------------------------------------------------------
     void update(){
 
         // create tensor from image file
@@ -44,7 +48,6 @@ public:
         input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
         input = cppflow::expand_dims(input, 0);
 
-
         // start neural network and time measurement
         auto start = std::chrono::system_clock::now();
         output = this->model(input);
@@ -52,24 +55,26 @@ public:
         std::chrono::duration<double> diff = end-start;
         std::cout << "Time: " << diff.count() << std::endl;
 
-        auto output_vector = output.get_data<float>();
-        auto input_vector = input.get_data<float>();
+        auto outputVector = output.get_data<float>();
+        auto inputVector = input.get_data<float>();
 
-        auto & pixels = img_out.getPixels();
-        for(int i=0; i<pixels.size(); i++) pixels[i] = output_vector[i];
+        auto & pixels = imgOut.getPixels();
+        for(int i=0; i<pixels.size(); i++) pixels[i] = outputVector[i];
 
-        auto & pixels_in = img_in.getPixels();
-        for(int i=0; i<pixels_in.size(); i++) pixels_in[i] = input_vector[i];
+        auto & pixels_in = imgIn.getPixels();
+        for(int i=0; i<pixels_in.size(); i++) pixels_in[i] = inputVector[i];
 
-        img_out.update();
-        img_in.update();
+        imgOut.update();
+        imgIn.update();
     }
 
+    //--------------------------------------------------------------
     void draw() {
-        img_in.draw(0, 0);
-        img_out.draw(nnWidth, nnHeight, nnWidth * 2, nnHeight * 2);
+        imgIn.draw(0, 0);
+        imgOut.draw(nnWidth, nnHeight, nnWidth * 2, nnHeight * 2);
     }
 
+    //--------------------------------------------------------------
     void keyPressed(int key){
     }
 
