@@ -10,22 +10,22 @@ void ofApp::setup(){
     input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
     input = cppflow::expand_dims(input, 0);
 
-    //  load and infer the model
-    cppflow::model model("python/model");
+    // load and infer the model
+    cppflow::model model(ofToDataPath("model"));
     auto output = model(input);
 
     // interpret the output
-    auto max_label = cppflow::arg_max(output, 1);
-    std::cout << "Maximum likelihood: " << max_label << std::endl;
+    auto maxLabel = cppflow::arg_max(output, 1);
+    std::cout << "Maximum likelihood: " << maxLabel << std::endl;
 
     // access each element via the internal vector
-    auto output_vector = output.get_data<float>();
+    auto outputVector = output.get_data<float>();
     
-    std::cout << "[281] tabby cat: " << output_vector[281] << std::endl;
-    std::cout << "[282] tiger cat: " << output_vector[282]  << std::endl;
-    std::cout << "[283] persian cat: " << output_vector[283]  << std::endl;
-    std::cout << "[284] siamese cat: " << output_vector[284]  << std::endl;
-    std::cout << "[285] egyptian cat: " << output_vector[285]  << std::endl;
+    std::cout << "[281] tabby cat: " << outputVector[281] << std::endl;
+    std::cout << "[282] tiger cat: " << outputVector[282]  << std::endl;
+    std::cout << "[283] persian cat: " << outputVector[283]  << std::endl;
+    std::cout << "[284] siamese cat: " << outputVector[284]  << std::endl;
+    std::cout << "[285] egyptian cat: " << outputVector[285]  << std::endl;
 }
 
 //--------------------------------------------------------------

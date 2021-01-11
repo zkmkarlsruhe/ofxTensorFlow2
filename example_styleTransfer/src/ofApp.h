@@ -24,7 +24,7 @@ public:
 
     //--------------------------------------------------------------
     ofApp(std::string modelPath)
-    : model(modelPath)
+    : model(ofToDataPath(modelPath))
       {}
 
 

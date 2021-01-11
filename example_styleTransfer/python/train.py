@@ -166,7 +166,7 @@ def trainer(style_file, dataset_path, weights_path, content_weight, style_weight
 
             if iteration % 1 == 0:
                 # Save model
-                network.save("model"+str(iteration), signatures={'serving_default': model_predict})
+                network.save('../bin/data/model'+str(iteration), signatures={'serving_default': model_predict})
                 print('=====================================')
                 print('            Model saved!            ')
                 print('=====================================\n')

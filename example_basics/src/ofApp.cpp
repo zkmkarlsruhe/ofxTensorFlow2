@@ -9,7 +9,7 @@ void ofApp::setup(){
 	auto input = cppflow::fill({10, 9, 17, 3}, 1.0f);
 
 	// load the model
-	cppflow::model model("python/model");
+	cppflow::model model(ofToDataPath("model"));
 
 	// inference
 	auto output = model(input);

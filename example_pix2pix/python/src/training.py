@@ -133,7 +133,7 @@ def train(
 
             # saving the model
             if (epoch + 1) % checkpoint_step == 0:
-                generator.save("model", signatures={'serving_default': model_predict})
+                generator.save("'../bin/data/model'", signatures={'serving_default': model_predict})
                 if save_checkpoints:
                     checkpoint.save(file_prefix = checkpoint_prefix)
 

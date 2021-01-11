@@ -16,7 +16,7 @@ test_target = np.random.random((128, 32, 32, 1))
 model.fit(test_input, test_target)
 
 # export to a SavedModel
-model.save('model')
+model.save('../bin/data/model')
 
 # test: load and predict
 reconstructed = tf.keras.models.load_model('model')

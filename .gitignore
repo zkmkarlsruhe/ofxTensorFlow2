@@ -2,11 +2,13 @@
 shared_libs/tensorflow2/lib
 shared_libs/tensorflow2/include
 
+
 # examples
-example_*/bin
+example_*/bin/*
+!example_*/bin/data/
+example_*/bin/data/model
+!example_*/bin/data/.gitkeep
 example_*/obj
-example_*/model
-example_*/python/*model*
 example_*/python/*datasets*
 example_*/python/__pycache__/
 example_*/python/src/__pycache__/
