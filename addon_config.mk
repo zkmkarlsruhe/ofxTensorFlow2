@@ -80,13 +80,15 @@ common:
 	# ADDON_LIBS += libs/opencv/lib/linuxarmv6l/libopencv_calib3d.a
 	# ...
 
-	ADDON_INCLUDES = shared_libs/tensorflow2/include
-	ADDON_INCLUDES += third_party/cppflow/include
+	ADDON_INCLUDES = libs/tensorflow2/include
+	ADDON_INCLUDES += libs/cppflow/include
+	
+	ADDON_SOURCES_EXCLUDE = libs/cppflow/examples/%
 
 linux64:
 
 	ADDON_LDFLAGS = -ltensorflow
-	ADDON_LDFLAGS += -L${OF_ROOT}/addons/ofxTensorFlow2/shared_libs/tensorflow2/lib/linux64
+	ADDON_LDFLAGS += -L${OF_ROOT}/addons/ofxTensorFlow2/libs/tensorflow2/lib/linux64
 
 vs:
 linuxarmv6l:
@@ -94,7 +96,7 @@ linuxarmv7l:
 android/armeabi:
 android/armeabi-v7a:
 osx:
-	ADDON_LDFLAGS = ${OF_ROOT}/addons/ofxTensorFlow2/shared_libs/tensorflow2/lib/macOS/libtensorflow.dylib
+	ADDON_LDFLAGS = ${OF_ROOT}/addons/ofxTensorFlow2/libs/tensorflow2/lib/macOS/libtensorflow.dylib
 
 ios:
 tvos:

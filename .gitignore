@@ -1,6 +1,6 @@
 # libs
-shared_libs/tensorflow2/lib
-shared_libs/tensorflow2/include
+libs/tensorflow2/lib
+libs/tensorflow2/include
 
 
 # examples
@@ -15,3 +15,4 @@ example_*/python/src/__pycache__/
 
 # ide folders
 .idea
+.DS_Store
