@@ -6,7 +6,7 @@ libs/tensorflow2/include
 # examples
 example_*/bin/*
 !example_*/bin/data/
-example_*/bin/data/model
+example_*/bin/data/model*
 !example_*/bin/data/.gitkeep
 example_*/obj
 example_*/python/*datasets*

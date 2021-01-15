@@ -23,7 +23,10 @@ def load(image_file):
         real_image = image
     input_image = tf.cast(input_image, tf.float32)
     real_image = tf.cast(real_image, tf.float32)
-    return input_image, real_image
+    if SWITCH_TASK == True:
+        return real_image, input_image
+    else:
+        return input_image, real_image
 
 
 def visualize(image_file, augment = False):

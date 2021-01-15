@@ -28,18 +28,18 @@ from tensorflow.keras.utils import plot_model
 
 # In[4]:
 
-path = download_existing_dataset(EXISTING_DATASETS['facades'], 'facades')
+path = download_existing_dataset(EXISTING_DATASETS['edges2shoes'], 'edges2shoes')
 print('Dataset Path ->', path)
 
 
 # In[5]:
 
-visualize(join(path, 'train/200.jpg'))
+# visualize(join(path, 'train/200.jpg'))
 
 
 # In[6]:
 
-visualize(join(path, 'train/200.jpg'), augment=True)
+# visualize(join(path, 'train/200.jpg'), augment=True)
 
 
 # In[7]:
