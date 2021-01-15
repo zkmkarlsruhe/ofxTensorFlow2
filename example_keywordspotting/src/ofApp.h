@@ -14,13 +14,16 @@ class ofApp : public ofBaseApp{
 
 		// audio 
 		ofSoundStream soundStream;
-		// for ease of use: we want to keep it a multiple of the downsampling factor
-		// micSamplingRate vs. neuralNetwork inputSamplingRate (16000)
-		const std::size_t downsamplingFactor = 3;
-		const std::size_t bufferSizeDownsampled = 200;
-		const std::size_t bufferSize = bufferSizeDownsampled * downsamplingFactor;
-		const std::size_t samplingRate = 48000;
-
+		// for ease of use: we want to keep the buffersize a multiple of the downsampling factor
+		// downsamplingFactor = micSamplingRate / neuralNetworkInputSamplingRate 
+		static constexpr std::size_t downsamplingFactor = 3;
+		static constexpr std::size_t bufferSize =  1024;
+		static constexpr std::size_t bufferSizeDownsampled = bufferSize / downsamplingFactor;
+		static constexpr std::size_t samplingRate = 48000;
+		
+		// this buffer keeps the previous audio buffer since volume detection has some latency 
+		std::vector<float> previousBuffer;
+		
 		// volume
 		std::vector<float> volHistory;
 		float smoothedVol;
@@ -28,6 +31,7 @@ class ofApp : public ofBaseApp{
 		float volThreshold;
 
 		std::vector<float> sample;
+		std::string displayLabel;
 
 		// neural network
 		cppflow::model model;
@@ -41,11 +45,12 @@ class ofApp : public ofBaseApp{
 		bool enable;
 		bool recording;
 		int recordingCounter;
-		const std::size_t recordingCounterMax = samplingRate / bufferSize;
+		static constexpr std::size_t recordingCounterMax = samplingRate / bufferSize;
+		static constexpr float minConfidence = 0.75;
 		
     //--------------------------------------------------------------
     ofApp(std::string modelPath)
-    : sample(inputSize), model(ofToDataPath(modelPath))
+    : previousBuffer(bufferSize), sample(inputSize), model(ofToDataPath(modelPath))
       {
 		  std::cout << "done loading neural network" << std::endl;
 		  std::cout.flush();
@@ -54,7 +59,7 @@ class ofApp : public ofBaseApp{
 	//--------------------------------------------------------------
 	void setup(){ 
 		
-		ofSetVerticalSync(true);5
+		ofSetVerticalSync(true);
 		ofSetCircleResolution(80);
 		ofBackground(54, 54, 54);	
 		
@@ -63,6 +68,8 @@ class ofApp : public ofBaseApp{
 		smoothedVol     = 0.0;
 		scaledVol		= 0.0;
 		volThreshold 	= 25;
+		
+		displayLabel = " ";
 
 		recordingCounter = 0;
 		enable = true;
@@ -114,8 +121,12 @@ class ofApp : public ofBaseApp{
 			auto maxElem = std::max_element(output_vector.begin(), output_vector.end());
 			int argMax = std::distance(output_vector.begin(), maxElem);
 
+			if (*maxElem >= minConfidence)
+				displayLabel = labelsMap[argMax];
+
 			// label look up
 			std::cout << "Label: " << labelsMap[argMax] << std::endl;
+			std::cout << "confidence: " << *maxElem << std::endl;
 			std::cout.flush();
 			
 			// release the trigger signal
@@ -130,6 +141,8 @@ class ofApp : public ofBaseApp{
 		ofSetColor(225);
 		
 		ofNoFill();
+
+		ofDrawBitmapString(displayLabel, 50, 50);
 		
 		// draw the average volume:
 		ofPushStyle();
@@ -173,14 +186,24 @@ class ofApp : public ofBaseApp{
 		smoothedVol *= 0.93;
 		smoothedVol += 0.07 * curVol;
 
+		for (size_t i = 0; i < previousBuffer.size(); i++){
+			previousBuffer[i] = input[i];
+		}
+
 		// trigger recording
 		if (ofMap(curVol, 0.0, 0.17, 0.0, 1.0, true) * 100 >= volThreshold){
 			if (enable){
-				recording = true;
 				enable = false;
-				recordingCounter = 0;
+				recordingCounter = 1;
 				std::cout << "recording" << std::endl;
 				std::cout.flush();
+				// downsample the previous buffer
+				for (int i=0; i<bufferSizeDownsampled; i++) {
+					float sum = 0.0; int offset = i*downsamplingFactor;
+					for (int j=0; j<downsamplingFactor; j++){sum += previousBuffer[offset+j];}
+					sample[i] = sum / downsamplingFactor;
+				}
+				recording = true;
 			}
 		}
 
@@ -205,6 +228,7 @@ class ofApp : public ofBaseApp{
 			}
 		}
 	}
+
 
 	//--------------------------------------------------------------
 	void keyPressed  (int key){ 
