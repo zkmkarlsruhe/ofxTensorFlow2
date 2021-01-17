@@ -32,8 +32,8 @@ public:
       camWidth = 640;  // try to grab at this size.
       camHeight = 480;
 
-      nnWidth = 512;
-      nnHeight = 512;
+      nnWidth = 256;
+      nnHeight = 256;
 
       videoGrabber.setDeviceID(0);
       videoGrabber.setDesiredFrameRate(30);
@@ -54,8 +54,6 @@ public:
 
         // get the frame
         ofPixels & pixels = videoGrabber.getPixels();
-
-        // resize pixels
         ofPixels resizedPixels(pixels);
         resizedPixels.resize(nnWidth, nnHeight);
 
@@ -71,9 +69,6 @@ public:
         input = cppflow::div(input, cppflow::tensor({127.5f}));
         input = cppflow::add(input, cppflow::tensor({-1.0f}));
 
-        // auto & input_vector = input.get_data<float>();
-        // for(int i=0; i<input_vector.size(); i++) input_vector[i] = input_vector[i] / 255;
-
         // start neural network and time measurement
         auto start = std::chrono::system_clock::now();
         auto output = this->model(input);
@@ -85,7 +80,8 @@ public:
 
         // copy to output frame and postprocessing
         auto outputVector = output.get_data<float>();
-        for(int i=0; i<outputVector.size(); i++) frameProcessed[i] = (outputVector[i] + 1) * 127.5;
+        // for(int i=0; i<outputVector.size(); i++) frameProcessed[i] = (outputVector[i] + 1) * 127.5;
+        for(int i=0; i<outputVector.size(); i++) frameProcessed[i] = ((outputVector[i] * 0.5 )+ 0.5) * 255;
 
         outputTexture.loadData(frameProcessed);
         inputTexture.loadData(resizedPixels);
@@ -100,9 +96,6 @@ public:
     }
 
     void keyPressed(int key){
-      if(key == 's' || key == 'S'){
-          videoGrabber.videoSettings();
-      }
     }
 
     void keyReleased(int key){}
