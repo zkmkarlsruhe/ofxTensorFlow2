@@ -13,6 +13,7 @@ example_*/python/*datasets*
 example_*/python/__pycache__/
 example_*/python/src/__pycache__/
 
-# ide folders
+# other folders
 .idea
+.vscode
 .DS_Store
