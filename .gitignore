@@ -1,7 +1,8 @@
 # libs
 libs/tensorflow2/lib
 libs/tensorflow2/include
-
+libs/tensorflow2/LICENSE
+libs/tensorflow2/THIRD_PARTY_TF_C_LICENSES
 
 # examples
 example_*/bin/*
@@ -15,4 +16,9 @@ example_*/python/src/__pycache__/
 
 # ide folders
 .idea
+
+# temp
+scripts/libtensorflow*
+
+# macOS
 .DS_Store
