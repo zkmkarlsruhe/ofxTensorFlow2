@@ -39,7 +39,7 @@ public:
     void update(){
 
         // create tensor from image file
-        input = cppflow::decode_jpeg(cppflow::read_file(std::string("cat2.jpg")));
+        input = cppflow::decode_jpeg(cppflow::read_file(ofToDataPath("cat2.jpg")));
 
         // cast data type and expand to batch size of 1
         input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
