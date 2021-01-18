@@ -7,21 +7,31 @@ The code has been developed by Hertz-Lab as part of the project [»The Intellige
 
 
 ## Installation
+
 Clone (or download and extract) this repository to the addon folder of openframeworks.
 ```bash
 cd OF_ROOT/addons
 git clone git@hertz-gitlab.zkm.de:Hertz-Lab/Research/intelligent-museum/ofxTensorFlow2.git
 ```
+
+### Dependencies
+
+* cppflow
+* tensorflow2
+
 Pull the third party library cppflow->cppflow2
 ```bash
 cd ofxTensorFlow2
 git submodule update --init --recursive
 ```
-Download [TensorFlow2 C API](https://www.tensorflow.org/install/lang_c). Then extract the following folders to their destination:
+
+Download [TensorFlow2 C API](https://www.tensorflow.org/install/lang_c) and extract the following folders to their destination:
   - include/ --> libs/tensorflow2/include
-  - lib/ --> libs/tensorflow2/lib/[macOS/linux64]
+  - lib/ --> libs/tensorflow2/lib/[osx/linux64/msys2/vs]
 
+To make this quick, you can also use a script which automates the download:
 
+    ./scripts/download_tensorflow.sh
 
 ### Ubuntu
 Add the lib folder to the LD_LIBRARY_PATH (replace OF_ROOT with the full path to the ofx installation)
