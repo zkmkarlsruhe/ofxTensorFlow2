@@ -5,7 +5,6 @@ The code has been developed by Hertz-Lab as part of the project [»The Intellige
 
  Since TensorFlow does not ship a C++ Library we make use of [cppFlow2](https://github.com/serizba/cppflow/tree/cppflow2), which is a C++ wrapper around TensorFlows C API.
 
-
 ## Installation
 Clone (or download and extract) this repository to the addon folder of openframeworks.
 ```bash
@@ -21,23 +20,69 @@ Download [TensorFlow2 C API](https://www.tensorflow.org/install/lang_c). Then ex
   - include/ --> libs/tensorflow2/include
   - lib/ --> libs/tensorflow2/lib/[macOS/linux64]
 
-
-
 ### Ubuntu
 Add the lib folder to the LD_LIBRARY_PATH (replace OF_ROOT with the full path to the ofx installation)
 ```bash
 export LD_LIBRARY_PATH=OF_ROOT/addons/ofxTensorFlow2/libs/tensorflow2/lib/linux64/:$LD_LIBRARY_PATH
 ```
-[optional] write the previous line to the end of ~/.bashrc for permanent modification of LD_LIBRARY_PATH
+[optional] write the previous line to the end of `~/.bashrc` for permanent modification of LD_LIBRARY_PATH
 
 [optional] for GPU support: refer to https://www.tensorflow.org/install/gpu and install driver and packages
 
 ### macOS
-Enable c++14 features: Change line 132 in OF_ROOT/libs/openFrameworksCompiled/project/osx/config.osx.default.mk:
-```bash
+
+The cppflow library requires C++14 which needs to be enabled when building on macOS.
+
+Also, libtensorflow is provided as pre-compiled dynamic libraries. On macOS these `.dylib` files need to be configured and copied into the build macOS .app. These steps are provided via the `scripts/xcode_install_libs.sh` script and can be invoked when building, either by Xcode or the Makefiles.
+
+#### Xcode build
+
+Enable C++14 features by changing the `CLANG_CXX_LANGUAGE_STANDARD` define in `OF_ROOT/libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig`, for example:
+
+```makefile
+CLANG_CXX_LANGUAGE_STANDARD[arch=x86_64] = c++14
+```
+
+After generating project files using the OF Project Generator, add the following to one of the Run Script build phases in the Xcode project to invoke the `xcode_install_libs.sh` script:
+
+1. Select the project in the left-hand Xcode project tree
+2. Select the project build target under TARGETS
+3. Under the Build Phases tab, find the 2nd Run Script, and add the following before the final `echo` line:
+
+```shell
+$OF_PATH/addons/ofxTensorflow2/scripts/xcode_install_libs.sh "$TARGET_BUILD_DIR/$PRODUCT_NAME.app";
+```
+
+#### Makefile build
+
+Enable C++14 features by changing `-std=c+=11` to `-std=c++14` line 142 in `OF_ROOT/libs/openFrameworksCompiled/project/osx/config.osx.default.mk`:
+
+```makefile
 PLATFORM_CXXFLAGS += -std=c++14
 ```
 
+When building an application using the makefiles, an additional step is required to install & configure the tensorflow2 dylibs into the project .app. This is partially automated by the `scripts/xcode_install_libs.sh` script. To use it, add the following to the Project's `Makefile`:
+
+```makefile
+##### ofxTensorflow2
+
+# path to ofxTensorflow2 dylib install script
+TF2_INSTALL_SCRIPT=$(OF_ROOT)/addons/ofxTensorflow2/scripts/xcode_install_libs.sh
+
+# install tensorflow2 dylibs into Debug .app
+TF2AppDebug: Debug
+	OF_PATH=$(OF_ROOT) $(TF2_INSTALL_SCRIPT) `pwd`/bin/$(APPNAME)_debug.app
+
+# install tensorflow2 dylibs into Release app
+TF2AppRelease: Release
+	OF_PATH=$(OF_ROOT) $(TF2_INSTALL_SCRIPT) `pwd`/bin/$(APPNAME).app
+```
+
+This adds two additional targets, one for Debug and the other for Release, which call ther script to install the .dylibs.
+
+For example, to build a debug version of the application *and* install the libs, simply run:
+
+    make TF2AppDebug
 
 ## Usage
 Each example contains code to train neural networks and export them as .pb files (SavedModel). However, we will provide already trained models.

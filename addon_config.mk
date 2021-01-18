@@ -96,7 +96,5 @@ linuxarmv7l:
 android/armeabi:
 android/armeabi-v7a:
 osx:
-	ADDON_LDFLAGS = ${OF_ROOT}/addons/ofxTensorFlow2/libs/tensorflow2/lib/macOS/libtensorflow.dylib
-
 ios:
 tvos:
