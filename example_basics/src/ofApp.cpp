@@ -1,6 +1,4 @@
 #include "ofApp.h"
-#include "cppflow/ops.h"
-#include "cppflow/model.h"
 
 //--------------------------------------------------------------
 void ofApp::setup(){

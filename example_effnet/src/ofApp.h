@@ -1,13 +1,13 @@
 #pragma once
 
-#include <string>
-
 #include "ofMain.h"
+
+#include "cppflow/cppflow.h"
 
 class ofApp : public ofBaseApp{
 
+    public:
 
-public:
     void setup();
     void update();
     void draw();
