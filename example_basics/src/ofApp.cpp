@@ -15,8 +15,7 @@ void ofApp::setup(){
 	auto output = model(input);
 
 	// print the tensor
-	std::cout << output << std::endl;
-
+	ofLogNotice() << output;
 }
 
 //--------------------------------------------------------------
