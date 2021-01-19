@@ -5,6 +5,19 @@ The code has been developed by Hertz-Lab as part of the project [»The Intellige
 
  Since TensorFlow does not ship a C++ Library we make use of [cppFlow2](https://github.com/serizba/cppflow/tree/cppflow2), which is a C++ wrapper around TensorFlows C API.
 
+## Quick Start
+
+Minimal quick start to clone & download everything needed:
+
+```bash
+git clone git@hertz-gitlab.zkm.de:Hertz-Lab/Research/intelligent-museum/ofxTensorFlow2.git
+cd ofxTensorFlow2
+git submodule update --init --recursive
+./scripts/download_tensorflow.sh
+```
+
+Detailed instructions follow.
+
 ## Installation
 
 Clone (or download and extract) this repository to the addon folder of openframeworks. Replace OF_ROOT with the path to your openFrameworks installation
