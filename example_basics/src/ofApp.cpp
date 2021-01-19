@@ -4,6 +4,9 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+	ofSetFrameRate(60);
+	ofSetVerticalSync(true);
+	ofSetWindowTitle("example_basics");
 
 	// create a tensor of an arbitrary shape and fill it
 	auto input = cppflow::fill({10, 9, 17, 3}, 1.0f);
@@ -15,7 +18,7 @@ void ofApp::setup(){
 	auto output = model(input);
 
 	// print the tensor
-	ofLogNotice() << output;
+	ofLog() << output;
 }
 
 //--------------------------------------------------------------
