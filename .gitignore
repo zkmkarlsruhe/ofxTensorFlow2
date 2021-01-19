@@ -16,6 +16,7 @@ example_*/python/src/__pycache__/
 
 # ide folders
 .idea
+.vscode
 
 # temp
 scripts/libtensorflow*

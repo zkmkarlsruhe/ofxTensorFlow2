@@ -2,8 +2,9 @@
 
 #include "ofMain.h"
 
-#include <cstdlib>
 #include "cppflow/cppflow.h"
+#include "cppflow/ops.h"
+#include "cppflow/model.h"
 
 class ofApp : public ofBaseApp{
 

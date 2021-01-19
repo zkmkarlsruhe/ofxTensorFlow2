@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofMain.h"
-
 #include "cppflow/cppflow.h"
 #include "labels.h"
 
