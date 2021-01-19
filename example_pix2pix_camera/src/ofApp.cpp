@@ -6,7 +6,7 @@
 void ofApp::setup(){
 	ofSetFrameRate(60);
 	ofSetVerticalSync(true);
-	ofSetWindowTitle("example_basics");
+	ofSetWindowTitle("example_pix2pix_camera");
 	ofBackground(100, 100, 100);
 
 	model = new cppflow::model(ofToDataPath("model"));
@@ -63,7 +63,7 @@ void ofApp::update(){
 		auto start = std::chrono::system_clock::now();
 		auto output = (*model)(input);
 		auto end = std::chrono::system_clock::now();
-		std::chrono::duration<double> diff = end-start;
+		std::chrono::duration<double> diff = end - start;
 
 		// ofLog() << output;
 		ofLog() << "Time: " << diff.count() << "s " << ofGetFrameRate() << " fps";
