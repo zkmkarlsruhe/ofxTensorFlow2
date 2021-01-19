@@ -7,7 +7,7 @@ The code has been developed by Hertz-Lab as part of the project [»The Intellige
 
 ## Installation
 
-Clone (or download and extract) this repository to the addon folder of openframeworks.
+Clone (or download and extract) this repository to the addon folder of openframeworks. Replace OF_ROOT with the path to your openFrameworks installation
 ```bash
 cd OF_ROOT/addons
 git clone git@hertz-gitlab.zkm.de:Hertz-Lab/Research/intelligent-museum/ofxTensorFlow2.git
@@ -18,7 +18,7 @@ git clone git@hertz-gitlab.zkm.de:Hertz-Lab/Research/intelligent-museum/ofxTenso
 * cppflow
 * tensorflow2
 
-Pull the third party library cppflow->cppflow2
+Pull cppflow to libs/cppflow and checkout cppflow2:
 ```bash
 cd ofxTensorFlow2
 git submodule update --init --recursive
@@ -33,7 +33,7 @@ To make this quick, you can also use a script which automates the download:
     ./scripts/download_tensorflow.sh
 
 ### Ubuntu
-Add the lib folder to the LD_LIBRARY_PATH (replace OF_ROOT with the full path to the ofx installation)
+Add the lib folder to the LD_LIBRARY_PATH. Replace OF_ROOT with the path to your openFrameworks installation.
 ```bash
 export LD_LIBRARY_PATH=OF_ROOT/addons/ofxTensorFlow2/libs/tensorflow2/lib/linux64/:$LD_LIBRARY_PATH
 ```
@@ -131,7 +131,7 @@ pip3 install -r requirements.txt
 ```
 Run the python script to start training
 ```bash
-python3 train.py
+python3 main.py
 ```
 To configure the training process refer to the README of each example.
 
