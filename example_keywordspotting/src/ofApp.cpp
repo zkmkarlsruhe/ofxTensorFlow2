@@ -8,7 +8,7 @@ void ofApp::setup(){
 	ofSetCircleResolution(80);
 	ofBackground(54, 54, 54);
 
-	model = cppflow::model(ofToDataPath(modelPath));
+	model = new cppflow::model(ofToDataPath(modelPath));
 	previousBuffer.reserve(bufferSize);
 	sample.reserve(inputSize);
 
