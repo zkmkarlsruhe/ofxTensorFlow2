@@ -4,6 +4,9 @@
 
 #include "cppflow/cppflow.h"
 
+//#define USE_LIVE_VIDEO // uncomment this to use a live camera
+						 // otherwise, we'll use an image file
+
 class ofApp : public ofBaseApp{
 
 	public:
@@ -29,6 +32,11 @@ class ofApp : public ofBaseApp{
 		int nnWidth;
 		int nnHeight;
 
-		ofImage imgOut;
+		#ifdef USE_LIVE_VIDEO
+			ofVideoGrabber vidIn;
+			int camWidth;
+			int camHeight;
+		#endif
 		ofImage imgIn;
+		ofImage imgOut;
 };

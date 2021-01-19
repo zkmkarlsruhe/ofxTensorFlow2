@@ -10,6 +10,13 @@ void ofApp::setup(){
 
 	nnWidth = 256;
 	nnHeight = 256;
+#ifdef USE_LIVE_VIDEO
+	// try to grab at this size
+	camWidth = 640;
+	camHeight = 360;
+	vidIn.setDesiredFrameRate(30);
+	vidIn.setup(camWidth, camHeight);
+#endif
 	imgIn.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
 	imgOut.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
 }
@@ -17,8 +24,32 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
 
+#ifdef USE_LIVE_VIDEO
+	// create tensor from video
+	vidIn.update();
+	if(vidIn.isFrameNew()){
+
+		// get the frame
+		ofPixels & pixels = vidIn.getPixels();
+
+		// resize pixels
+		ofPixels resizedPixels(pixels);
+		resizedPixels.resize(nnWidth, nnHeight);
+
+		// copy to tensor
+		input = cppflow::tensor(
+			  std::vector<float>(resizedPixels.begin(),
+								  resizedPixels.end()),
+							  {nnWidth, nnHeight, 3});
+	}
+	else{
+		// try again later
+		return;
+	}
+#else
 	// create tensor from image file
 	input = cppflow::decode_jpeg(cppflow::read_file(ofToDataPath("cat2.jpg")));
+#endif
 
 	// cast data type and expand to batch size of 1
 	input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
@@ -35,7 +66,7 @@ void ofApp::update(){
 	std::chrono::duration<double> diff = end - start;
 
 	// ofLog() << output;
-	ofLog() << "Time: " << diff.count() << "s " << ofGetFrameRate() << " fps";
+	ofLog() << "Time: " << diff.count() << "s Fps: " << ofGetFrameRate();
 
 	// copy output to image
 	auto outputVector = output.get_data<float>();
@@ -57,13 +88,21 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+	ofSetColor(255);
 	imgOut.draw(0, 0);
 	imgIn.draw(0, nnHeight);
+#ifdef USE_LIVE_VIDEO
+	vidIn.draw(nnWidth, 0, camWidth, camHeight);
+#endif
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+#ifdef USE_LIVE_VIDEO
+	if(key == 's' || key == 'S'){
+		vidIn.videoSettings();
+	}
+#endif
 }
 
 //--------------------------------------------------------------
