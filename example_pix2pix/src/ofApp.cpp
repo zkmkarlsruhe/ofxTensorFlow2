@@ -35,7 +35,7 @@ void ofApp::update(){
 	std::chrono::duration<double> diff = end - start;
 
 	// ofLogNotice() << output;
-	ofLogNotice() << "Time: " << diff.count();
+	ofLogNotice() << "Time: " << diff.count() << "s " << ofGetFrameRate() << " fps";
 
 	// copy output to image
 	auto outputVector = output.get_data<float>();
