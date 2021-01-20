@@ -123,6 +123,8 @@ make
 make RunRelease
 ```
 
+**Note**: When creating a new project make sure to copy the Makefile from any example provided and the name of this addon is given in addons.make 
+
 
 ## Training (GPU support recommended)
 #### Requirements
