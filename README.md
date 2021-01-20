@@ -109,11 +109,14 @@ This will also work when building the normal targets using two steps, for exampl
     make DebugTF2
 
 ## Usage
-Each example contains code to train neural networks and export them as .pb files (SavedModel). However, we will provide already trained models.
+Each example contains code to create a neural network and export it as SavedModel. Neural networks require training which may take hours or days in order to produce a satisfying output.
+Therefor, we provide already trained models. Check the assets of this repository to find the trained models.
 
-Models need to be placed in example_XXXX/bin/data.
+When referring to the SavedModel we mean the parent folder of the exported neural network containing two subfolders assets and variables and a saved_model.pb file. Do not change anything inside this folder. However renaming the folder is permited.
 
-Afterwards compile and execute the example.
+By default, the example applications try to load a SavedModel named "model" located in "example_XXXX/bin/data/". When downloading or training a model please make sure the SavedModel is at this location at has the right name (renaming may be necessary).
+
+Afterwards compile and execute the example. For example using make:
 ```bash
 cd example_XXXX
 make
