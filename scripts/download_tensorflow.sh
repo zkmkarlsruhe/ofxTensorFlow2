@@ -35,14 +35,14 @@ OF_OS=unknown
 case "$OS" in
 	darwin)
 		OF_OS=osx
-		if [ "$TYPE" == "gpu" ] ; then
+		if [ "$TYPE" = "gpu" ] ; then
 			echo "macOS TYPE is cpu-only, switching to cpu"
 			TYPE=cpu
 		fi
 		;;
 	linux)
 		# tf Linux builds are 64 bit only
-		if [ "$ARCH" == "x86_64" ] ; then
+		if [ "$ARCH" = "x86_64" ] ; then
 			OF_OS=linux64
 		else
 			echo "unsupported architecture: $ARCH"
