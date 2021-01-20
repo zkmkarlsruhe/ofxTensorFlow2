@@ -82,6 +82,7 @@ common:
 
 	ADDON_INCLUDES = libs/tensorflow2/include
 	ADDON_INCLUDES += libs/cppflow/include
+	ADDON_INCLUDES += src
 	
 	ADDON_SOURCES_EXCLUDE = libs/cppflow/examples/%
 
