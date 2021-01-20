@@ -6,13 +6,18 @@
 # usage: APP
 # ie. APP is path/to/OFApp.app
 #
+# if run outside of Xcode, the OF_PATH variable must be set:
+# OF_PATH=../../ macos_install_libs.sh bin/MyApp.app 
+#
 # Dan Wilcox ZKM | Hertz-Lab 2021
 
 # stop on error
 set -e
 
-# tf version
-VER=2.4.0
+if [ "$1" = "" ] ; then
+	echo "usage: path/to/Project.app"
+	exit 1
+fi
 
 APP_PATH="$1"
 APP_NAME="$(basename ${APP_PATH%.*})"
@@ -21,6 +26,10 @@ SRC="$OF_PATH/addons/ofxTensorflow2/libs/tensorflow2/lib/osx"
 DEST="$APP_PATH/Contents/Frameworks"
 
 echo "ofxTensorFlow2: install tensorflow libs to $APP_PATH $APP_NAME"
+
+# detect tf version from dylib naming: libtensorflow.2.4.0.dylib -> 2.4.0
+VER=$(ls "$SRC" | egrep "libtensorflow\.[0-9]\.[0-9]\.[0-9]" | sed "s/[^0-9]*//")
+VER="$(basename ${VER%.*})"
 
 # copy dylibs to app bundle
 rsync -aved "$SRC"/*.dylib "$DEST"
