@@ -13,7 +13,7 @@ VER=2.4.0
 
 # tf type: cpu or gpu,
 # override when running via: TYPE=gpu ./download_tensorflow.sh
-if [ "$TYPE" == "" ] ; then
+if [ "$TYPE" = "" ] ; then
 	TYPE=cpu
 fi
 
