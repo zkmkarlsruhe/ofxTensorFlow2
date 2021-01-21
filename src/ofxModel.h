@@ -29,7 +29,7 @@ class ofxModel {
 
     ~ofxModel(){
         delete model_;
-        ofLog() << "ofxModel: loaded model: ";
+        ofLog() << "ofxModel: destruct model: " << modelPath_;
     }
 
     ofxTensor run(const cppflow::tensor & tensor){
