@@ -1,9 +1,11 @@
 # ofxTensorFlow2
 
+![ofxTensorFlow2 thumbnail](ofxaddons_thumbnail.png)
+
 This is an openFrameworks addon for TensorFlow 2.
 The code has been developed by Hertz-Lab as part of the project [»The Intelligent Museum«](#the-intelligent-museum).
 
- Since TensorFlow does not ship a C++ Library we make use of [cppFlow2](https://github.com/serizba/cppflow/tree/cppflow2), which is a C++ wrapper around TensorFlows C API.
+Since TensorFlow does not ship a C++ Library we make use of [cppFlow2](https://github.com/serizba/cppflow/tree/cppflow2), which is a C++ wrapper around TensorFlows C API.
 
 ## Quick Start
 
@@ -80,7 +82,7 @@ $OF_PATH/addons/ofxTensorflow2/scripts/macos_install_libs.sh "$TARGET_BUILD_DIR/
 
 #### Makefile build
 
-Enable C++14 features by changing `-std=c+=11` to `-std=c++14` line 142 in `OF_ROOT/libs/openFrameworksCompiled/project/osx/config.osx.default.mk`:
+Enable C++14 features by changing `-std=c+=11` to `-std=c++14` on line 142 in `OF_ROOT/libs/openFrameworksCompiled/project/osx/config.osx.default.mk`:
 
 ```makefile
 PLATFORM_CXXFLAGS += -std=c++14
