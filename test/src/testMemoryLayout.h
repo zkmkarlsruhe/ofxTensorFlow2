@@ -3,6 +3,8 @@
 
 void testMemoryLayout() {
 
+    ofLog() << "============= Start testing memory layout =============";
+
     const int size = 16;
     std::vector <int> flat {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
 
