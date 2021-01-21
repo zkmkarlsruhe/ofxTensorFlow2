@@ -1,3 +1,12 @@
+# Fast Style Transfer
+The code has been taken from [this repo](https://github.com/cryu854/FastStyle).
+
+We modified the script train.py to export a SavedModel with specific input dimensions. In our experiments the specific input dimensions were necessary to correctly load and execute the model in C++. 
+
+### TODO 
+* script to edit input signature of SavedModels to execute the model for other input dimensions
+
+Please find the original README below...
 # Fast Style Transfer in TensorFlow 2 
 
 This is an implementation of Fast-Style-Transfer on Python 3 and Tensorflow 2. 

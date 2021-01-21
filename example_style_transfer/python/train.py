@@ -143,7 +143,7 @@ def trainer(style_file, dataset_path, weights_path, content_weight, style_weight
     start = time.time()
 
 
-    @tf.function(input_signature=[tf.TensorSpec([None, 512, 512, 3], dtype=tf.float32)])
+    @tf.function(input_signature=[tf.TensorSpec([None, 640, 480, 3], dtype=tf.float32)])
     def model_predict(input_1):
         return {'outputs': network(input_1, training=False)}
 
@@ -164,7 +164,7 @@ def trainer(style_file, dataset_path, weights_path, content_weight, style_weight
             if e == 0 and iteration == 0:
                 network.summary()
 
-            if iteration % 1 == 0:
+            if iteration % 100 == 0:
                 # Save model
                 network.save('../bin/data/model'+str(iteration), signatures={'serving_default': model_predict})
                 print('=====================================')
