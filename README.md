@@ -42,8 +42,13 @@ Download [TensorFlow2 C API](https://www.tensorflow.org/install/lang_c) and extr
   - lib/ --> libs/tensorflow2/lib/[osx/linux64/msys2/vs]
 
 To make this quick, you can also use a script which automates the download:
-
-    ./scripts/download_tensorflow.sh
+```shell
+./scripts/download_tensorflow.sh
+```
+When opting for GPU support run
+```shell 
+TYPE=gpu ./scripts/download_tensorflow.sh
+```
 
 ### Ubuntu
 Add the lib folder to the LD_LIBRARY_PATH. Replace OF_ROOT with the path to your openFrameworks installation.
@@ -101,7 +106,7 @@ For example, to build a debug version of the application *and* install the libs,
 
  Similarly, for release builds use:
 
-     make ReleaseTF2
+    make ReleaseTF2
 
 This will also work when building the normal targets using two steps, for example:
 
