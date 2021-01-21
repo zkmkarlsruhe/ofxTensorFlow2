@@ -13,4 +13,4 @@ endif
 include $(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon/compile.project.mk
 
 # ofxTensorflow2
-include $(OF_ROOT)/addons/ofxTensorflow2/addon_targets.mk
+include $(OF_ROOT)/addons/ofxTensorFlow2/addon_targets.mk
