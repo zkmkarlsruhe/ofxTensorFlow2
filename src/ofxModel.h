@@ -10,7 +10,8 @@ class ofxModel {
     ofxModel() = default;
     
     ofxModel(std::string modelPath) {
-        // todo check if boost::is_directory()
+
+        // todo check if is_directory()
         if (false){
             ofLog() << "ofxModel: path not a folder!";
         }
@@ -21,10 +22,16 @@ class ofxModel {
             }
             else {
                 ofLog() << "ofxModel: loaded model: " << modelPath;
+                modelPath_ = modelPath;
             }
         }
     }
-    
+
+    ~ofxModel(){
+        delete model_;
+        ofLog() << "ofxModel: loaded model: ";
+    }
+
     ofxTensor run(const cppflow::tensor & tensor){
         if (model_){
             return (*model_)(tensor);
@@ -37,7 +44,7 @@ class ofxModel {
 
     int load(std::string modelPath) {
         if (model_){
-            ofLog() << "ofxModel: delete current model";
+            ofLog() << "ofxModel: delete current model: " << modelPath_;
             delete model_;
         }
         model_ = new cppflow::model(modelPath);
@@ -48,12 +55,13 @@ class ofxModel {
         }
         else {
             ofLog() << "ofxModel: loaded model: " << modelPath;
+            modelPath_ = modelPath;
             return 1;
         }
     }
 
     private:
-
+    std::string modelPath_;
     cppflow::model * model_;
 
 };

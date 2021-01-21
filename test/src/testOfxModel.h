@@ -4,6 +4,7 @@
 int testOfxModel(const cppflow::tensor & input, const cppflow::tensor & output){
 
 	// ====== ofxModel ====== //
+    ofLog() << "============= Start testing ofxModel =============";
 
 	// load the ofxModel
 	ofxModel simpleModel(ofToDataPath("model"));
