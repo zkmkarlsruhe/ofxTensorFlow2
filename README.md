@@ -5,6 +5,11 @@ The code has been developed by Hertz-Lab as part of the project [»The Intellige
 
  Since TensorFlow does not ship a C++ Library we make use of [cppFlow2](https://github.com/serizba/cppflow/tree/cppflow2), which is a C++ wrapper around TensorFlows C API.
 
+
+## License
+This software is distributed under the [Simplified BSD License](LICENSE.txt). Copyright (c) 2021 ZKM | Karlruhe. 
+
+
 ## Quick Start
 
 Minimal quick start to clone & download everything needed:
@@ -16,7 +21,8 @@ git submodule update --init --recursive
 ./scripts/download_tensorflow.sh
 ```
 
-Detailed instructions follow.
+Please find detailed instructions below.
+
 
 ## Installation
 
@@ -155,10 +161,6 @@ To configure the training process refer to the README of each example.
 
 ## Known issues
 please take a look at the [issues](https://hertz-gitlab.zkm.de/Hertz-Lab/Research/intelligent-museum/ofxTensorFlow2/-/issues?scope=all&utf8=%E2%9C%93&state=all)
-
-
-## License
-[MIT License](https://en.wikipedia.org/wiki/MIT_License)
 
 
 ## The Intelligent Museum
