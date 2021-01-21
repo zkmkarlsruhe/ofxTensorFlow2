@@ -1,0 +1,9 @@
+*.wav
+*.zip
+*.npy
+.ipynb_checkpoints/
+resources/.ipynb_checkpoints/
+sd_*/
+__pycache__/
+
+*.h5
