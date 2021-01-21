@@ -59,7 +59,7 @@ class ofxTensor{
         auto lhsShape = tensor_.shape().get_data<shape_t>();
         auto rhsShape = rhs.shape().get_data<shape_t>();
         if ( lhsShape != rhsShape) {
-            ofLog() << "shape mismatch:"
+            ofLog() << "ofxTensor: shape mismatch:"
                     << " shape(lhs): " << shapeToString(lhsShape)
                     << " shape(rhs): " << shapeToString(rhsShape);
             return false;
@@ -67,7 +67,7 @@ class ofxTensor{
 
         // check if the data types are the same
         if (tensor_.dtype() != rhs.dtype()){
-            ofLog() << "dtype mismatch";
+            ofLog() << "ofxTensor: dtype mismatch";
             return false;
         }
 
@@ -84,11 +84,11 @@ class ofxTensor{
     bool equals (const cppflow::tensor & rhs) const {
 
         if (!( *this == rhs)){
-            ofLog() << "tensors not comparable";
+            ofLog() << "ofxTensor: tensors not comparable";
             return false;
         }
         if ( tensor_.get_data<T>() != rhs.get_data<T>() ) {
-            ofLog() << "value mismatch";
+            ofLog() << "ofxTensor: value mismatch";
             return false;
         }
         return true;
