@@ -2,81 +2,42 @@
 
 #include "cppflow/cppflow.h"
 #include "ofxTF2Tensor.h"
+#include "ofFileUtils.h"
 
-class ofxTF2ModelSettings {
-	// left for future implementation
+/// model-specific settings?
+struct ofxTF2ModelSettings {
+	std::vector<shape_t> inputShape;
+	std::vector<shape_t> outputShape;
 };
 
 class ofxTF2Model {
 
-	public: 
+public:
+
+	/// \section Constructors
 
 	ofxTF2Model() = default;
 	ofxTF2Model(const std::string & modelPath);
-	~ofxTF2Model();
+	virtual ~ofxTF2Model();
 
-	ofxTF2Tensor run(const ofxTF2Tensor & tensor);
+	/// \section Functions
+
+	/// load model
+	/// returns true on success
 	bool load(const std::string & modelPath);
+
+	/// clear model
+	void clear();
+
+	/// set up model with settings?
 	bool setup(const ofxTF2ModelSettings & settings);
 
-	private:
+	/// run model on input
+	ofxTF2Tensor run(const ofxTF2Tensor & tensor);
+
+protected:
 
 	ofxTF2ModelSettings settings;
 	std::string modelPath_;
-	cppflow::model * model_;
+	cppflow::model * model_ = nullptr;
 };
-
-ofxTF2Model::ofxTF2Model(const std::string & modelPath) {
-
-	// todo check if is_directory()
-	if (false){
-		ofLog() << "ofxTF2Model: path not a folder!";
-	}
-	else {
-		model_ = new cppflow::model(modelPath);
-		if (!model_){
-			ofLog() << "ofxTF2Model: model not initialized!";
-		}
-		else {
-			ofLog() << "ofxTF2Model: loaded model: " << modelPath;
-			modelPath_ = modelPath;
-		}
-	}
-}
-
-ofxTF2Model::~ofxTF2Model(){
-	delete model_;
-	ofLog() << "ofxTF2Model: destruct model: " << modelPath_;
-}
-
-ofxTF2Tensor ofxTF2Model::run(const ofxTF2Tensor & tensor){
-	if (model_){
-		return (*model_)(tensor);
-	}
-	else{
-		ofLog() << "ofxTF2Model: no model loaded! Returning tensor containing -1.";
-		return ofxTF2Tensor(-1);
-	}
-}
-
-bool ofxTF2Model::setup(const ofxTF2ModelSettings & settings){
-
-}
-
-bool ofxTF2Model::load(const std::string & modelPath) {
-	if (model_){
-		ofLog() << "ofxTF2Model: delete current model: " << modelPath_;
-		delete model_;
-	}
-	model_ = new cppflow::model(modelPath);
-
-	if (!model_){
-		ofLog() << "ofxTF2Model: model not initialized!";
-		return false;
-	}
-	else {
-		ofLog() << "ofxTF2Model: loaded model: " << modelPath;
-		modelPath_ = modelPath;
-		return true;
-	}
-}
