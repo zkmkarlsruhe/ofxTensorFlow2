@@ -4,7 +4,7 @@
 ifdef MAC_OS_MIN_VERSION
 
 # path to ofxTensorflow2 dylib install script
-TF2_INSTALL_SCRIPT=$(OF_ROOT)/addons/ofxTensorflow2/scripts/macos_install_libs.sh
+TF2_INSTALL_SCRIPT=$(OF_ROOT)/addons/ofxTensorFlow2/scripts/macos_install_libs.sh
 
 # build Debug app and install tensorflow2 dylibs
 DebugTF2: Debug
