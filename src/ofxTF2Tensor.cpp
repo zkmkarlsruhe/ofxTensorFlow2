@@ -1,4 +1,4 @@
-#include "ofxTF2Model.h"
+#include "ofxTF2Tensor.h"
 
 // ==== constructors ====
 
