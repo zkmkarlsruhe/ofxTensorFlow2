@@ -1,4 +1,4 @@
-# ofxTensorflow2
+# ofxTensorFlow2
 #
 # Copyright (c) 2021 ZKM | Hertz-Lab
 # Paul Bethge <bethge@zkm.de>
@@ -18,5 +18,3 @@ model = tf.keras.applications.EfficientNetB0()
 
 # export to a SavedModel
 model.save('../bin/data/model')
-
-
