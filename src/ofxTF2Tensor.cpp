@@ -2,10 +2,11 @@
 
 // ==== constructors ====
 
-ofxTF2Tensor::ofxTF2Tensor(const cppflow::tensor & tensor)
-: tensor_(tensor) {}
+ofxTF2Tensor::ofxTF2Tensor(const cppflow::tensor & tensor) :
+	tensor_(tensor) {}
 
-ofxTF2Tensor::ofxTF2Tensor(const ofImage & img) : ofxTF2Tensor(img.getPixels()) {}
+ofxTF2Tensor::ofxTF2Tensor(const ofImage & img) :
+	ofxTF2Tensor(img.getPixels()) {}
 
 // ==== operators ====
 
@@ -13,12 +14,12 @@ ofxTF2Tensor::operator cppflow::tensor & (){
 	return tensor_;
 }
 
-bool ofxTF2Tensor::operator == (const cppflow::tensor & rhs) const {
+bool ofxTF2Tensor::operator == (const cppflow::tensor & rhs) const{
 
 	// check if shapes are the same
 	auto lhsShape = tensor_.shape().get_data<shape_t>();
 	auto rhsShape = rhs.shape().get_data<shape_t>();
-	if (lhsShape != rhsShape) {
+	if (lhsShape != rhsShape){
 		ofLogWarning() << "ofxTF2Tensor: shape mismatch:"
 		               << " shape(lhs): " << shapeToString(lhsShape)
 		               << " shape(rhs): " << shapeToString(rhsShape);
@@ -40,11 +41,11 @@ std::ostream & operator << (std::ostream & os, const ofxTF2Tensor & tensor){
 
 // ==== data access ====
 
-std::vector<shape_t> ofxTF2Tensor::getShape() const {
+std::vector<shape_t> ofxTF2Tensor::getShape() const{
 	return tensor_.shape().get_data<shape_t>();
 }
 
-cppflow::tensor ofxTF2Tensor::getTensor() const {
+const cppflow::tensor & ofxTF2Tensor::getTensor() const{
 	return tensor_;
 }
 

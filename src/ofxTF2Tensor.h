@@ -19,7 +19,7 @@ class ofxTF2Tensor{
 
 public:
 
-    // \section Constructors
+    /// \section Constructors
 
     // forwarding to cppflow constructors
     template <typename T>
@@ -42,31 +42,31 @@ public:
 
     /// \section Operators
 
-    // implicit cast to cppflow::tensor 
-    // especially useful for using cppflow ops with ofxTF2Tensor
+    /// implicit cast to cppflow::tensor
+    /// especially useful for using cppflow ops with ofxTF2Tensor
 	operator cppflow::tensor & ();
 
-    // check if tensors are comparable
+    /// check if tensors are comparable
 	bool operator == (const cppflow::tensor & rhs) const;
 
-	// ostream print operator
+	/// std::ostream print operator
 	friend std::ostream & operator << (std::ostream & os, const ofxTF2Tensor & tensor);
 
 	/// \section Comparison
 
-    // check if both tensors share the same values
+    /// check if both tensors share the same values
     template <typename T>
-	bool equals (const cppflow::tensor & rhs) const;
+	bool equals(const cppflow::tensor & rhs) const;
 
 	/// \section Data Access
 
 	std::vector<shape_t> getShape() const;
 
-	cppflow::tensor getTensor() const;
+	const cppflow::tensor & getTensor() const;
 
-	// this function will not convert the values. Make sure to use the correct
-    // type. That is, when using int as template parameter on a float tensor
-    // values will not get truncated but the bytes will be interpreted as int. 
+    /// this function will not convert the values. Make sure to use the correct
+    /// type. That is, when using int as template parameter on a float tensor
+    /// values will not get truncated but the bytes will be interpreted as int.
     template <typename T>
 	std::vector<T> getVector() const;
 
@@ -95,7 +95,7 @@ ofxTF2Tensor::ofxTF2Tensor(const std::vector<T> & values,
 template <typename T>
 ofxTF2Tensor::ofxTF2Tensor(const ofPixels & pixels) : tensor_(
 		std::vector<T>(pixels.begin(), pixels.end()),
-		{pixels.getWidth(), pixels.getHeight(), pixels.getNumChannels()} )
+		{pixels.getWidth(), pixels.getHeight(), pixels.getNumChannels()})
 		{}
 
 template <typename T>
@@ -105,7 +105,7 @@ bool ofxTF2Tensor::equals(const cppflow::tensor & rhs) const {
 		ofLogWarning() << "ofxTF2Tensor: tensors not comparable";
 		return false;
 	}
-	if ( tensor_.get_data<T>() != rhs.get_data<T>() ) {
+	if (tensor_.get_data<T>() != rhs.get_data<T>()) {
 		ofLogWarning() << "ofxTF2Tensor: value mismatch";
 		return false;
 	}
