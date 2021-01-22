@@ -1,13 +1,13 @@
 #pragma once
     
 
-int testOfxModel(const cppflow::tensor & input, const cppflow::tensor & output){
+int testOfxTF2Model(const cppflow::tensor & input, const cppflow::tensor & output){
 
-	// ====== ofxModel ====== //
-    ofLog() << "============= Start testing ofxModel =============";
+	// ====== ofxTF2Model ====== //
+    ofLog() << "============= Start testing ofxTF2Model =============";
 
-	// load the ofxModel
-	ofxModel simpleModel(ofToDataPath("model"));
+	// load the ofxTF2Model
+	ofxTF2Model simpleModel(ofToDataPath("model"));
 	
 	// reload
 	simpleModel.load(ofToDataPath("model"));

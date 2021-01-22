@@ -3,14 +3,14 @@
 template<typename T>
 void printVector(const std::vector<T> & vec);
 
-int testOfxTensor(){
+int testOfxTF2Tensor(){
 
-	// ====== ofxTensor ====== //
-    ofLog() << "============= Start testing ofxTensor =============";
+	// ====== ofxTF2Tensor ====== //
+    ofLog() << "============= Start testing ofxTF2Tensor =============";
 
-	// ofxTensor from cppflow::tensor
+	// ofxTF2Tensor from cppflow::tensor
 	auto cppflowTensor = cppflow::fill({1, 2, 2, 3}, 2);
-	ofxTensor fromCppflowTensor (cppflowTensor);
+	ofxTF2Tensor fromCppflowTensor (cppflowTensor);
 
     // check comparision operator
 	auto cppflowTensorOtherShape = cppflow::fill({2, 1, 2, 3}, 0.9f);
@@ -30,21 +30,21 @@ int testOfxTensor(){
     // std::cout << fromCppflowTensor << std::endl;
     // ofLog() << fromCppflowTensor.getTensor();
 
-	// todo ofxTensor from vector
-	// todo ofxTensor from ofImage
-	// todo ofxTensor from ofPixels
+	// todo ofxTF2Tensor from vector
+	// todo ofxTF2Tensor from ofImage
+	// todo ofxTF2Tensor from ofPixels
 
-	// vector from ofxTensor
-	auto vecFromOfxTensor = fromCppflowTensor.getVector<int>();
+	// vector from ofxTF2Tensor
+	auto vecFromofxTF2Tensor = fromCppflowTensor.getVector<int>();
 
-	// todo vector from ofxTensor
-	// todo ofImage from ofxTensor  
-	// todo ofPixels from ofxTensor
+	// todo vector from ofxTF2Tensor
+	// todo ofImage from ofxTF2Tensor  
+	// todo ofPixels from ofxTF2Tensor
 
-	// std::cout << "vecFromOfxTensor size: " << vecFromOfxTensor.size() << std::endl;
+	// std::cout << "vecFromofxTF2Tensor size: " << vecFromofxTF2Tensor.size() << std::endl;
 	// std::cout << "vecFromCppflowTensor size: " << input.get_data<float>().size() << std::endl;
 
-    printVector(vecFromOfxTensor);
+    printVector(vecFromofxTF2Tensor);
 
     return 0;
 }
@@ -64,7 +64,7 @@ void printVector(const std::vector<T> & vec){
 
 //     std::string out;
 // 	for (int i=0; i < tensor.size(); i++){
-// 		out.append(std::to_string(vecFromOfxTensor[i]));
+// 		out.append(std::to_string(vecFromofxTF2Tensor[i]));
 //         out.append(" ");
 // 	}
 // 	ofLog() << out;

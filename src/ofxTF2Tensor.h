@@ -13,41 +13,43 @@
 // a shape is represented as a vector of shape_t
 typedef int32_t shape_t;
 
-class ofxTensor{
+// a simple wrapper for cppflow::tensor
+// note: getData<T> (and cppflow::tensor.get_data<T>) does not convert the value
+class ofxTF2Tensor{
 
     public:
 
     // ==== Constructors ====
     // forwarding to cppflow constructors
     template <typename T>
-    ofxTensor(const T& value) 
+    ofxTF2Tensor(const T& value) 
         : tensor_(value) {}
 
     template <typename T>
-    ofxTensor(const std::vector<T> & values) 
+    ofxTF2Tensor(const std::vector<T> & values) 
         : tensor_(values) {}
 
     template <typename T>
-    ofxTensor(const std::vector<T> & values, const std::vector<int64_t>& shape)
+    ofxTF2Tensor(const std::vector<T> & values, const std::vector<int64_t>& shape)
         : tensor_(values, shape) {}
 
-    ofxTensor(const cppflow::tensor & tensor) 
+    ofxTF2Tensor(const cppflow::tensor & tensor) 
         : tensor_(tensor) {}
 
     // constuctors for openframework interaction
     template <typename T>
-    ofxTensor(const ofPixels & pixels) : tensor_(
+    ofxTF2Tensor(const ofPixels & pixels) : tensor_(
             std::vector<T>(pixels.begin(), pixels.end()),
             {pixels.getWidth(), pixels.getHeight(), pixels.getNumChannels()} )
             {}
 
-    ofxTensor(const ofImage & img) : ofxTensor(img.getPixels()) {}
+    ofxTF2Tensor(const ofImage & img) : ofxTF2Tensor(img.getPixels()) {}
 
 
     // ==== operators ====
 
     // implicit cast to cppflow::tensor 
-    // especially useful for using cppflow ops with ofxTensor
+    // especially useful for using cppflow ops with ofxTF2Tensor
     operator cppflow::tensor & (){
         return tensor_;
     }
@@ -59,7 +61,7 @@ class ofxTensor{
         auto lhsShape = tensor_.shape().get_data<shape_t>();
         auto rhsShape = rhs.shape().get_data<shape_t>();
         if ( lhsShape != rhsShape) {
-            ofLog() << "ofxTensor: shape mismatch:"
+            ofLog() << "ofxTF2Tensor: shape mismatch:"
                     << " shape(lhs): " << shapeToString(lhsShape)
                     << " shape(rhs): " << shapeToString(rhsShape);
             return false;
@@ -67,14 +69,14 @@ class ofxTensor{
 
         // check if the data types are the same
         if (tensor_.dtype() != rhs.dtype()){
-            ofLog() << "ofxTensor: dtype mismatch";
+            ofLog() << "ofxTF2Tensor: dtype mismatch";
             return false;
         }
 
         return true;
     }
 
-    // friend ostream & operator << (ostream & os, const ofxTensor & tensor);
+    // friend ostream & operator << (ostream & os, const ofxTF2Tensor & tensor);
     // ostream & operator << (ostream & os){
     //     return os << "works";
     // }
@@ -83,12 +85,12 @@ class ofxTensor{
     template <typename T>
     bool equals (const cppflow::tensor & rhs) const {
 
-        if (!( *this == rhs)){
-            ofLog() << "ofxTensor: tensors not comparable";
+        if (!( *this == rhs )){
+            ofLog() << "ofxTF2Tensor: tensors not comparable";
             return false;
         }
         if ( tensor_.get_data<T>() != rhs.get_data<T>() ) {
-            ofLog() << "ofxTensor: value mismatch";
+            ofLog() << "ofxTF2Tensor: value mismatch";
             return false;
         }
         return true;
@@ -100,6 +102,9 @@ class ofxTensor{
     cppflow::tensor getTensor() const {
         return tensor_;
     }
+    // this function will not convert the values. Make sure to use the correct 
+    // type. That is, when using int as template parameter on a float tensor
+    // values will not get truncated but the bytes will be interpreted as int. 
     template <typename T>
     std::vector<T> getVector() const {
         return tensor_.get_data<T>();
@@ -124,6 +129,6 @@ class ofxTensor{
 
 };
 
-// ostream & operator << (ostream & os, const ofxTensor & tensor){
+// ostream & operator << (ostream & os, const ofxTF2Tensor & tensor){
 //     return os << tensor.tensor_;
 // }

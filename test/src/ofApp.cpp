@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
-#include "testOfxModel.h"
-#include "testOfxTensor.h"
+#include "testOfxTF2Model.h"
+#include "testofxTF2Tensor.h"
 #include "testMemoryLayout.h"
 
 
@@ -25,9 +25,9 @@ void ofApp::setup(){
 	// print the tensor
 	ofLog() << output;
 
-	testOfxTensor();
+	testOfxTF2Tensor();
 
-	testOfxModel(input, output);
+	testOfxTF2Model(input, output);
 
 	testMemoryLayout();
 
