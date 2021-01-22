@@ -19,11 +19,9 @@
 #include "ofMain.h"
 #include "ofxTensorFlow2.h"
 
-int testOfxTF2Tensor(const cppflow::tensor & input){
+int testOperators(const cppflow::tensor & input){
 
-	// ====== ofxTF2Tensor ====== //
-    ofLog() << "============= Start testing ofxTF2Tensor =============";
-
+    ofLog() << "====== Start testing Operators ======";
 	// ofxTF2Tensor from cppflow::tensor
 	ofxTF2Tensor fromCppflowTensor (input);
 
@@ -50,21 +48,50 @@ int testOfxTF2Tensor(const cppflow::tensor & input){
     // ofLog() << fromCppflowTensor << std::endl;
     // ofLog() << fromCppflowTensor.getTensor();
 
-	// todo ofxTF2Tensor from vector
-	// todo ofxTF2Tensor from ofImage
-	// todo ofxTF2Tensor from ofPixels
+	
+	return 1;
+}
 
-	// vector from ofxTF2Tensor
-	auto vecFromofxTF2Tensor = fromCppflowTensor.getVector<float>();
+int testConstructorsFloatVector(const std::vector<float> & input){
 
-	// todo vector from ofxTF2Tensor
-	// todo ofImage from ofxTF2Tensor  
-	// todo ofPixels from ofxTF2Tensor
+	std::vector<int64_t> shape(1);
+	shape[0] = input.size();
 
-	// std::cout << "vecFromofxTF2Tensor size: " << vecFromofxTF2Tensor.size() << std::endl;
-	// std::cout << "vecFromCppflowTensor size: " << input.get_data<float>().size() << std::endl;
+	ofxTF2Tensor fromFloatVector (input, shape);
+	auto vecFromFloatVector = fromFloatVector.getVector<float>();
+	
+	ofLog() << "testOfxTF2Tensor: ofxTensor(input) == floatVector: "
+			<< (vecFromFloatVector == input);
+    ofLog() << vectorToString(input);
+    ofLog() << vectorToString(vecFromFloatVector);
 
-    ofLog() << vectorToString(vecFromofxTF2Tensor);
+    return 1;
+}
 
-    return 0;
+int testConstructors(){
+
+    ofLog() << "====== Start testing Operators ======";
+
+    std::vector<float> floatVector
+		{0.0, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9};
+	testConstructorsFloatVector(floatVector);
+
+	// TODO: ofxTF2Tensor from ofImage
+	// TODO: ofxTF2Tensor from ofPixels
+
+	// TODO: ofImage from ofxTF2Tensor  
+	// TODO: ofPixels from ofxTF2Tensor
+
+	return 1;
+}
+
+
+int testOfxTF2Tensor(const cppflow::tensor & input){
+
+	// ====== ofxTF2Tensor ====== //
+    ofLog() << "============= Start testing ofxTF2Tensor =============";
+	testOperators(input);
+	testConstructors();
+
+	return 1;
 }
