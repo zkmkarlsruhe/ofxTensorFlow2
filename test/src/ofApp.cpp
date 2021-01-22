@@ -41,10 +41,7 @@ void ofApp::setup(){
 	// inference
 	auto output = model(input);
 
-	// print the tensor
-	ofLog() << output;
-
-	testOfxTF2Tensor();
+	testOfxTF2Tensor(input);
 
 	testOfxTF2Model(input, output);
 
