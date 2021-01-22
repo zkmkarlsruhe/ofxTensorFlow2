@@ -13,9 +13,6 @@
  * Museum“ generously funded by the German Federal Cultural Foundation.
  */
 
-
-#pragma once
-
 #include "ofMain.h"
 #include "ofxTensorFlow2Utils.h"
 

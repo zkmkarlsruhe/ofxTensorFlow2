@@ -19,9 +19,6 @@
 #include "ofMain.h"
 #include "ofxTensorFlow2.h"
 
-template<typename T>
-void printVector(const std::vector<T> & vec);
-
 int testOfxTF2Tensor(){
 
 	// ====== ofxTF2Tensor ====== //
