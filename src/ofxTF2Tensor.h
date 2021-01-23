@@ -37,6 +37,8 @@ public:
 
     /// \section Constructors
 
+	ofxTF2Tensor() = default;
+
     // forwarding to cppflow constructors
     template <typename T>
 	ofxTF2Tensor(const T& value);
@@ -78,6 +80,9 @@ public:
     bool equals (const ofxTF2Tensor & rhs) const;
 
 	/// \section Data Access
+
+	void fill(const cppflow::tensor& dims, const cppflow::tensor& value,
+			  cppflow::datatype index_type=static_cast<cppflow::datatype>(3));
 
 	std::vector<shape_t> getShape() const;
 

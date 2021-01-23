@@ -21,16 +21,16 @@ void ofApp::setup(){
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("example_basics");
 
-	// create a tensor of an arbitrary shape and fill it
-	auto input = cppflow::fill({10, 9, 17, 3}, 1.0f);
+	// create an input tensor of an arbitrary shape and fill it
+	input.fill({10, 9, 17, 3}, 1.0f);
 
 	// load the model
-	cppflow::model model(ofToDataPath("model"));
+	model.load("model");
 
 	// inference
-	auto output = model(input);
+	output = model.run(input);
 
-	// print the tensor
+	// print the output tensor
 	ofLog() << output;
 }
 

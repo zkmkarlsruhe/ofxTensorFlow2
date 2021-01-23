@@ -16,8 +16,7 @@
 #pragma once
 
 #include "ofMain.h"
-
-#include "cppflow/cppflow.h"
+#include "ofxTensorFlow2.h"
 
 class ofApp : public ofBaseApp{
 
@@ -37,4 +36,8 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+
+		ofxTF2Model model;
+		ofxTF2Tensor input;
+		ofxTF2Tensor output;
 };

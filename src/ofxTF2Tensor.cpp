@@ -61,6 +61,12 @@ std::ostream & operator << (std::ostream & os, const ofxTF2Tensor & tensor){
 
 // ==== data access ====
 
+void ofxTF2Tensor::fill(const cppflow::tensor& dims,
+						const cppflow::tensor& value,
+						cppflow::datatype index_type) {
+	tensor_ = cppflow::fill(dims, value, index_type);
+}
+
 std::vector<shape_t> ofxTF2Tensor::getShape() const{
 	return tensor_.shape().get_data<shape_t>();
 }
