@@ -19,13 +19,19 @@
 void ofApp::setup(){
 	ofSetFrameRate(60);
 	ofSetVerticalSync(true);
-	ofSetWindowTitle("example_styleTransfer");
+	ofSetWindowTitle("example_style_transfer");
 
 	model = new cppflow::model(ofToDataPath("model"));
 
-	nnWidth = 512;
-	nnHeight = 512;
-	
+	nnWidth = 640;
+	nnHeight = 480;
+#ifdef USE_LIVE_VIDEO
+	// try to grab at this size
+	camWidth = 640;
+	camHeight = 480;
+	vidIn.setDesiredFrameRate(30);
+	vidIn.setup(camWidth, camHeight);
+#endif
 	imgIn.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
 	imgOut.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
 }
@@ -33,31 +39,62 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
 
+#ifdef USE_LIVE_VIDEO
+	// create tensor from video
+	vidIn.update();
+	if(vidIn.isFrameNew()){
+
+		// get the frame
+		ofPixels & pixels = vidIn.getPixels();
+
+		// resize pixels
+		ofPixels resizedPixels(pixels);
+		resizedPixels.resize(nnWidth, nnHeight);
+
+		// copy to tensor
+		input = cppflow::tensor(
+			  std::vector<float>(resizedPixels.begin(),
+								  resizedPixels.end()),
+							  {nnWidth, nnHeight, 3});
+	}
+	else{
+		// try again later
+		return;
+	}
+#else
+	std::string imgPath(ofToDataPath("cat2.jpg"));
+	ofLog() << "Loading image: " << imgPath;
 	// create tensor from image file
-	input = cppflow::decode_jpeg(cppflow::read_file(ofToDataPath("cat3.jpg")));
-	
+	input = cppflow::decode_jpeg(cppflow::read_file(imgPath));
+	ofLog() << "Image loaded";
+#endif
+
 	// cast data type and expand to batch size of 1
 	input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
 	input = cppflow::expand_dims(input, 0);
 
 	// start neural network and time measurement
 	auto start = std::chrono::system_clock::now();
-	output = (*model)(input);
+	// output = (*model)(input);
+	output = (*model)({{"serving_default_input", input}}, {"StatefulPartitionedCall"})[0];
 	auto end = std::chrono::system_clock::now();
 	std::chrono::duration<double> diff = end - start;
-	ofLog() << "Time: " << diff.count() << "s " << ofGetFrameRate() << " fps";
 
+	// ofLog() << output;
+	ofLog() << "Time: " << diff.count() << "s Fps: " << ofGetFrameRate();
+
+	// copy output to image
 	auto outputVector = output.get_data<float>();
-	auto inputVector = input.get_data<float>();
-
 	auto & pixels = imgOut.getPixels();
 	for(int i = 0; i < pixels.size(); i++){
 		pixels[i] = outputVector[i];
 	}
 
-	auto & pixels_in = imgIn.getPixels();
-	for(int i = 0; i < pixels_in.size(); i++){
-		pixels_in[i] = inputVector[i];
+	// copy input to image
+	auto inputVector = input.get_data<float>();
+	auto & inputPixels = imgIn.getPixels();
+	for(int i = 0; i < inputPixels.size(); i++){
+		inputPixels[i] = inputVector[i];
 	}
 
 	imgOut.update();
@@ -66,13 +103,21 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	imgIn.draw(0, 0);
-	imgOut.draw(nnWidth, nnHeight, nnWidth * 2, nnHeight * 2);
+	ofSetColor(255);
+	imgOut.draw(0, 0);
+	imgIn.draw(0, nnHeight);
+#ifdef USE_LIVE_VIDEO
+	vidIn.draw(nnWidth, 0, camWidth, camHeight);
+#endif
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+#ifdef USE_LIVE_VIDEO
+	if(key == 's' || key == 'S'){
+		vidIn.videoSettings();
+	}
+#endif
 }
 
 //--------------------------------------------------------------
@@ -81,7 +126,7 @@ void ofApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y){
 
 }
 
@@ -121,6 +166,6 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
+void ofApp::dragEvent(ofDragInfo dragInfo){ 
 
 }
