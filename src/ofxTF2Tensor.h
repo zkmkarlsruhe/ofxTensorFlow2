@@ -13,7 +13,6 @@
  * Museum“ generously funded by the German Federal Cultural Foundation.
  */
 
-
 #pragma once
 
 #include "cppflow/cppflow.h"
@@ -29,7 +28,7 @@
 typedef int32_t shape_t;
 
 /// \class ofxTF2Tensor
-/// \brief a simple wrapper for cppflow::tensor
+/// \brief a wrapper for cppflow::tensor
 /// note: getData<T> (and cppflow::tensor.get_data<T>) does not convert the value
 class ofxTF2Tensor{
 
@@ -93,6 +92,11 @@ public:
     /// values will not get truncated but the bytes will be interpreted as int.
     template <typename T>
 	std::vector<T> getVector() const;
+
+	/// \section Util
+
+	/// output representation as a string
+	std::string toString();
 
 protected:
 

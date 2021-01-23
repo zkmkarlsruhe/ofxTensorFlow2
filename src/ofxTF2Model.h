@@ -13,7 +13,6 @@
  * Museum“ generously funded by the German Federal Cultural Foundation.
  */
 
-
 #pragma once
 
 #include "cppflow/cppflow.h"
@@ -26,17 +25,15 @@ struct ofxTF2ModelSettings {
 	std::vector<shape_t> outputShape;
 };
 
+/// \class ofxTF2Model
+/// \brief a wrapper for cppflow::model
 class ofxTF2Model {
 
 public:
 
-	/// \section Constructors
-
 	ofxTF2Model() = default;
 	ofxTF2Model(const std::string & modelPath);
 	virtual ~ofxTF2Model();
-
-	/// \section Functions
 
 	/// load model
 	/// returns true on success
@@ -54,9 +51,12 @@ public:
     /// run model on input
     ofxTF2Tensor run(const cppflow::tensor & tensor) const;
 
+    /// returns true if model is loaded
+    bool isLoaded();
+
 protected:
 
 	ofxTF2ModelSettings settings;
-	std::string modelPath_;
+	std::string modelPath_ = "";
 	cppflow::model * model_ = nullptr;
 };

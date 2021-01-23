@@ -37,8 +37,8 @@ bool ofxTF2Tensor::operator == (const cppflow::tensor & rhs) const{
 	auto rhsShape = rhs.shape().get_data<shape_t>();
 	if (lhsShape != rhsShape){
 		ofLogWarning() << "ofxTF2Tensor: shape mismatch:"
-		               << " shape(lhs): " << vectorToString(lhsShape)
-		               << " shape(rhs): " << vectorToString(rhsShape);
+		    << " shape(lhs): " << ofxTensorFlow2::vectorToString(lhsShape)
+		    << " shape(rhs): " << ofxTensorFlow2::vectorToString(rhsShape);
 		return false;
 	}
 
@@ -73,4 +73,10 @@ std::vector<shape_t> ofxTF2Tensor::getShape() const{
 
 const cppflow::tensor & ofxTF2Tensor::getTensor() const{
 	return tensor_;
+}
+
+// ==== util ====
+
+std::string ofxTF2Tensor::toString() {
+	return cppflow::to_string(tensor_);
 }

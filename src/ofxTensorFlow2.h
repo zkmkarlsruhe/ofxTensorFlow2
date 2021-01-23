@@ -13,7 +13,6 @@
  * Museum“ generously funded by the German Federal Cultural Foundation.
  */
 
-
 #pragma once
 
 #include "ofxTF2Model.h"

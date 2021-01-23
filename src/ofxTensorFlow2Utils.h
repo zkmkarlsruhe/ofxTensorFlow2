@@ -12,18 +12,32 @@
  * This code has been developed at ZKM | Hertz-Lab as part of „The Intelligent 
  * Museum“ generously funded by the German Federal Cultural Foundation.
  */
-
-
 #pragma once
 
+/// static util class
+class ofxTensorFlow2 {
+
+public:
+
+	/// convert vector to string with a similar format to cppflow
+	/// ex: {1, 2, 3} -> "[1, 2, 3, 4]"
+	template<typename T>
+	static std::string vectorToString(const std::vector<T> & vec);
+
+};
+
+
+// ==== template implementations ====
+
 template<typename T>
-std::string vectorToString(const std::vector<T> & vec) {
-	std::string logMSG ("(");
-	for (int i = 0; i < vec.size(); i++){
-		logMSG.append(std::to_string(vec[i]));
-		if (i != vec.size() - 1)
-			logMSG.append(", ");
+std::string ofxTensorFlow2::vectorToString(const std::vector<T> & vec) {
+	std::string s("[");
+	for (int i = 0; i < vec.size(); i++) {
+		s.append(std::to_string(vec[i]));
+		if (i != vec.size() - 1) {
+			s.append(", ");
+		}
 	}
-	logMSG.append(")");
-	return logMSG;
+	s.append("]");
+	return s;
 }

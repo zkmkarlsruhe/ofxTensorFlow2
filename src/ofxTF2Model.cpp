@@ -13,7 +13,6 @@
  * Museum“ generously funded by the German Federal Cultural Foundation.
  */
 
-
 #include "ofxTF2Model.h"
 
 // ==== constructors ====
@@ -76,4 +75,8 @@ ofxTF2Tensor ofxTF2Model::run(const cppflow::tensor & tensor) const {
 		ofLog() << "ofxTF2Model: no model loaded! Returning tensor containing -1.";
 		return ofxTF2Tensor(-1);
 	}
+}
+
+bool ofxTF2Model::isLoaded() {
+	return model_ != nullptr;
 }
