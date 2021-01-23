@@ -1,11 +1,10 @@
 # Keywordspotting
+This example uses code from an external repository to spot keywords in audio signals. Fortunately, the authours deliver an .h5 file, which contains the weights of a trained neural network. In Python we reconstruct the model, load the weights and export the model as _SavedModel_.
 
-This example uses code from an external repository to spot keywords in audio signals. Fortunately, the developers deliver an .h5 file, which contains the weights of a trained neural network. In Python we reconstruct the model, load the weights and export the model as SavedModel.
-
-Check out the python notebook train.py if you want to learn more about the training process.
+Check out the python train.py if you want to learn more about the training process.
 
 ### TensorFlow2
-After loading the model we use a trick to save the model. It allows us to change the signature of the SavedModel and to specify `training=false`. The later is very important as some layers (such as Dropout) act different during training and will not get correctly initialized in C++. 
+After loading the model we use a trick to save the model. It allows us to change the signature of the _SavedModel_ and to specify `training=False`. The later is very important as some layers (such as Dropout) act different during training and will not get correctly initialized in C++. 
 
 ```python
 @tf.function(input_signature=[tf.TensorSpec([None, None], dtype=tf.float32)])
