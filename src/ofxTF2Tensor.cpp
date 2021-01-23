@@ -1,4 +1,20 @@
+/*
+ * ofxTensorFlow2
+ *
+ * Copyright (c) 2021 ZKM | Hertz-Lab
+ * Paul Bethge <bethge@zkm.de>
+ * Dan Wilcox <dan.wilcox@zkm.de>
+ *
+ * BSD Simplified License.
+ * For information on usage and redistribution, and for a DISCLAIMER OF ALL
+ * WARRANTIES, see the file, "LICENSE.txt," in this distribution.
+ *
+ * This code has been developed at ZKM | Hertz-Lab as part of „The Intelligent 
+ * Museum“ generously funded by the German Federal Cultural Foundation.
+ */
+
 #include "ofxTF2Tensor.h"
+#include "ofxTensorFlow2Utils.h"
 
 // ==== constructors ====
 
@@ -21,8 +37,8 @@ bool ofxTF2Tensor::operator == (const cppflow::tensor & rhs) const{
 	auto rhsShape = rhs.shape().get_data<shape_t>();
 	if (lhsShape != rhsShape){
 		ofLogWarning() << "ofxTF2Tensor: shape mismatch:"
-		               << " shape(lhs): " << shapeToString(lhsShape)
-		               << " shape(rhs): " << shapeToString(rhsShape);
+		               << " shape(lhs): " << vectorToString(lhsShape)
+		               << " shape(rhs): " << vectorToString(rhsShape);
 		return false;
 	}
 
@@ -33,6 +49,10 @@ bool ofxTF2Tensor::operator == (const cppflow::tensor & rhs) const{
 	}
 
 	return true;
+}
+
+bool ofxTF2Tensor::operator == (const ofxTF2Tensor & rhs) const {
+	return (*this) == rhs.getTensor();
 }
 
 std::ostream & operator << (std::ostream & os, const ofxTF2Tensor & tensor){
@@ -47,17 +67,4 @@ std::vector<shape_t> ofxTF2Tensor::getShape() const{
 
 const cppflow::tensor & ofxTF2Tensor::getTensor() const{
 	return tensor_;
-}
-
-// ==== protected ====
-
-std::string ofxTF2Tensor::shapeToString(const std::vector<shape_t> & shape) const{
-	std::string logMSG ("(");
-	for (int i = 0; i < shape.size(); i++){
-		logMSG.append(std::to_string(shape[i]));
-		if (i != shape.size() -1)
-			logMSG.append(", ");
-	}
-	logMSG.append(")");
-	return logMSG;
 }

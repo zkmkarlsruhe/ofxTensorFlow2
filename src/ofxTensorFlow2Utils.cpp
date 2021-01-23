@@ -13,17 +13,4 @@
  * Museum“ generously funded by the German Federal Cultural Foundation.
  */
 
-
-#pragma once
-
-template<typename T>
-std::string vectorToString(const std::vector<T> & vec) {
-	std::string logMSG ("(");
-	for (int i = 0; i < vec.size(); i++){
-		logMSG.append(std::to_string(vec[i]));
-		if (i != vec.size() - 1)
-			logMSG.append(", ");
-	}
-	logMSG.append(")");
-	return logMSG;
-}
+#include "ofxTensorFlow2Utils.h"

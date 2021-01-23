@@ -1,3 +1,19 @@
+/*
+ * ofxTensorFlow2
+ *
+ * Copyright (c) 2021 ZKM | Hertz-Lab
+ * Paul Bethge <bethge@zkm.de>
+ * Dan Wilcox <dan.wilcox@zkm.de>
+ *
+ * BSD Simplified License.
+ * For information on usage and redistribution, and for a DISCLAIMER OF ALL
+ * WARRANTIES, see the file, "LICENSE.txt," in this distribution.
+ *
+ * This code has been developed at ZKM | Hertz-Lab as part of „The Intelligent 
+ * Museum“ generously funded by the German Federal Cultural Foundation.
+ */
+
+
 #include "ofxTF2Model.h"
 
 // ==== constructors ====
@@ -38,14 +54,26 @@ void ofxTF2Model::clear() {
 	modelPath_ = "";
 }
 
-bool ofxTF2Model::setup(const ofxTF2ModelSettings & settings) {}
+bool ofxTF2Model::setup(const ofxTF2ModelSettings & settings) {
+    return true;
+}
 
-ofxTF2Tensor ofxTF2Model::run(const ofxTF2Tensor & tensor) {
+ofxTF2Tensor ofxTF2Model::run(const ofxTF2Tensor & tensor) const {
+	if (model_){
+		return ofxTF2Tensor((*model_)(tensor.getTensor()));
+	}
+	else{
+		ofLogWarning() << "ofxTF2Model: no model loaded! Returning tensor containing -1.";
+		return ofxTF2Tensor(-1);
+	}
+}
+
+ofxTF2Tensor ofxTF2Model::run(const cppflow::tensor & tensor) const {
 	if (model_){
 		return ofxTF2Tensor((*model_)(tensor));
 	}
 	else{
-		ofLogWarning() << "ofxTF2Model: no model loaded! Returning tensor containing -1.";
+		ofLog() << "ofxTF2Model: no model loaded! Returning tensor containing -1.";
 		return ofxTF2Tensor(-1);
 	}
 }

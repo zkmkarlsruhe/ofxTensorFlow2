@@ -1,3 +1,19 @@
+/*
+ * ofxTensorFlow2
+ *
+ * Copyright (c) 2021 ZKM | Hertz-Lab
+ * Paul Bethge <bethge@zkm.de>
+ * Dan Wilcox <dan.wilcox@zkm.de>
+ *
+ * BSD Simplified License.
+ * For information on usage and redistribution, and for a DISCLAIMER OF ALL
+ * WARRANTIES, see the file, "LICENSE.txt," in this distribution.
+ *
+ * This code has been developed at ZKM | Hertz-Lab as part of „The Intelligent 
+ * Museum“ generously funded by the German Federal Cultural Foundation.
+ */
+
+
 #pragma once
 
 #include "cppflow/cppflow.h"
@@ -33,7 +49,10 @@ public:
 	bool setup(const ofxTF2ModelSettings & settings);
 
 	/// run model on input
-	ofxTF2Tensor run(const ofxTF2Tensor & tensor);
+	ofxTF2Tensor run(const ofxTF2Tensor & tensor) const;
+    
+    /// run model on input
+    ofxTF2Tensor run(const cppflow::tensor & tensor) const;
 
 protected:
 

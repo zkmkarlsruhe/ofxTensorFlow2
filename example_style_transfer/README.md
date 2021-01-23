@@ -1,4 +1,4 @@
-# StyleTransfer
+# Style Transfer
 This example shows realtime style transfer (about 20fps on a GTX 1080).
 We highly recommend using a GPU.
 

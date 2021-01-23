@@ -1,3 +1,19 @@
+/*
+ * ofxTensorFlow2
+ *
+ * Copyright (c) 2021 ZKM | Hertz-Lab
+ * Paul Bethge <bethge@zkm.de>
+ * Dan Wilcox <dan.wilcox@zkm.de>
+ *
+ * BSD Simplified License.
+ * For information on usage and redistribution, and for a DISCLAIMER OF ALL
+ * WARRANTIES, see the file, "LICENSE.txt," in this distribution.
+ *
+ * This code has been developed at ZKM | Hertz-Lab as part of „The Intelligent 
+ * Museum“ generously funded by the German Federal Cultural Foundation.
+ */
+
+
 #pragma once
 
 #include "cppflow/cppflow.h"
@@ -48,6 +64,7 @@ public:
 
     /// check if tensors are comparable
 	bool operator == (const cppflow::tensor & rhs) const;
+    bool operator == (const ofxTF2Tensor & rhs) const;
 
 	/// std::ostream print operator
 	friend std::ostream & operator << (std::ostream & os, const ofxTF2Tensor & tensor);
@@ -57,6 +74,8 @@ public:
     /// check if both tensors share the same values
     template <typename T>
 	bool equals(const cppflow::tensor & rhs) const;
+    template <typename T>
+    bool equals (const ofxTF2Tensor & rhs) const;
 
 	/// \section Data Access
 
@@ -71,8 +90,6 @@ public:
 	std::vector<T> getVector() const;
 
 protected:
-
-	std::string shapeToString(const std::vector<shape_t> & shape) const;
 
     cppflow::tensor tensor_;
 };
@@ -100,7 +117,6 @@ ofxTF2Tensor::ofxTF2Tensor(const ofPixels & pixels) : tensor_(
 
 template <typename T>
 bool ofxTF2Tensor::equals(const cppflow::tensor & rhs) const {
-
 	if (!( *this == rhs )){
 		ofLogWarning() << "ofxTF2Tensor: tensors not comparable";
 		return false;
@@ -110,6 +126,11 @@ bool ofxTF2Tensor::equals(const cppflow::tensor & rhs) const {
 		return false;
 	}
 	return true;
+}
+
+template <typename T>
+bool ofxTF2Tensor::equals (const ofxTF2Tensor & rhs) const {
+    return this->equals<T>(rhs.getTensor());
 }
 
 template <typename T>
