@@ -32,6 +32,7 @@ void ofApp::setup(){
 	vidSrc.setDesiredFrameRate(30);
 	vidSrc.setup(camWidth, camHeight);
 #else
+	// note: model expects RGB only, no alpha!
 	imgSrc.load("shoe.png");
 #endif
 	imgIn.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
