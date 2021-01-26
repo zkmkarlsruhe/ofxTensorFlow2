@@ -26,7 +26,28 @@ struct ofxTF2ModelSettings {
 };
 
 /// \class ofxTF2Model
-/// \brief a wrapper for cppflow::model
+/// \brief a wrapper for cppflow::model which processes input to output
+///
+/// basic usage example:
+///
+///     class ofApp : public ofBaseApp {
+///     public:
+///     ...
+///         ofxTF2Model model;
+///     };
+///
+///     void ofApp::setup() {
+///         ...
+///         model.load("path/to/modeldir");
+///     }
+///
+///     void ofApp.cpp::update() {
+///         cppflow::tensor input = ...
+///         ... prepare input
+///         cppflow::tensor output = model.runModel(input);
+///         ... process output
+///     }
+///
 class ofxTF2Model {
 
 public:
@@ -36,6 +57,7 @@ public:
 	virtual ~ofxTF2Model();
 
 	/// load model
+	/// TODO: describe expected model folder layout?
 	/// returns true on success
 	bool load(const std::string & modelPath);
 
@@ -55,6 +77,14 @@ public:
     bool isLoaded();
 
 protected:
+
+	/// preprocess input tensor, called before running model
+	/// implement in a subclass, default implementation simply returns input
+	virtual cppflow::tensor preprocess(const cppflow::tensor & input) const;
+
+	/// postprocess output tensor, called after running model
+	/// implement in a subclass, default implementation simply returns output
+	virtual cppflow::tensor postprocess(const cppflow::tensor & output) const;
 
 	ofxTF2ModelSettings settings;
 	std::string modelPath_ = "";
