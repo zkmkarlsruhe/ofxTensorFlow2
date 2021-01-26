@@ -88,7 +88,7 @@ After generating project files using the OF Project Generator, add the following
 3. Under the Build Phases tab, find the 2nd Run Script, and add the following before the final `echo` line:
 
 ```shell
-$OF_PATH/addons/ofxTensorflow2/scripts/macos_install_libs.sh "$TARGET_BUILD_DIR/$PRODUCT_NAME.app";
+$OF_PATH/addons/ofxTensorFlow2/scripts/macos_install_libs.sh "$TARGET_BUILD_DIR/$PRODUCT_NAME.app";
 ```
 
 #### Makefile build
@@ -102,8 +102,8 @@ PLATFORM_CXXFLAGS += -std=c++14
 When building an application using the makefiles, an additional step is required to install & configure the tensorflow2 dylibs into the project .app. This is partially automated by the `scripts/macos_install_libs.sh` script which is called from the `addon_targets.mk` file. To use it, add the following to the end of the Project's `Makefile`:
 
 ```makefile
-# ofxTensorflow2
-include $(OF_ROOT)/addons/ofxTensorflow2/addon_targets.mk
+# ofxTensorFlow2
+include $(OF_ROOT)/addons/ofxTensorFlow2/addon_targets.mk
 ```
 
 This adds two additional targets, one for Debug and the other for Release, which call the script to install the .dylibs.

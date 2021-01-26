@@ -18,8 +18,9 @@
 #include "ofMain.h"
 
 #include "cppflow/cppflow.h"
-#include "cppflow/ops.h"
-#include "cppflow/model.h"
+
+// #define USE_LIVE_VIDEO // uncomment this to use a live camera
+						 // otherwise, we'll use an image file
 
 class ofApp : public ofBaseApp{
 
@@ -27,10 +28,10 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
-
+		
 		void keyPressed(int key);
 		void keyReleased(int key);
-		void mouseMoved(int x, int y );
+		void mouseMoved(int x, int y);
 		void mouseDragged(int x, int y, int button);
 		void mousePressed(int x, int y, int button);
 		void mouseReleased(int x, int y, int button);
@@ -46,6 +47,11 @@ class ofApp : public ofBaseApp{
 		int nnWidth;
 		int nnHeight;
 
-		ofImage imgOut;
+		#ifdef USE_LIVE_VIDEO
+			ofVideoGrabber vidIn;
+			int camWidth;
+			int camHeight;
+		#endif
 		ofImage imgIn;
+		ofImage imgOut;
 };
