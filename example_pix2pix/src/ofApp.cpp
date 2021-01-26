@@ -52,6 +52,7 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
+	bool newInput = false;
 
 #ifdef USE_LIVE_VIDEO
 	// create tensor from video
@@ -67,34 +68,33 @@ void ofApp::update(){
 
 		// copy to tensor
 		input = cppflow::pixels_to_tensor(resizedPixels);
-	}
-	else{
-		// try again later
-		return;
+		newInput = true;
 	}
 #else
 	if(model.readyForInput()) {
 		// create tensor from image
 		input = cppflow::image_to_tensor(imgSrc);
-	}
-	else {
-		// try again later
-		return;
+		newInput = true;
 	}
 #endif
 
-	// cast data type and expand to batch size of 1
-	input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
-	input = cppflow::expand_dims(input, 0);
+	// feed input into model
+	if(newInput) {
 
-	// apply preprocessing as in python to change range to -1 to 1
-	input = cppflow::div(input, cppflow::tensor({127.5f}));
-	input = cppflow::sub(input, cppflow::tensor({1.0f}));
-	// the above can also be written using math operators:
-	//input = (input / cppflow::tensor({127.5f})) - cppflow::tensor({1.0f});
+		// cast data type and expand to batch size of 1
+		input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
+		input = cppflow::expand_dims(input, 0);
 
-	// feed input into model, process any output
-	model.update(input);
+		// apply preprocessing as in python to change range to -1 to 1
+		input = cppflow::div(input, cppflow::tensor({127.5f}));
+		input = cppflow::sub(input, cppflow::tensor({1.0f}));
+		// the above can also be written using math operators:
+		//input = (input / cppflow::tensor({127.5f})) - cppflow::tensor({1.0f});
+
+		model.update(input);
+	}
+
+	// process any output
 	if(model.isOutputNew()) {
 
 		// TODO: readd this somehow using the threaded model?
