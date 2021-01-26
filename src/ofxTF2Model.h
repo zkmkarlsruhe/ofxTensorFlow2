@@ -46,10 +46,10 @@ public:
 	bool setup(const ofxTF2ModelSettings & settings);
 
 	/// run model on input
-	ofxTF2Tensor run(const ofxTF2Tensor & tensor) const;
+	ofxTF2Tensor runModel(const ofxTF2Tensor & tensor) const;
     
     /// run model on input
-    ofxTF2Tensor run(const cppflow::tensor & tensor) const;
+    cppflow::tensor runModel(const cppflow::tensor & tensor) const;
 
     /// returns true if model is loaded
     bool isLoaded();

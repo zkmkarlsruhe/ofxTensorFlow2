@@ -41,6 +41,13 @@ void ofApp::setup(){
 #endif
 	imgIn.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
 	imgOut.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
+
+	// shorten idle time to have model check for input more frequently,
+	// this may increase responsivity on faster machines but will use more cpu
+	//model.setIdleTime(16);
+
+	// start the model background thread
+	model.startThread();
 }
 
 //--------------------------------------------------------------
@@ -49,25 +56,32 @@ void ofApp::update(){
 #ifdef USE_LIVE_VIDEO
 	// create tensor from video
 	vidSrc.update();
-	if(vidSrc.isFrameNew()){
+	if(vidSrc.isFrameNew() && model.readyForInput()){
 
-		// get the frame
-		ofPixels & pixels = vidSrc.getPixels();
+			// get the frame
+			ofPixels & pixels = vidSrc.getPixels();
 
-		// resize pixels
-		ofPixels resizedPixels(pixels);
-		resizedPixels.resize(nnWidth, nnHeight);
+			// resize pixels
+			ofPixels resizedPixels(pixels);
+			resizedPixels.resize(nnWidth, nnHeight);
 
-		// copy to tensor
-		input = cppflow::pixels_to_tensor(resizedPixels);
+			// copy to tensor
+			input = cppflow::pixels_to_tensor(resizedPixels);
+		}
 	}
 	else{
 		// try again later
 		return;
 	}
 #else
-	// create tensor from image file
-	input = cppflow::image_to_tensor(imgSrc);
+	if(model.readyForInput()) {
+		// create tensor from image
+		input = cppflow::image_to_tensor(imgSrc);
+	}
+	else {
+		// try again later
+		return;
+	}
 #endif
 
 	// cast data type and expand to batch size of 1
@@ -80,29 +94,37 @@ void ofApp::update(){
 	// the above can also be written using math operators:
 	//input = (input / cppflow::tensor({127.5f})) - cppflow::tensor({1.0f});
 
-	// start neural network and time measurement
-	auto start = std::chrono::system_clock::now();
-	output = model.run(input);
-	auto end = std::chrono::system_clock::now();
-	std::chrono::duration<double> diff = end - start;
+	// feed input into model, process any output
+	model.update(input);
+	if(model.isOutputNew()) {
 
-	// ofLog() << output;
-	ofLog() << "run took: " << diff.count() << "s, fps: " << ofGetFrameRate();
+		// TODO: readd this somehow using the threaded model?
+		// start neural network and time measurement
+		//auto start = std::chrono::system_clock::now();
+		//output = model.runModel(input);
+		//auto end = std::chrono::system_clock::now();
+		//std::chrono::duration<double> diff = end - start;
 
-	// postprocess to change range to -1 to 1 and copy output to image
-	output = cppflow::add(output, cppflow::tensor({1.0f}));
-	output = cppflow::mul(output, cppflow::tensor({127.5f}));
-	// the above can also be written using math operators:
-	//output = (output + cppflow::tensor({1.0f})) * cppflow::tensor({127.5f});
-	cppflow::tensor_to_image(output, imgOut);
+		// ofLog() << output;
+		//ofLog() << "run took: " << diff.count() << "s, fps: " << ofGetFrameRate();
 
-//	// postprocess and copy input to image
-//	input = cppflow::add(input, cppflow::tensor({1.0f}));
-//	input = cppflow::mul(input, cppflow::tensor({127.5f}));
-//	cppflow::tensor_to_image(input, imgIn);
+		output = model.getOutput();
 
-	imgOut.update();
-	imgIn.update();
+		// postprocess to change range to -1 to 1 and copy output to image
+		output = cppflow::add(output, cppflow::tensor({1.0f}));
+		output = cppflow::mul(output, cppflow::tensor({127.5f}));
+		// the above can also be written using math operators:
+		//output = (output + cppflow::tensor({1.0f})) * cppflow::tensor({127.5f});
+		cppflow::tensor_to_image(output, imgOut);
+
+//		// postprocess and copy input to image
+//		input = cppflow::add(input, cppflow::tensor({1.0f}));
+//		input = cppflow::mul(input, cppflow::tensor({127.5f}));
+//		cppflow::tensor_to_image(input, imgIn);
+
+		imgOut.update();
+		imgIn.update();
+	}
 }
 
 //--------------------------------------------------------------
@@ -119,9 +141,9 @@ void ofApp::draw(){
 #endif
 
 	ofSetColor(255);
-	ofDrawBitmapString("output", 12, 8);
+	ofDrawBitmapString("output", 12, 10);
 //	ofDrawBitmapString("input", 12, 24 + nnHeight);
-	ofDrawBitmapString("source", 12 + nnWidth, 8);
+	ofDrawBitmapString("source", 12 + nnWidth, 10);
 }
 
 //--------------------------------------------------------------

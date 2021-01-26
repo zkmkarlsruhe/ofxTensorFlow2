@@ -43,7 +43,9 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
-		ofxTF2Model model;
+		// unless your computer is fast, use the threaded model so as not to
+		// block the GUI while the model is processing
+		ofxTF2ThreadedModel model;
 		cppflow::tensor input;
 		cppflow::tensor output;
 		int nnWidth;

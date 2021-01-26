@@ -57,7 +57,7 @@ bool ofxTF2Model::setup(const ofxTF2ModelSettings & settings) {
     return true;
 }
 
-ofxTF2Tensor ofxTF2Model::run(const ofxTF2Tensor & tensor) const {
+ofxTF2Tensor ofxTF2Model::runModel(const ofxTF2Tensor & tensor) const {
 	if (model_){
 		return ofxTF2Tensor((*model_)(tensor.getTensor()));
 	}
@@ -67,9 +67,9 @@ ofxTF2Tensor ofxTF2Model::run(const ofxTF2Tensor & tensor) const {
 	}
 }
 
-ofxTF2Tensor ofxTF2Model::run(const cppflow::tensor & tensor) const {
+cppflow::tensor ofxTF2Model::runModel(const cppflow::tensor & tensor) const {
 	if (model_){
-		return ofxTF2Tensor((*model_)(tensor));
+		return (*model_)(tensor);
 	}
 	else{
 		ofLog() << "ofxTF2Model: no model loaded! Returning tensor containing -1.";

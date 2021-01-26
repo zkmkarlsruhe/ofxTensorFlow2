@@ -16,4 +16,5 @@
 #pragma once
 
 #include "ofxTF2Model.h"
+#include "ofxTF2ThreadedModel.h"
 #include "ofxTensorFlow2Utils.h"
