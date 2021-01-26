@@ -83,6 +83,12 @@ public:
 	/// note: do not call this while the thread is running
 	void setIdleTime(unsigned int ms);
 
+	// locked call to clear()
+	void clearSafely();
+
+	// lockd call to load()
+	void loadSafely(const std::string & modelPath);
+
 protected:
 
 	/// thread run function, do not call this directly

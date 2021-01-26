@@ -34,23 +34,26 @@ bool ofxTF2Model::load(const std::string & modelPath) {
 		ofLogError() << "ofxTF2Model: model path not found: " << modelPath;
 		return false;
 	}
-	model_ = new cppflow::model(path);
-	if (!model_){
+	auto model = new cppflow::model(path);
+	if (!model){
+		modelPath_ = "";
 		ofLogError() << "ofxTF2Model: model could not be initialized!";
 		return false;
-	}
-	ofLogVerbose() << "ofxTF2Model: loaded model: " << modelPath;
-	modelPath_ = path;
+	}	
+	model_ = model;
+	modelPath_ = modelPath;
+	ofLogVerbose() << "ofxTF2Model: loaded model: " << modelPath_;
 	return true;
 }
 
+
 void ofxTF2Model::clear() {
 	if (model_){
+		ofLogVerbose() << "ofxTF2Model: clear model" << modelPath_;
 		delete model_;
 		model_ = nullptr;
-		ofLogVerbose() << "ofxTF2Model: cleared model: " << modelPath_;
+		modelPath_ = "";
 	}
-	modelPath_ = "";
 }
 
 bool ofxTF2Model::setup(const ofxTF2ModelSettings & settings) {
