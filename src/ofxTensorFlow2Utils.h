@@ -16,6 +16,7 @@
 
 #include "cppflow/cppflow.h"
 #include "ofImage.h"
+#include "ofLog.h"
 
 /// static util class
 class ofxTensorFlow2 {
@@ -27,6 +28,9 @@ public:
 	template<typename T>
 	static std::string vectorToString(const std::vector<T> & vec);
 
+	/// set TensorFlow log level using ofLogLevel enums
+	/// FIXME: doesn't seem to work yet, at least on macOS...
+	static void setLogLevel(ofLogLevel level);
 };
 
 namespace cppflow {

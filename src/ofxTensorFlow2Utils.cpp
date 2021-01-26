@@ -14,6 +14,51 @@
  */
 
 #include "ofxTensorFlow2Utils.h"
+#include <cstdlib>
+#include <sys/errno.h>
+#include "ofConstants.h"
+
+#ifdef TARGET_WIN32
+/// Windows doesn't provide setenv(), use this _putenv_s() wrapper from:
+/// https://stackoverflow.com/a/23616164/2146055
+static setenv(const char *name, const char *value, int overwrite) {
+	int errcode = 0;
+	if(!overwrite) {
+		size_t envsize = 0;
+		errcode = getenv_s(&envsize, NULL, 0, name);
+		if(errcode || envsize) return errcode;
+	}
+	return _putenv_s(name, value);
+}
+#endif
+
+// the TensorFlow log level is set via the TF_CPP_MIN_LOG_LEVEL env variable,
+// TF log const ints are defined in tensorflow/core/platform/default/logging.h
+void ofxTensorFlow2::setLogLevel(ofLogLevel level) {
+	int tfLogLevel;
+	switch(level) {
+		default:
+		case OF_LOG_VERBOSE:
+		case OF_LOG_NOTICE:
+			tfLogLevel = 0; // INFO
+			break;
+		case OF_LOG_WARNING:
+			tfLogLevel = 1; // WARNING
+			break;
+		case OF_LOG_ERROR:
+			tfLogLevel = 2; // ERROR
+		case OF_LOG_FATAL_ERROR:
+			tfLogLevel = 3; // FATAL
+		case OF_LOG_SILENT:
+			tfLogLevel = 4; // NUM_SEVERITIES?
+	}
+	const std::string n = "TF_CPP_MIN_LOG_LEVEL";
+	std::string v = ofToString(tfLogLevel);
+	if(setenv(n.c_str(), v.c_str(), 1) == -1) {
+		ofLogError() << "ofxTensorFlow2: unable to set TF_CPP_MIN_LOG_LEVEL: "
+		             << errno << " " << strerror(errno);
+	}
+}
 
 namespace cppflow {
 
