@@ -58,16 +58,15 @@ void ofApp::update(){
 	vidSrc.update();
 	if(vidSrc.isFrameNew() && model.readyForInput()){
 
-			// get the frame
-			ofPixels & pixels = vidSrc.getPixels();
+		// get the frame
+		ofPixels & pixels = vidSrc.getPixels();
 
-			// resize pixels
-			ofPixels resizedPixels(pixels);
-			resizedPixels.resize(nnWidth, nnHeight);
+		// resize pixels
+		ofPixels resizedPixels(pixels);
+		resizedPixels.resize(nnWidth, nnHeight);
 
-			// copy to tensor
-			input = cppflow::pixels_to_tensor(resizedPixels);
-		}
+		// copy to tensor
+		input = cppflow::pixels_to_tensor(resizedPixels);
 	}
 	else{
 		// try again later
