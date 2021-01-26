@@ -15,7 +15,9 @@
 
 #include "ofxTF2Model.h"
 
-// ==== constructors ====
+#include "ofFileUtils.h"
+#include "ofUtils.h"
+#include "ofLog.h"
 
 ofxTF2Model::ofxTF2Model(const std::string & modelPath) {
 	load(modelPath);
@@ -24,8 +26,6 @@ ofxTF2Model::ofxTF2Model(const std::string & modelPath) {
 ofxTF2Model::~ofxTF2Model(){
 	clear();
 }
-
-// ==== functions ====
 
 bool ofxTF2Model::load(const std::string & modelPath) {
 	clear();
@@ -56,30 +56,28 @@ void ofxTF2Model::clear() {
 	}
 }
 
-bool ofxTF2Model::setup(const ofxTF2ModelSettings & settings) {
-    return true;
-}
-
-ofxTF2Tensor ofxTF2Model::runModel(const ofxTF2Tensor & tensor) const {
-	if (model_){
-		return ofxTF2Tensor((*model_)(tensor.getTensor()));
-	}
-	else{
-		ofLogWarning() << "ofxTF2Model: no model loaded! Returning tensor containing -1.";
-		return ofxTF2Tensor(-1);
-	}
-}
-
 cppflow::tensor ofxTF2Model::runModel(const cppflow::tensor & tensor) const {
 	if (model_){
-		return (*model_)(tensor);
+		cppflow::tensor input = preprocess(tensor);
+		cppflow::tensor output = (*model_)(input);
+		return postprocess(output);
 	}
 	else{
 		ofLog() << "ofxTF2Model: no model loaded! Returning tensor containing -1.";
-		return ofxTF2Tensor(-1);
+		return cppflow::tensor(-1);
 	}
 }
 
 bool ofxTF2Model::isLoaded() {
 	return model_ != nullptr;
+}
+
+// ==== protected ====
+
+cppflow::tensor ofxTF2Model::preprocess(const cppflow::tensor & input) const {
+	return input;
+}
+
+cppflow::tensor ofxTF2Model::postprocess(const cppflow::tensor & output) const {
+	return output;
 }

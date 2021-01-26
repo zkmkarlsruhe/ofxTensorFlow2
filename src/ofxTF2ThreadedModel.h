@@ -29,7 +29,6 @@
 ///         ofxTF2ThreadedModel model;
 ///     };
 ///
-///
 ///     void ofApp::setup() {
 ///         ...
 ///         model.load("path/to/modeldir");

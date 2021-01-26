@@ -16,17 +16,30 @@
 #pragma once
 
 #include "cppflow/cppflow.h"
-#include "ofxTF2Tensor.h"
-#include "ofFileUtils.h"
-
-/// model-specific settings?
-struct ofxTF2ModelSettings {
-	std::vector<shape_t> inputShape;
-	std::vector<shape_t> outputShape;
-};
 
 /// \class ofxTF2Model
-/// \brief a wrapper for cppflow::model
+/// \brief a wrapper for cppflow::model which processes input to output
+///
+/// basic usage example:
+///
+///     class ofApp : public ofBaseApp {
+///     public:
+///     ...
+///         ofxTF2Model model;
+///     };
+///
+///     void ofApp::setup() {
+///         ...
+///         model.load("path/to/modeldir");
+///     }
+///
+///     void ofApp.cpp::update() {
+///         cppflow::tensor input = ...
+///         ... prepare input
+///         cppflow::tensor output = model.runModel(input);
+///         ... process output
+///     }
+///
 class ofxTF2Model {
 
 public:
@@ -36,17 +49,12 @@ public:
 	virtual ~ofxTF2Model();
 
 	/// load model
+	/// TODO: describe expected model folder layout?
 	/// returns true on success
 	bool load(const std::string & modelPath);
 
 	/// clear model
 	void clear();
-
-	/// set up model with settings?
-	bool setup(const ofxTF2ModelSettings & settings);
-
-	/// run model on input
-	ofxTF2Tensor runModel(const ofxTF2Tensor & tensor) const;
     
     /// run model on input
     cppflow::tensor runModel(const cppflow::tensor & tensor) const;
@@ -56,7 +64,14 @@ public:
 
 protected:
 
-	ofxTF2ModelSettings settings;
+	/// preprocess input tensor, called before running model
+	/// implement in a subclass, default implementation simply returns input
+	virtual cppflow::tensor preprocess(const cppflow::tensor & input) const;
+
+	/// postprocess output tensor, called after running model
+	/// implement in a subclass, default implementation simply returns output
+	virtual cppflow::tensor postprocess(const cppflow::tensor & output) const;
+
 	std::string modelPath_ = "";
 	cppflow::model * model_ = nullptr;
 };
