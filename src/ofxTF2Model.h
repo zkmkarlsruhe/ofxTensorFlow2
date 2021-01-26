@@ -16,8 +16,6 @@
 #pragma once
 
 #include "cppflow/cppflow.h"
-#include "ofxTF2Tensor.h"
-#include "ofFileUtils.h"
 
 /// \class ofxTF2Model
 /// \brief a wrapper for cppflow::model which processes input to output
@@ -57,9 +55,6 @@ public:
 
 	/// clear model
 	void clear();
-
-	/// run model on input
-	ofxTF2Tensor runModel(const ofxTF2Tensor & tensor) const;
     
     /// run model on input
     cppflow::tensor runModel(const cppflow::tensor & tensor) const;

@@ -15,6 +15,10 @@
 
 #include "ofxTF2Model.h"
 
+#include "ofFileUtils.h"
+#include "ofUtils.h"
+#include "ofLog.h"
+
 ofxTF2Model::ofxTF2Model(const std::string & modelPath) {
 	load(modelPath);
 }
@@ -49,18 +53,6 @@ void ofxTF2Model::clear() {
 	modelPath_ = "";
 }
 
-ofxTF2Tensor ofxTF2Model::runModel(const ofxTF2Tensor & tensor) const {
-	if (model_){
-		cppflow::tensor input = preprocess(tensor.getTensor());
-		cppflow::tensor output = (*model_)(input);
-		return ofxTF2Tensor(postprocess(output));
-	}
-	else{
-		ofLogWarning() << "ofxTF2Model: no model loaded! Returning tensor containing -1.";
-		return ofxTF2Tensor(-1);
-	}
-}
-
 cppflow::tensor ofxTF2Model::runModel(const cppflow::tensor & tensor) const {
 	if (model_){
 		cppflow::tensor input = preprocess(tensor);
@@ -69,7 +61,7 @@ cppflow::tensor ofxTF2Model::runModel(const cppflow::tensor & tensor) const {
 	}
 	else{
 		ofLog() << "ofxTF2Model: no model loaded! Returning tensor containing -1.";
-		return ofxTF2Tensor(-1);
+		return cppflow::tensor(-1);
 	}
 }
 
