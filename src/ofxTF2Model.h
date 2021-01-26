@@ -19,12 +19,6 @@
 #include "ofxTF2Tensor.h"
 #include "ofFileUtils.h"
 
-/// model-specific settings?
-struct ofxTF2ModelSettings {
-	std::vector<shape_t> inputShape;
-	std::vector<shape_t> outputShape;
-};
-
 /// \class ofxTF2Model
 /// \brief a wrapper for cppflow::model which processes input to output
 ///
@@ -64,9 +58,6 @@ public:
 	/// clear model
 	void clear();
 
-	/// set up model with settings?
-	bool setup(const ofxTF2ModelSettings & settings);
-
 	/// run model on input
 	ofxTF2Tensor runModel(const ofxTF2Tensor & tensor) const;
     
@@ -86,7 +77,6 @@ protected:
 	/// implement in a subclass, default implementation simply returns output
 	virtual cppflow::tensor postprocess(const cppflow::tensor & output) const;
 
-	ofxTF2ModelSettings settings;
 	std::string modelPath_ = "";
 	cppflow::model * model_ = nullptr;
 };

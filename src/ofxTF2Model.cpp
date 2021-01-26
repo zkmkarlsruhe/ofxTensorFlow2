@@ -15,8 +15,6 @@
 
 #include "ofxTF2Model.h"
 
-// ==== constructors ====
-
 ofxTF2Model::ofxTF2Model(const std::string & modelPath) {
 	load(modelPath);
 }
@@ -24,8 +22,6 @@ ofxTF2Model::ofxTF2Model(const std::string & modelPath) {
 ofxTF2Model::~ofxTF2Model(){
 	clear();
 }
-
-// ==== functions ====
 
 bool ofxTF2Model::load(const std::string & modelPath) {
 	clear();
@@ -51,10 +47,6 @@ void ofxTF2Model::clear() {
 		ofLogVerbose() << "ofxTF2Model: cleared model: " << modelPath_;
 	}
 	modelPath_ = "";
-}
-
-bool ofxTF2Model::setup(const ofxTF2ModelSettings & settings) {
-    return true;
 }
 
 ofxTF2Tensor ofxTF2Model::runModel(const ofxTF2Tensor & tensor) const {
