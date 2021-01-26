@@ -32,8 +32,13 @@ if __name__ == "__main__":
     #    description='Fast Style Transfer')
     #parser.add_argument('--path', required=True, type=str)
 
-    path = os.path.dirname('../bin/data/chkpt_models/wave/')
-    dest = os.path.dirname('../bin/data/')
-    shape = [None, 512, 512, 3]
+    path = os.path.dirname('../bin/data/chkpt_models/')
+    dest = os.path.dirname('../bin/data/models/')
 
-    convert(path, dest, shape)
+    shape = [None, 1024, 1024, 3]
+
+    subfolders = [ f.path for f in os.scandir(path) if f.is_dir() ]
+    for subpath in subfolders:
+        print("Converting", shape, ": ", subpath, " to ", dest)
+        convert(subpath, dest, shape)
+
