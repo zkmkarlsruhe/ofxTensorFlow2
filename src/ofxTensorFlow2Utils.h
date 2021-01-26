@@ -14,6 +14,9 @@
  */
 #pragma once
 
+#include "cppflow/cppflow.h"
+#include "ofImage.h"
+
 /// static util class
 class ofxTensorFlow2 {
 
@@ -26,6 +29,21 @@ public:
 
 };
 
+namespace cppflow {
+
+// currently assumes tenspr range float -1 to 1
+tensor image_to_tensor(const ofImage & image);
+
+// currently assumes tenspr range float -1 to 1
+void tensor_to_image(const tensor & tensor, ofImage & image);
+
+// currently assumes tenspr range float -1 to 1
+tensor pixels_to_tensor(const ofPixels & pixels);
+
+// currently assumes tenspr range float -1 to 1
+void tensor_to_pixels(const tensor & tensor, ofPixels & pixels);
+
+};
 
 // ==== template implementations ====
 

@@ -17,11 +17,13 @@
 
 #include "ofMain.h"
 
-#include "cppflow/cppflow.h"
+#include "ofxTensorFlow2.h"
 
 // #define USE_LIVE_VIDEO // uncomment this to use a live camera
 						 // otherwise, we'll use an image file
 
+// TODO: add "draw a shoe" canvas for live input?
+// FIXME: does live camera input make sense for the model?
 class ofApp : public ofBaseApp{
 
 	public:
@@ -41,16 +43,18 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
-		cppflow::model *model = nullptr;
+		ofxTF2Model model;
 		cppflow::tensor input;
 		cppflow::tensor output;
 		int nnWidth;
 		int nnHeight;
 
 		#ifdef USE_LIVE_VIDEO
-			ofVideoGrabber vidIn;
+			ofVideoGrabber vidSrc;
 			int camWidth;
 			int camHeight;
+		#else
+			ofImage imgSrc;
 		#endif
 		ofImage imgIn;
 		ofImage imgOut;

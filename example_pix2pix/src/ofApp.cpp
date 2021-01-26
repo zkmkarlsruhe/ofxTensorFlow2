@@ -21,7 +21,7 @@ void ofApp::setup(){
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("example_pix2pix");
 
-	model = new cppflow::model(ofToDataPath("model"));
+	model.load("model");
 
 	nnWidth = 256;
 	nnHeight = 256;
@@ -29,8 +29,10 @@ void ofApp::setup(){
 	// try to grab at this size
 	camWidth = 640;
 	camHeight = 360;
-	vidIn.setDesiredFrameRate(30);
-	vidIn.setup(camWidth, camHeight);
+	vidSrc.setDesiredFrameRate(30);
+	vidSrc.setup(camWidth, camHeight);
+#else
+	imgSrc.load("shoe.png");
 #endif
 	imgIn.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
 	imgOut.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
@@ -41,21 +43,18 @@ void ofApp::update(){
 
 #ifdef USE_LIVE_VIDEO
 	// create tensor from video
-	vidIn.update();
-	if(vidIn.isFrameNew()){
+	vidSrc.update();
+	if(vidSrc.isFrameNew()){
 
 		// get the frame
-		ofPixels & pixels = vidIn.getPixels();
+		ofPixels & pixels = vidSrc.getPixels();
 
 		// resize pixels
 		ofPixels resizedPixels(pixels);
 		resizedPixels.resize(nnWidth, nnHeight);
 
 		// copy to tensor
-		input = cppflow::tensor(
-			  std::vector<float>(resizedPixels.begin(),
-								  resizedPixels.end()),
-							  {nnWidth, nnHeight, 3});
+		input = cppflow::pixels_to_tensor(resizedPixels);
 	}
 	else{
 		// try again later
@@ -63,7 +62,7 @@ void ofApp::update(){
 	}
 #else
 	// create tensor from image file
-	input = cppflow::decode_jpeg(cppflow::read_file(ofToDataPath("cat2.jpg")));
+	input = cppflow::image_to_tensor(imgSrc);
 #endif
 
 	// cast data type and expand to batch size of 1
@@ -76,26 +75,22 @@ void ofApp::update(){
 
 	// start neural network and time measurement
 	auto start = std::chrono::system_clock::now();
-	output = (*model)(input);
+	output = model.run(input);
 	auto end = std::chrono::system_clock::now();
 	std::chrono::duration<double> diff = end - start;
 
 	// ofLog() << output;
-	ofLog() << "Time: " << diff.count() << "s Fps: " << ofGetFrameRate();
+	ofLog() << "run took: " << diff.count() << "s, fps: " << ofGetFrameRate();
 
-	// copy output to image
-	auto outputVector = output.get_data<float>();
-	auto & pixels = imgOut.getPixels();
-	for(int i = 0; i < pixels.size(); i++){
-		pixels[i] = (outputVector[i] + 1) * 127.5;
-	}
+	// postprocess and copy output to image
+	output = cppflow::add(output, cppflow::tensor({1.0f}));
+	output = cppflow::mul(output, cppflow::tensor({127.5f}));
+	cppflow::tensor_to_image(output, imgOut);
 
-	// copy input to image
-	auto inputVector = input.get_data<float>();
-	auto & inputPixels = imgIn.getPixels();
-	for(int i = 0; i < inputPixels.size(); i++){
-		inputPixels[i] = inputVector[i];
-	}
+//	// postprocess and copy input to image
+//	input = cppflow::add(input, cppflow::tensor({1.0f}));
+//	input = cppflow::mul(input, cppflow::tensor({127.5f}));
+//	cppflow::tensor_to_image(input, imgIn);
 
 	imgOut.update();
 	imgIn.update();
@@ -103,19 +98,28 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+
 	ofSetColor(255);
-	imgOut.draw(0, 0);
-	imgIn.draw(0, nnHeight);
+	imgOut.draw(12, 12);
+//	imgIn.draw(12, 12 + nnHeight + 12);
 #ifdef USE_LIVE_VIDEO
-	vidIn.draw(nnWidth, 0, camWidth, camHeight);
+	vidSrc.draw(12 + nnWidth, 12, camWidth, camHeight);
+	ofColor(0);
+#else
+	imgSrc.draw(12 + nnWidth, 12);
 #endif
+
+	ofSetColor(255);
+	ofDrawBitmapString("output", 12, 8);
+//	ofDrawBitmapString("input", 12, 24 + nnHeight);
+	ofDrawBitmapString("source", 12 + nnWidth, 8);
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 #ifdef USE_LIVE_VIDEO
 	if(key == 's' || key == 'S'){
-		vidIn.videoSettings();
+		vidSrc.videoSettings();
 	}
 #endif
 }
