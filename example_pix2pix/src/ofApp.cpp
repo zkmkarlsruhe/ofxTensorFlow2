@@ -78,7 +78,7 @@ void ofApp::update(){
 	}
 #endif
 
-	// feed input into model
+	// process any input
 	if(newInput) {
 
 		// cast data type and expand to batch size of 1
@@ -91,23 +91,26 @@ void ofApp::update(){
 		// the above can also be written using math operators:
 		//input = (input / cppflow::tensor({127.5f})) - cppflow::tensor({1.0f});
 
+		// input timestamp
+		start = std::chrono::system_clock::now();
+
+		// feed input into model
 		model.update(input);
 	}
 
 	// process any output
 	if(model.isOutputNew()) {
 
-		// TODO: readd this somehow using the threaded model?
-		// start neural network and time measurement
-		//auto start = std::chrono::system_clock::now();
-		//output = model.runModel(input);
-		//auto end = std::chrono::system_clock::now();
-		//std::chrono::duration<double> diff = end - start;
-
-		// ofLog() << output;
-		//ofLog() << "run took: " << diff.count() << "s, fps: " << ofGetFrameRate();
-
+		// pull output from model
 		output = model.getOutput();
+
+		// output timestamp
+		end = std::chrono::system_clock::now();
+
+		// FIXME: this doesn't work, probably because passing input & output is not directly blocking?
+		// simple model run time measurement
+		//std::chrono::duration<double> diff = end - start;
+		//ofLog() << "run took: " << diff.count() << " s or ~" << (int)(1.0/diff.count()) << " fps";
 
 		// postprocess to change range to -1 to 1 and copy output to image
 		output = cppflow::add(output, cppflow::tensor({1.0f}));

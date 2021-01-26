@@ -60,4 +60,8 @@ class ofApp : public ofBaseApp{
 		#endif
 		ofImage imgIn;
 		ofImage imgOut;
+
+		// time metrics
+		std::chrono::time_point<std::chrono::system_clock> start;
+		std::chrono::time_point<std::chrono::system_clock> end;
 };

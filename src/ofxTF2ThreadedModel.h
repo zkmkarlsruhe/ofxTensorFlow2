@@ -95,6 +95,6 @@ protected:
 
 	cppflow::tensor input_;  //< input to be processed, mutex protected
 	cppflow::tensor output_; //< processed output, mutex protected
-	bool newInput_ = false;  //< is the input new? mutex proteced
+	bool newInput_ = false;  //< is the input new? mutex protected
 	bool newOutput_ = false; //< is the output new? mutex protected
 };
