@@ -34,6 +34,10 @@ void ofApp::setup(){
 #else
 	// note: model expects RGB only, no alpha!
 	imgSrc.load("shoe.png");
+	if(imgSrc.getWidth() != nnWidth || imgSrc.getHeight() != nnHeight) {
+		ofLog() << "resizing source to " << nnWidth << "x" << nnHeight;
+		imgSrc.resize(nnWidth, nnHeight);
+	}
 #endif
 	imgIn.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
 	imgOut.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
@@ -70,9 +74,11 @@ void ofApp::update(){
 	input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
 	input = cppflow::expand_dims(input, 0);
 
-	// apply preprocessing as in python
+	// apply preprocessing as in python to change range to -1 to 1
 	input = cppflow::div(input, cppflow::tensor({127.5f}));
-	input = cppflow::add(input, cppflow::tensor({-1.0f}));
+	input = cppflow::sub(input, cppflow::tensor({1.0f}));
+	// the above can also be written using math operators:
+	//input = (input / cppflow::tensor({127.5f})) - cppflow::tensor({1.0f});
 
 	// start neural network and time measurement
 	auto start = std::chrono::system_clock::now();
@@ -83,9 +89,11 @@ void ofApp::update(){
 	// ofLog() << output;
 	ofLog() << "run took: " << diff.count() << "s, fps: " << ofGetFrameRate();
 
-	// postprocess and copy output to image
+	// postprocess to change range to -1 to 1 and copy output to image
 	output = cppflow::add(output, cppflow::tensor({1.0f}));
 	output = cppflow::mul(output, cppflow::tensor({127.5f}));
+	// the above can also be written using math operators:
+	//output = (output + cppflow::tensor({1.0f})) * cppflow::tensor({127.5f});
 	cppflow::tensor_to_image(output, imgOut);
 
 //	// postprocess and copy input to image
