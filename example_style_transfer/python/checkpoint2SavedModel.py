@@ -28,13 +28,8 @@ def convert(src_dir, dest_dir, shape):
 
 if __name__ == "__main__":
 
-    #parser = argparse.ArgumentParser(
-    #    description='Fast Style Transfer')
-    #parser.add_argument('--path', required=True, type=str)
-
-    path = os.path.dirname('../bin/data/chkpt_models/')
+    path = os.path.dirname('../bin/data/models_checkpoint/')
     dest = os.path.dirname('../bin/data/models/')
-
     shape = [None, 480, 640, 3]
 
     subfolders = [ f.path for f in os.scandir(path) if f.is_dir() ]
