@@ -16,6 +16,7 @@
 #include "ofxTensorFlow2Utils.h"
 #include <cstdlib>
 #include <sys/errno.h>
+#include <float.h>
 #include "ofConstants.h"
 
 #ifdef TARGET_WIN32
@@ -78,18 +79,20 @@ tensor pixels_to_tensor(const ofPixels & pixels) {
 			return tensor(
 			std::vector<float>(pixels.begin(),
 								pixels.end()),
-							{w, h, 1});
+							{h, w, 1});
 		case OF_IMAGE_COLOR:
 			return tensor(
 			std::vector<float>(pixels.begin(),
 								pixels.end()),
-							{w, h, 3});
+							{h, w, 3});
 		case OF_IMAGE_COLOR_ALPHA:
 			return tensor(
 			std::vector<float>(pixels.begin(),
 								pixels.end()),
-							{w, h, 4});
+							{h, w, 4});
 		case OF_IMAGE_UNDEFINED:
+			return tensor(-1);
+		default:
 			return tensor(-1);
 	}
 }
@@ -120,8 +123,35 @@ void tensor_to_pixels(const tensor & tensor, ofPixels & pixels) {
 			}
 			break;
 		case OF_IMAGE_UNDEFINED:
-			return ofLogError() << "tensor_to_pixels, pixels image type undefined";
+			ofLogError() << "tensor_to_pixels, pixels image type undefined";
+			break; 
 	}
+
+}
+
+tensor map_values(const tensor & inputTensor, float inputMin,
+	float inputMax, float outputMin, float outputMax) {
+
+	if (fabs(inputMin - inputMax) < FLT_EPSILON){
+		ofLogWarning("ofMath") << "ofMap(): avoiding possible divide by zero, \
+			check inputMin and inputMax: " << inputMin << " " << inputMax;
+		return tensor(-1);
+	} else {
+
+		// outVal = ((value - inputMin) / (inputMax - inputMin)
+		// outVal = outVal * (outputMax - outputMin) + outputMin);
+
+		float divider = inputMax - inputMin;
+		float multiplier = outputMax - outputMin;
+
+		auto result = sub(inputTensor, inputMin);
+		result = div(result, divider);
+		result = mul(result, multiplier);
+		result = add(result, outputMin);
+	
+		return result;
+	}
+
 
 }
 

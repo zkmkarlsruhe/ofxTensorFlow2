@@ -47,6 +47,9 @@ tensor pixels_to_tensor(const ofPixels & pixels);
 // currently assumes tenspr range float -1 to 1
 void tensor_to_pixels(const tensor & tensor, ofPixels & pixels);
 
+tensor map_values(const tensor & inputTensor, float inputMin,
+	float inputMax, float outputMin, float outputMax);
+
 };
 
 // ==== template implementations ====
