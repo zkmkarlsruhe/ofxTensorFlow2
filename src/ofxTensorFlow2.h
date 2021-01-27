@@ -15,5 +15,7 @@
 
 #pragma once
 
+typedef uint32_t shape_t;
+
 #include "ofxTF2ThreadedModel.h"
 #include "ofxTensorFlow2Utils.h"
