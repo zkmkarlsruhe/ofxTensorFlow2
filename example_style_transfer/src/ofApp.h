@@ -16,7 +16,6 @@
 #pragma once
 
 #include "ofMain.h"
-
 #include "ofxTensorFlow2.h"
 
 #define USE_LIVE_VIDEO // uncomment this to use a live camera
@@ -44,7 +43,7 @@ class ofApp : public ofBaseApp{
 		bool loadNewModel;
 		std::size_t modelCounter;
 		std::size_t frameCounter;
-		std::size_t waitNumCamFrames;
+		std::size_t waitNumFrames;
 
 		std::vector<std::string> modelPaths;
 		

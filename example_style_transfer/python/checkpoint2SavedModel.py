@@ -35,7 +35,7 @@ if __name__ == "__main__":
     path = os.path.dirname('../bin/data/chkpt_models/')
     dest = os.path.dirname('../bin/data/models/')
 
-    shape = [None, 1024, 1024, 3]
+    shape = [None, 480, 640, 3]
 
     subfolders = [ f.path for f in os.scandir(path) if f.is_dir() ]
     for subpath in subfolders:

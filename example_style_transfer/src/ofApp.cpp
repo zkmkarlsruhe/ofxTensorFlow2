@@ -35,14 +35,14 @@ void ofApp::setup(){
 		}
 	}
 
-	model.load(modelPaths[0]);
+	model.loadSafely(modelPaths[0]);
 	modelCounter = 1;
 	frameCounter = 0;
-	waitNumCamFrames = 100; 
+	waitNumFrames = 240; 
 
-	nnWidth = 1024;
-	nnHeight = 1024;
-	imgIn.allocate(nnWidth, nnWidth, OF_IMAGE_COLOR);
+	nnWidth = 640;
+	nnHeight = 480;
+	imgIn.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
 	imgOut.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
 
 #ifdef USE_LIVE_VIDEO
@@ -52,14 +52,17 @@ void ofApp::setup(){
 	vidIn.setDesiredFrameRate(30);
 	vidIn.setup(camWidth, camHeight);
 #endif
+
+	// start the model!
+	model.setIdleTime(1);
 	model.startThread();
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 
-	// load a new model from the directory every other waitNumCamFrames frames
-	if (frameCounter >= waitNumCamFrames){
+	// load a new model from the directory every other waitNumFrames frames
+	if (frameCounter >= waitNumFrames){
 		frameCounter = 0;
 		loadNewModel = true;
 	}
@@ -76,94 +79,65 @@ void ofApp::update(){
 	// create tensor from video
 	vidIn.update();
 	if(vidIn.isFrameNew()){	
-		
 
-		// get the frame
+		// get the frame, resize and copy to tensor
 		ofPixels & pixels = vidIn.getPixels();
-
-		// resize pixels
 		ofPixels resizedPixels(pixels);
 		resizedPixels.resize(nnWidth, nnHeight);
-
-		// resizedPixels.resizeTo(imgIn);
-		
-
-		// copy to tensor
-		input = cppflow::tensor(
-			  std::vector<float>(resizedPixels.begin(),
-								  resizedPixels.end()),
-							  {nnHeight, nnWidth, 3});
+		input = cppflow::pixels_to_tensor(resizedPixels);
 
 #else
-		std::string imgPath(ofToDataPath("cat512x512.jpg"));
-		// std::string imgPath(ofToDataPath("cat640x480.jpg"));
-		ofLog() << "Loading image: " << imgPath;
+		// std::string imgPath(ofToDataPath("cat512x512.jpg"));
+		std::string imgPath(ofToDataPath("cat640x480.jpg"));
 		// create tensor from image file
 		input = cppflow::decode_jpeg(cppflow::read_file(imgPath));
-		ofLog() << "Image loaded";
 #endif
 
+		// copy input to image
+		auto & inputPixels = imgIn.getPixels();
+		cppflow::tensor_to_pixels(input, inputPixels);
+		imgIn.update();
+
 		if (model.readyForInput()){
-			ofLog() << "Input is ready";
 			// cast data type and expand to batch size of 1
 			input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
 			input = cppflow::expand_dims(input, 0);
 			model.update(input);
 		}
 
-
-		// // start neural network and time measurement
-		// auto start = std::chrono::system_clock::now();
-		// // output = (*model)({{"serving_default_input_1", input}}, {"StatefulPartitionedCall"})[0];
-		// auto end = std::chrono::system_clock::now();
-		// std::chrono::duration<double> diff = end - start;
-		// ofLog() << "Time: " << diff.count() << "s Fps: " << ofGetFrameRate();
-
 		if (model.isOutputNew()){
-			ofLog() << "Output is ready";
 			auto output = model.getOutput();
-			auto outputShape = output.shape().get_data<shape_t>();
-			ofLog() << "outputShape: " << ofxTensorFlow2::vectorToString(outputShape);
+
+			// postprocess: last layer = (tf.nn.tanh(x) * 150 + 255. / 2)
+			output = cppflow::map_values(output, -22.5f, 277.5f, 0.0f, 255.0f);
 
 			// copy output to image
-			auto outputVector = output.get_data<float>();
 			auto & outputPixels = imgOut.getPixels();
-			for(int i = 0; i < outputPixels.size(); i++){
-				outputPixels[i] = outputVector[i];
-			}
+			cppflow::tensor_to_pixels(output, outputPixels);
 			imgOut.update();
-
 		}
-
-		// copy input to image
-		auto inputVector = input.get_data<float>();
-		auto & inputPixels = imgIn.getPixels();
-		for(int i = 0; i < inputPixels.size(); i++){
-			inputPixels[i] = inputVector[i];
-		}
-		
-		imgIn.update();
-
-		frameCounter++;
-
 
 #ifdef USE_LIVE_VIDEO
-	}
+	} // close frame loop
 	else{
 		// try again later
-		return;
 	}
 #endif
+	frameCounter++;
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+
+	int pad = 12;
+
 	ofSetColor(255);
-	imgOut.draw(0, 0);
-	imgIn.draw(nnWidth, 0);
-#ifdef USE_LIVE_VIDEO
-	// vidIn.draw(nnWidth, 0, camWidth*2, camHeight*2);
-#endif
+	imgOut.draw(pad, pad, nnWidth, nnHeight);
+
+	std::string text("Loading new model in ";
+	text += std::to_string(waitNumFrames - frameCounter);
+	text += " frames";
+	ofDrawBitmapString(text, pad, 10);
 }
 
 //--------------------------------------------------------------
