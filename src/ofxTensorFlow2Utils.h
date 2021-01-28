@@ -123,7 +123,7 @@ namespace ofxTF2{
 				break;
 			case OF_IMAGE_UNDEFINED:
 				ofLogError() << "pixels_to_tensor: image type undefined: " 
-							<< pixels.getImageType();
+							<< std::to_string(pixels.getImageType());
 				return -1;
 			default:
 				ofLogError() << "pixels_to_tensor: image type not implemented";
