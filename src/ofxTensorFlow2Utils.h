@@ -30,12 +30,11 @@ public:
 
 namespace ofxTF2{
 
+	using namespace cppflow;
+	
 	// shape must be retrieved using uint32_t, however tensor() uses uint64_t
 	typedef uint32_t shape_t;
 
-	{
-
-	using namespace cppflow;
 
 	/// convert vector to string with a similar format to cppflow
 	/// ex: {1, 2, 3} -> "[1, 2, 3, 4]"
@@ -96,6 +95,10 @@ namespace ofxTF2{
 	template <typename T>
 	bool tensorToImage(const tensor & srcTensor, ofImage & image);
 
+}; // end namespace ofxTF2
+
+
+namespace ofxTF2{
 
 	// ==== template implementations ====
 
@@ -227,7 +230,4 @@ namespace ofxTF2{
 		
 		return true;
 	}
-
-	} // end using namespace cppflow
-
 }; // end namespace ofxTF2
