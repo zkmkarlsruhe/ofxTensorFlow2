@@ -85,7 +85,7 @@ public:
 	// locked call to clear()
 	void clearSafely();
 
-	// lockd call to load()
+	// locked call to load()
 	void loadSafely(const std::string & modelPath);
 
 protected:
