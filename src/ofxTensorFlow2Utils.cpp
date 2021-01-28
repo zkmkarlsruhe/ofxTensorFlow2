@@ -56,103 +56,56 @@ void ofxTensorFlow2::setLogLevel(ofLogLevel level) {
 	const std::string n = "TF_CPP_MIN_LOG_LEVEL";
 	std::string v = ofToString(tfLogLevel);
 	if(setenv(n.c_str(), v.c_str(), 1) == -1) {
-		ofLogError() << "ofxTensorFlow2: unable to set TF_CPP_MIN_LOG_LEVEL: "
+		ofLogError() << "ofxTF2: unable to set TF_CPP_MIN_LOG_LEVEL: "
 		             << errno << " " << strerror(errno);
 	}
 }
 
-namespace cppflow {
+namespace ofxTF2 {
 
-tensor image_to_tensor(const ofImage & image) {
-	return pixels_to_tensor(image.getPixels());
-}
+	std::vector<shape_t> getTensorShape(const tensor & tensor){
+		return tensor.shape().get_data<shape_t>();
+	}
 
-void tensor_to_image(const tensor & tensor, ofImage & image) {
-	tensor_to_pixels(tensor, image.getPixels());
-}
+	bool isSameShape (const std::vector<shape_t> & lhs, 
+		const std::vector<shape_t> & rhs) {
+			
+		if (lhs.size() != rhs.size()){
+				ofLogWarning() << "ofxTF2: incompatible amount of dimensions "
+								<< " for lhs " << std::to_string(lhs.size())
+								<< " and rhs " << std::to_string(rhs.size());
+				return false;
+		}
+		for (int i = 0; i < lhs.size(); i++) {
+			if (lhs[i] != rhs[i]){
+				ofLogWarning() << "ofxTF2: shape mismatch at dimension " << i
+								<< " for lhs " << vectorToString(lhs)
+								<< " and rhs " << vectorToString(rhs);
+				return false;
+			}
+		}
+		return true;
+	}
 
-tensor pixels_to_tensor(const ofPixels & pixels) {
-	const long long w = pixels.getWidth();
-	const long long h = pixels.getHeight();
-	switch(pixels.getImageType()) {
-		case OF_IMAGE_GRAYSCALE:
-			return tensor(
-			std::vector<float>(pixels.begin(),
-								pixels.end()),
-							{h, w, 1});
-		case OF_IMAGE_COLOR:
-			return tensor(
-			std::vector<float>(pixels.begin(),
-								pixels.end()),
-							{h, w, 3});
-		case OF_IMAGE_COLOR_ALPHA:
-			return tensor(
-			std::vector<float>(pixels.begin(),
-								pixels.end()),
-							{h, w, 4});
-		case OF_IMAGE_UNDEFINED:
+	tensor mapTensorValues(const tensor & inputTensor, float inputMin,
+		float inputMax, float outputMin, float outputMax) {
+
+		if (fabs(inputMin - inputMax) < FLT_EPSILON){
+			ofLogWarning() << "ofxTF2: avoiding possible divide by zero, \
+				check inputMin and inputMax: " << inputMin << " " << inputMax;
 			return tensor(-1);
-		default:
-			return tensor(-1);
+		} else {
+			// outVal = ((value - inputMin) / (inputMax - inputMin)
+			// outVal = outVal * (outputMax - outputMin) + outputMin);
+			float divider = inputMax - inputMin;
+			float multiplier = outputMax - outputMin;
+			auto result = sub(inputTensor, inputMin);
+			result = div(result, divider);
+			result = mul(result, multiplier);
+			result = add(result, outputMin);
+		
+			return result;
+		}
 	}
-}
-
-void tensor_to_pixels(const tensor & tensor, ofPixels & pixels) {
-	auto data = tensor.get_data<float>();
-	if(pixels.size() <= data.size()) {
-	}
-	switch(pixels.getImageType()) {
-		case OF_IMAGE_GRAYSCALE:
-			for(int i = 0; i < pixels.size(); i++){
-				pixels[i] = data[i];
-			}
-			break;
-		case OF_IMAGE_COLOR:
-			for(int i = 0; i < pixels.size(); i+=3){
-				pixels[i] = data[i];
-				pixels[i+1] = data[i+1];
-				pixels[i+2] = data[i+2];
-			}
-			break;
-		case OF_IMAGE_COLOR_ALPHA:
-			for(int i = 0; i < pixels.size(); i+=4){
-				pixels[i] = data[i];
-				pixels[i+1] = data[i+1];
-				pixels[i+2] = data[i+2];
-				pixels[i+3] = data[i+3];
-			}
-			break;
-		case OF_IMAGE_UNDEFINED:
-			ofLogError() << "tensor_to_pixels, pixels image type undefined";
-			break; 
-	}
-
-}
-
-tensor map_values(const tensor & inputTensor, float inputMin,
-	float inputMax, float outputMin, float outputMax) {
-
-	if (fabs(inputMin - inputMax) < FLT_EPSILON){
-		ofLogWarning("ofMath") << "ofMap(): avoiding possible divide by zero, \
-			check inputMin and inputMax: " << inputMin << " " << inputMax;
-		return tensor(-1);
-	} else {
-
-		// outVal = ((value - inputMin) / (inputMax - inputMin)
-		// outVal = outVal * (outputMax - outputMin) + outputMin);
-
-		float divider = inputMax - inputMin;
-		float multiplier = outputMax - outputMin;
-
-		auto result = sub(inputTensor, inputMin);
-		result = div(result, divider);
-		result = mul(result, multiplier);
-		result = add(result, outputMin);
-	
-		return result;
-	}
-
-
-}
 
 };
