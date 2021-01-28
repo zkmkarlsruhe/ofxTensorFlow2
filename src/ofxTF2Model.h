@@ -65,8 +65,8 @@ public:
 	ofxTF2Model(const std::string & modelPath);
 	virtual ~ofxTF2Model();
 
-	/// load model
-	/// TODO: describe expected model folder layout?
+	/// load a SavedModel directory relative to bin/data
+	/// directories for SavedModels includes assets, variables and a .pb file
 	/// returns true on success
 	bool load(const std::string & modelPath);
 

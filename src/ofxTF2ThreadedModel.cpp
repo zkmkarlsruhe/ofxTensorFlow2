@@ -61,6 +61,20 @@ void ofxTF2ThreadedModel::setIdleTime(unsigned int ms) {
 	idleMS_ = ms;
 }
 
+
+void ofxTF2ThreadedModel::loadSafely(const std::string & modelPath) {
+	lock();
+	load(modelPath);
+	unlock();
+}
+
+void ofxTF2ThreadedModel::clearSafely() {
+	lock();
+	clear();
+	unlock();
+}
+
+
 // ==== protected ====
 
 void ofxTF2ThreadedModel::threadedFunction() {

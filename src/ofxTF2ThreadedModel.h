@@ -82,15 +82,20 @@ public:
 	/// note: do not call this while the thread is running
 	void setIdleTime(unsigned int ms);
 
+	// locked call to ofxTF2Model::clear()
+	void clearSafely();
+
+	// locked call to ofxTF2Model::load()
+	void loadSafely(const std::string & modelPath);
+
 protected:
 
 	/// thread run function, do not call this directly
 	void threadedFunction();
 
 	/// idle sleep time in ms
-	/// TODO: should this be shorter? ie. 16 ms ~= 60 fps?
 	/// note: not mutex protected, only set when the thread is not running
-	unsigned int idleMS_ = 100;
+	unsigned int idleMS_ = 16;
 
 	cppflow::tensor input_;  //< input to be processed, mutex protected
 	cppflow::tensor output_; //< processed output, mutex protected
