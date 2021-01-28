@@ -36,9 +36,9 @@ void ofApp::setup(){
 	}
 
 	model.loadSafely(modelPaths[0]);
-	modelCounter = 1;
+	modelCounter = 5;
 	frameCounter = 0;
-	waitNumFrames = 240; 
+	waitNumFrames = 360; 
 
 	nnWidth = 640;
 	nnHeight = 480;
@@ -84,7 +84,7 @@ void ofApp::update(){
 		ofPixels & pixels = vidIn.getPixels();
 		ofPixels resizedPixels(pixels);
 		resizedPixels.resize(nnWidth, nnHeight);
-		input = cppflow::pixels_to_tensor(resizedPixels);
+		ofxTF2::pixelsToTensor<float>(resizedPixels, input);
 
 #else
 		// std::string imgPath(ofToDataPath("cat512x512.jpg"));
@@ -95,7 +95,7 @@ void ofApp::update(){
 
 		// copy input to image
 		auto & inputPixels = imgIn.getPixels();
-		cppflow::tensor_to_pixels(input, inputPixels);
+		ofxTF2::tensorToPixels<float>(input, inputPixels);
 		imgIn.update();
 
 		if (model.readyForInput()){
@@ -109,11 +109,10 @@ void ofApp::update(){
 			auto output = model.getOutput();
 
 			// postprocess: last layer = (tf.nn.tanh(x) * 150 + 255. / 2)
-			output = cppflow::map_values(output, -22.5f, 277.5f, 0.0f, 255.0f);
+			output = ofxTF2::mapTensorValues(output, -22.5f, 277.5f, 0.0f, 255.0f);
 
 			// copy output to image
-			auto & outputPixels = imgOut.getPixels();
-			cppflow::tensor_to_pixels(output, outputPixels);
+			ofxTF2::tensorToImage<float>(output, imgOut);
 			imgOut.update();
 		}
 
@@ -132,12 +131,12 @@ void ofApp::draw(){
 	int pad = 12;
 
 	ofSetColor(255);
-	imgOut.draw(pad, pad, nnWidth, nnHeight);
+	imgOut.draw(pad, pad, nnWidth*2, nnHeight*2);
 
-	std::string text("Loading new model in ";
+	std::string text("Loading new model in ");
 	text += std::to_string(waitNumFrames - frameCounter);
 	text += " frames";
-	ofDrawBitmapString(text, pad, 10);
+	ofDrawBitmapString(text, pad, pad);
 }
 
 //--------------------------------------------------------------
