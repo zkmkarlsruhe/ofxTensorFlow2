@@ -44,7 +44,7 @@ void ofApp::setup(){
 
 	// shorten idle time to have model check for input more frequently,
 	// this may increase responsivity on faster machines but will use more cpu
-	//model.setIdleTime(16);
+	model.setIdleTime(10);
 
 	// start the model background thread
 	model.startThread();
@@ -67,13 +67,13 @@ void ofApp::update(){
 		resizedPixels.resize(nnWidth, nnHeight);
 
 		// copy to tensor
-		ofxTF2::pixelsToTensor<float>(resizedPixels, input);
+		input = ofxTF2::pixelsToTensor<float>(resizedPixels);
 		newInput = true;
 	}
 #else
 	if(model.readyForInput()) {
 		// create tensor from image
-		ofxTF2::imageToTensor<float>(imgSrc, input);
+		input = ofxTF2::imageToTensor<float>(imgSrc);
 		newInput = true;
 	}
 #endif

@@ -84,7 +84,7 @@ void ofApp::update(){
 		ofPixels & pixels = vidIn.getPixels();
 		ofPixels resizedPixels(pixels);
 		resizedPixels.resize(nnWidth, nnHeight);
-		ofxTF2::pixelsToTensor<float>(resizedPixels, input);
+		input = ofxTF2::pixelsToTensor<float>(resizedPixels);
 
 #else
 		// std::string imgPath(ofToDataPath("cat512x512.jpg"));

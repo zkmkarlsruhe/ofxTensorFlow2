@@ -22,16 +22,18 @@ void ofApp::setup(){
 	ofSetWindowTitle("example_basics");
 
 	// create an input tensor of an arbitrary shape and fill it
-	input.fill({10, 9, 17, 3}, 1.0f);
+	input = cppflow::fill({10, 9, 17, 3}, 1.0f);
 
 	// load the model
 	model.load("model");
 
 	// inference
-	output = model.run(input);
+	output = model.runModel(input);
 
-	// print the output tensor
-	ofLog() << output;
+	// use the ofxTF2 namespace for some useful functions like conversion
+	std::vector<float> asVector;
+	ofxTF2::tensorToVector<float>(output, asVector);
+	ofLog() << ofxTF2::vectorToString()
 }
 
 //--------------------------------------------------------------

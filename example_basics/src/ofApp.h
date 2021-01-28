@@ -38,6 +38,6 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 
 		ofxTF2Model model;
-		ofxTF2Tensor input;
-		ofxTF2Tensor output;
+		cppflow::tensor input;
+		cppflow::tensor output;
 };
