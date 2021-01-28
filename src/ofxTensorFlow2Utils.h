@@ -51,6 +51,21 @@ namespace ofxTF2{
 	bool isSameShape (const std::vector<shape_t> & lhs, 
 		const std::vector<shape_t> & rhs);
 
+	// converts a std::vector to a tensor
+	// expects shape in HWC format (height, width, channel)
+	// creates a flat tensor if no shape provided 
+	// does not convert tensor to a batch
+	// return 0 if successful
+	template <typename T>
+	int vectorToTensor(const std::vector<T> & vector, tensor & dstTensor, 
+		std::vector<shape_t> shape);
+
+	// converts a std::vector to a tensor
+	// only supports HWC output format (height, width, channel)
+	// return 0 if successful
+	template <typename T>
+	int tensorToVector(const tensor & srcTensor, std::vector<T> & vector);
+
 	// converts ofImage to a tensor
 	// only supports HWC output format (height, width, channel)
 	// does not convert tensor to a batch
@@ -95,6 +110,21 @@ namespace ofxTF2{
 		return s;
 	}
 
+	template <typename T>
+	int vectorToTensor(const std::vector<T> & srcVector, tensor & dstTensor, 
+			std::vector<uint64_t> shape = std::vector<uint64_t>{0}) {
+		if (shape == std::vector<uint64_t>{0}) // create a flat vector
+			dstTensor = tensor(srcVector);
+		else
+			dstTensor = tensor(srcVector, shape);
+		return 0;
+	}
+
+	template <typename T>
+	int tensorToVector(const tensor & srcTensor, std::vector<T> & dstVector){
+		dstVector = srcTensor.get_data<T>();
+		return 0;
+	}
 
 	template <typename T>
 	int imageToTensor(const ofImage & image, tensor & dstTensor) {
