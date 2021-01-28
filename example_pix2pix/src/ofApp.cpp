@@ -67,13 +67,13 @@ void ofApp::update(){
 		resizedPixels.resize(nnWidth, nnHeight);
 
 		// copy to tensor
-		input = cppflow::pixels_to_tensor(resizedPixels);
+		ofxTF2::pixelsToTensor<float>(resizedPixels, input);
 		newInput = true;
 	}
 #else
 	if(model.readyForInput()) {
 		// create tensor from image
-		input = cppflow::image_to_tensor(imgSrc);
+		ofxTF2::imageToTensor<float>(imgSrc, input);
 		newInput = true;
 	}
 #endif
@@ -117,7 +117,7 @@ void ofApp::update(){
 		output = cppflow::mul(output, cppflow::tensor({127.5f}));
 		// the above can also be written using math operators:
 		//output = (output + cppflow::tensor({1.0f})) * cppflow::tensor({127.5f});
-		cppflow::tensor_to_image(output, imgOut);
+		ofxTF2::tensorToImage<float>(output, imgOut);
 
 //		// postprocess and copy input to image
 //		input = cppflow::add(input, cppflow::tensor({1.0f}));

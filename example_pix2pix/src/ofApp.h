@@ -16,10 +16,9 @@
 #pragma once
 
 #include "ofMain.h"
-
 #include "ofxTensorFlow2.h"
 
-//#define USE_LIVE_VIDEO // uncomment this to use a live camera
+#define USE_LIVE_VIDEO // uncomment this to use a live camera
 						 // otherwise, we'll use an image file
 
 // TODO: add "draw a shoe" canvas for live input?
