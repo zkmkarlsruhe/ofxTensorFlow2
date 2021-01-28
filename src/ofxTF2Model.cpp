@@ -56,11 +56,9 @@ void ofxTF2Model::clear() {
 	}
 }
 
-cppflow::tensor ofxTF2Model::runModel(const cppflow::tensor & tensor) const {
+cppflow::tensor ofxTF2Model::runModel(const cppflow::tensor & input) const {
 	if (model_){
-		cppflow::tensor input = preprocess(tensor);
-		cppflow::tensor output = (*model_)(input);
-		return postprocess(output);
+		return (*model_)(input);
 	}
 	else{
 		ofLog() << "ofxTF2Model: no model loaded! Returning tensor containing -1.";
@@ -70,14 +68,4 @@ cppflow::tensor ofxTF2Model::runModel(const cppflow::tensor & tensor) const {
 
 bool ofxTF2Model::isLoaded() {
 	return model_ != nullptr;
-}
-
-// ==== protected ====
-
-cppflow::tensor ofxTF2Model::preprocess(const cppflow::tensor & input) const {
-	return input;
-}
-
-cppflow::tensor ofxTF2Model::postprocess(const cppflow::tensor & output) const {
-	return output;
 }

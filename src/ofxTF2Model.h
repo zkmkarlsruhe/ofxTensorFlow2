@@ -40,6 +40,23 @@
 ///         ... process output
 ///     }
 ///
+/// to add custom built-in pre or post processing, subclass and override
+/// the runModel() virtual function:
+///
+///     class Model : public ofxTF2Model {
+///     public:
+///         cppflow::tensor runModel(const cppflow::tensor & input) const;
+///     };
+///
+///     cppflow::tensor Model::runModel(const cppflow::tensor & input) const {
+///         input = input * cppflow::tensor({-1}); // invert, etc
+///         ... preprocess input
+///         cppflow::tensor output = ofxTF2Model::runModel(input); // call super
+///         ... postprocess output
+///         output = output * cppflow::tensor({-1}); // invert back, etc
+///         return output; // done
+///     }
+///
 class ofxTF2Model {
 
 public:
@@ -56,21 +73,14 @@ public:
 	/// clear model
 	void clear();
     
-    /// run model on input
-    cppflow::tensor runModel(const cppflow::tensor & tensor) const;
+    /// run model on input, blocks until returning output
+    /// implement in a subclass to add custom pre / post processing
+    virtual cppflow::tensor runModel(const cppflow::tensor & input) const;
 
     /// returns true if model is loaded
     bool isLoaded();
 
 protected:
-
-	/// preprocess input tensor, called before running model
-	/// implement in a subclass, default implementation simply returns input
-	virtual cppflow::tensor preprocess(const cppflow::tensor & input) const;
-
-	/// postprocess output tensor, called after running model
-	/// implement in a subclass, default implementation simply returns output
-	virtual cppflow::tensor postprocess(const cppflow::tensor & output) const;
 
 	std::string modelPath_ = "";
 	cppflow::model * model_ = nullptr;
