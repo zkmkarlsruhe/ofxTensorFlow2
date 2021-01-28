@@ -16,16 +16,16 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup() {
 	ofSetFrameRate(60);
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("example_keywordspotting");
 	ofSetCircleResolution(80);
 	ofBackground(54, 54, 54);
 
-	model = new cppflow::model(ofToDataPath(modelPath));
-	previousBuffer.reserve(bufferSize);
-	sample.reserve(inputSize);
+	model = new cppflow::model(ofToDataPath("model"));
+	previousBuffer.resize(bufferSize);
+	sample.resize(inputSize);
 
 	volHistory.assign(400, 0.0);
 		
@@ -57,6 +57,7 @@ void ofApp::setup(){
 	// neural network warm up
 	auto test = cppflow::fill({1, 16000}, 1.0f);
 	output = (*model)(test);
+	ofLog() << "setup done";
 }
 
 //--------------------------------------------------------------
@@ -74,12 +75,16 @@ void ofApp::update(){
 
 	if(trigger) {
 
+		ofLog() << "convert: " << sample.size();
+
 		// convert recorded sample to a single batch
 		cppflow::tensor input(sample, {1, 16000});
 
+		ofLog() << "inference";
 		// inference
-		auto output_vector = model(input).get_data<float>();
+		auto output_vector = (*model)(input).get_data<float>();
 
+		ofLog() << "inference done";
 		// postprocessing
 		auto maxElem = std::max_element(output_vector.begin(), output_vector.end());
 		int argMax = std::distance(output_vector.begin(), maxElem);
@@ -130,7 +135,7 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void audioIn(ofSoundBuffer & input){
+void ofApp::audioIn(ofSoundBuffer & input){
 	
 	float curVol = 0.0;
 

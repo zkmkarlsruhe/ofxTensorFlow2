@@ -16,12 +16,13 @@
 #pragma once
 
 #include "ofMain.h"
-#include "cppflow/cppflow.h"
+#include "ofxTensorFlow2.h"
 #include "labels.h"
 
 class ofApp : public ofBaseApp{
 
 	public:
+
 		void setup();
 		void update();
 		void draw();

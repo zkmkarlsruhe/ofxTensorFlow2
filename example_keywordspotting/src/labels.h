@@ -20,7 +20,7 @@
 
 typedef std::map<int, std::string> Labels;
 
-Labels labelsMap = {
+static Labels labelsMap = {
     {0, "nothing"},
     {1, "nine"},
     {2, "yes"},
