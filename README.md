@@ -5,8 +5,6 @@
 This is an openFrameworks addon for TensorFlow 2.
 The code has been developed by Hertz-Lab as part of the project [»The Intelligent Museum«](#the-intelligent-museum).
 
-Since TensorFlow does not ship a C++ Library we make use of [cppFlow2](https://github.com/serizba/cppflow/tree/cppflow2), which is a C++ wrapper around TensorFlows C API.
-
 
 ## License
 This software is distributed under the [Simplified BSD License](LICENSE.txt). Copyright (c) 2021 ZKM | Karlruhe. 
@@ -35,6 +33,9 @@ git clone git@hertz-gitlab.zkm.de:Hertz-Lab/Research/intelligent-museum/ofxTenso
 ```
 
 ### Dependencies
+
+Since TensorFlow does not ship a C++ Library we make use of [cppFlow2](https://github.com/serizba/cppflow/tree/cppflow2), which is a C++ wrapper around TensorFlows C API.
+
 
 * cppflow
 * tensorflow2
@@ -127,7 +128,7 @@ Therefor, we provide already trained models. Check the assets of this repository
 
 When referring to the SavedModel we mean the parent folder of the exported neural network containing two subfolders assets and variables and a saved_model.pb file. Do not change anything inside this folder. However renaming the folder is permited.
 
-By default, the example applications try to load a SavedModel named "model" located in "example_XXXX/bin/data/". When downloading or training a model please make sure the SavedModel is at this location at has the right name (renaming may be necessary).
+By default, the example applications try to load a SavedModel named "model" (or "models" depending on the example) located in "example_XXXX/bin/data/". When downloading or training a model please make sure the SavedModel is at this location and has the right name.
 
 Afterwards compile and execute the example. For example using make:
 ```bash
@@ -145,7 +146,7 @@ python3: for ease of use install [anaconda](https://docs.anaconda.com/anaconda/i
 
 pip3
 ```bash
-conda install pip
+conda install pip3
 ```
 
 #### Execution

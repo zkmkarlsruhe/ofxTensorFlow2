@@ -1,3 +1,16 @@
+# ofxTensorFlow2
+#
+# Copyright (c) 2021 ZKM | Hertz-Lab
+# Paul Bethge <bethge@zkm.de>
+#
+# BSD Simplified License.
+# For information on usage and redistribution, and for a DISCLAIMER OF ALL
+# WARRANTIES, see the file, "LICENSE.txt," in this distribution.
+#
+# This code has been developed at ZKM | Hertz-Lab as part of „The Intelligent 
+# Museum“ generously funded by the German Federal Cultural Foundation.
+
+
 from modules.utils import tensor_to_image, load_img, clip_0_1, resolve_video
 from modules.forward import feed_forward
 import tensorflow as tf
