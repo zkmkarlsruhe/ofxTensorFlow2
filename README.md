@@ -23,7 +23,6 @@ git submodule update --init --recursive
 
 Please find detailed instructions below.
 
-
 ## Installation
 
 Clone (or download and extract) this repository to the addon folder of openframeworks. Replace OF_ROOT with the path to your openFrameworks installation
@@ -59,7 +58,8 @@ When opting for GPU support run
 TYPE=gpu ./scripts/download_tensorflow.sh
 ```
 
-### Ubuntu
+### Ubuntu / Linux
+
 Add the lib folder to the LD_LIBRARY_PATH. Replace OF_ROOT with the path to your openFrameworks installation.
 ```bash
 export LD_LIBRARY_PATH=OF_ROOT/addons/ofxTensorFlow2/libs/tensorflow2/lib/linux64/:$LD_LIBRARY_PATH
@@ -68,11 +68,23 @@ export LD_LIBRARY_PATH=OF_ROOT/addons/ofxTensorFlow2/libs/tensorflow2/lib/linux6
 
 [optional] for GPU support: refer to https://www.tensorflow.org/install/gpu and install driver and packages
 
+#### Using libtensorflow Installed to the System
+
+To use libtensorflow installed to a system path, ie. by your system's package manager, the path(s) need to be added to the project header include and library search paths and the libraries need to be passed to the linker.
+
+1. If libtensorflow was downloaded to `libs/tensorflow2/`, remove all files in this directory
+2. Edit `addon_config.mk` under the "linux64" build taget: comment the "local path" sections
+3. If using the OF Project Generator, (re)regenerate project files for projects using the addon
+
+_Note: When using libtensorflow installed to the system, the `LD_LIBRARY_PATH` export is not needed._
+
 ### macOS
 
 The cppflow library requires C++14 which needs to be enabled when building on macOS.
 
 libtensorflow is provided as pre-compiled dynamic libraries. On macOS these `.dylib` files need to be configured and copied into the build macOS .app. These steps are automated via the `scripts/macos_install_libs.sh` script and can be invoked when building, either by Xcode or the Makefiles.
+
+Alternatively, you can use libtensorflow compiled and installed to the system, ie. `/usr/local` or `/usr/opt`. In this case, the dylibs do not need to be copied into the macOS .app, however the built app will not run on other computers without the same libraries installed to the same location.
 
 #### Xcode build
 
@@ -122,6 +134,16 @@ This will also work when building the normal targets using two steps, for exampl
     make Debug
     make DebugTF2
 
+#### Using libtensorflow Installed to the System
+
+To use libtensorflow installed to a system path, ie. from a package manager like Homebrew, the path(s) need to be added to the project header include and library search paths and the libraries need to be passed to the linker. The `scripts/macos_install_libs.sh` is not needed.
+
+1. If libtensorflow was downloaded to `libs/tensorflow2/`, remove all files in this directory
+2. Edit `addon_config.mk` under the "osx" build taget:
+  * comment the "local path" sections and uncomment the "system path" sections
+  * If needed, change the path for your system, ie. `/usr/local` to `/usr/opt` etc
+3. If using the OF Project Generator, (re)regenerate project files for projects using the addon
+
 ## Usage
 Each example contains code to create a neural network and export it as SavedModel. Neural networks require training which may take hours or days in order to produce a satisfying output.
 Therefor, we provide already trained models. Check the assets of this repository to find the trained models.
@@ -168,8 +190,30 @@ To configure the training process refer to the README of each example.
 
 
 ## Known issues
+
+TODO: chnage this to a GitHub link since the Gitlab project is not public?
 please take a look at the [issues](https://hertz-gitlab.zkm.de/Hertz-Lab/Research/intelligent-museum/ofxTensorFlow2/-/issues?scope=all&utf8=%E2%9C%93&state=all)
 
+### EXC_BAD_INSTRUCTION Crash on macOS
+
+The pre-built libtensorflow downloaded to `libs/tensorflow` comes with AVX (Advanced Vector Extensions) enabled which is an extension to the Intel x86 instruction set for fast vector math. CPUs older than circa 2013 may not support this and the application will simply crash with error such as:
+
+~~~
+in libtensorflow_framework.2.dylib
+...
+EXC_BAD_INSTRUCTION (code=EXC_I386_INVOP, subcode=0x0)
+~~~
+
+This problem may also be seen when using libtensorflow installed via Homebrew.
+
+The only solution is to build libtensorflow from source with AVX disabled use a machine with a newer CPU. To check if your CPU supports AVX use:
+```shell
+# print all CPU features
+sysctl -a | grep cpu.feat
+
+# prints only if CPU supports AVX
+sysctl -a | grep cpu.feat | grep AVX
+```
 
 ## The Intelligent Museum
 An artistic-curatorial field of experimentation for deep learning and visitor participation
