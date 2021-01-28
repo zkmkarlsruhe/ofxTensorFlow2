@@ -189,8 +189,30 @@ To configure the training process refer to the README of each example.
 
 
 ## Known issues
+
+TODO: chnage this to a GitHub link since the Gitlab project is not public?
 please take a look at the [issues](https://hertz-gitlab.zkm.de/Hertz-Lab/Research/intelligent-museum/ofxTensorFlow2/-/issues?scope=all&utf8=%E2%9C%93&state=all)
 
+### EXC_BAD_INSTRUCTION Crash on macOS
+
+The pre-built libtensorflow downloaded to `libs/tensorflow` comes with AVX (Advanced Vector Extensions) enabled which is an extension to the Intel x86 instruction set for fast vector math. CPUs older than circa 2013 may not support this and the application will simply crash with error such as:
+
+~~~
+in libtensorflow_framework.2.dylib
+...
+EXC_BAD_INSTRUCTION (code=EXC_I386_INVOP, subcode=0x0)
+~~~
+
+This problem may also be seen when using libtensorflow installed via Homebrew.
+
+The only solution is to build libtensorflow from source with AVX disabled use a machine with a newer CPU. To check if your CPU supports AVX use:
+```shell
+# print all CPU features
+sysctl -a | grep cpu.feat
+
+# prints only if CPU supports AVX
+sysctl -a | grep cpu.feat | grep AVX
+```
 
 ## The Intelligent Museum
 An artistic-curatorial field of experimentation for deep learning and visitor participation
