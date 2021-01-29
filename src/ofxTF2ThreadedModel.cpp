@@ -19,6 +19,20 @@ ofxTF2ThreadedModel::~ofxTF2ThreadedModel() {
 	waitForThread();
 }
 
+bool ofxTF2ThreadedModel::load(const std::string & modelPath) {
+	bool ret = false;
+	lock();
+	ret = ofxTF2Model::load(modelPath);
+	unlock();
+	return ret;
+}
+
+void ofxTF2ThreadedModel::clear() {
+	lock();
+	ofxTF2Model::clear();
+	unlock();
+}
+
 bool ofxTF2ThreadedModel::readyForInput() {
 	bool ret = false;
 	if(tryLock()) {
@@ -60,20 +74,6 @@ cppflow::tensor ofxTF2ThreadedModel::getOutput() {
 void ofxTF2ThreadedModel::setIdleTime(unsigned int ms) {
 	idleMS_ = ms;
 }
-
-
-void ofxTF2ThreadedModel::loadSafely(const std::string & modelPath) {
-	lock();
-	load(modelPath);
-	unlock();
-}
-
-void ofxTF2ThreadedModel::clearSafely() {
-	lock();
-	clear();
-	unlock();
-}
-
 
 // ==== protected ====
 

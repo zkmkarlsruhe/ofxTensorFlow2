@@ -60,6 +60,12 @@ public:
 	/// stop and wait for thread to exit on delete
 	virtual ~ofxTF2ThreadedModel();
 
+	/// thread-safe call to ofxTF2Model::load()
+	bool load(const std::string & modelPath);
+
+	/// thread-safe call to ofxTF2Model::clear()
+	void clear();
+
 	/// returns true if the model is idle and ready for new input
 	bool readyForInput();
 
@@ -81,12 +87,6 @@ public:
 	/// lower values will check for input more often at the expense of cpu time
 	/// note: do not call this while the thread is running
 	void setIdleTime(unsigned int ms);
-
-	// locked call to ofxTF2Model::clear()
-	void clearSafely();
-
-	// locked call to ofxTF2Model::load()
-	void loadSafely(const std::string & modelPath);
 
 protected:
 
