@@ -68,6 +68,7 @@ TGZ=libtensorflow-${TYPE}-${OS}-${ARCH}-${VER}.tar.gz
 
 # summary
 echo "detected: $OS $ARCH -> $OF_OS"
+echo "build type: $TYPE"
 echo "downloading: $TGZ"
 
 ##### prepare

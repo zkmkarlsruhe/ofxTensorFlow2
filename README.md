@@ -1,20 +1,43 @@
-# ofxTensorFlow2
+ofxTensorFlow2
+==============
 
 ![ofxTensorFlow2 thumbnail](ofxaddons_thumbnail.png)
 
-This is an openFrameworks addon for TensorFlow 2.
-The code has been developed by Hertz-Lab as part of the project [»The Intelligent Museum«](#the-intelligent-museum).
+This is an openFrameworks addon for the TensorFlow 2 ML (Machine Learning) library. The code has been developed by the ZKM | Hertz-Lab as part of the project [»The Intelligent Museum«](#the-intelligent-museum).
 
+Copyright (c) 2021 ZKM | Karlsruhe. 
 
-## License
-This software is distributed under the [Simplified BSD License](LICENSE.txt). Copyright (c) 2021 ZKM | Karlruhe. 
+BSD Simplified License.
 
+For information on usage and redistribution, and for a DISCLAIMER OF ALL
+WARRANTIES, see the file, "LICENSE.txt," in this distribution.
 
-## Quick Start
+Description
+-----------
 
-Minimal quick start to clone & download everything needed:
+ofxTensorFlow2 is an openFrameworks addon for loading and running ML models trained with the Tensorflow 2 ML (Machine Learning) library:
+
+>TensorFlow is an end-to-end open source platform for machine learning. It has a comprehensive, flexible ecosystem of tools, libraries and community resources that lets researchers push the state-of-the-art in ML and developers easily build and deploy ML powered applications.
+
+<https://www.tensorflow.org>
+
+The addon utilizes the TensorFlow 2 C library wrapped by the open source cppflow 2 C++ interface:
+
+>Run TensorFlow models in c++ without Bazel, without TensorFlow installation and without compiling Tensorflow. Perform tensor manipulation, use eager execution and run saved models directly from C++.
+
+<https://github.com/serizba/cppflow/tree/cppflow2>
+
+Additional classes wrap the process of loading & running a model and utility functions are provided for conversion between common openFrameworks types (images, pixels, audio samples, etc) and TensorFlow2 tensors.
+
+[openFrameworks](http://www.openframeworks.cc) is a cross platform open source toolkit for creative coding in C++.
+
+Quick Start
+-----------
+
+Minimal quick start to clone cppflow and download pre-built TensorFlow 2 dynamic libraries, starting in the root openFrameworks directory:
 
 ```bash
+cd addons
 git clone git@hertz-gitlab.zkm.de:Hertz-Lab/Research/intelligent-museum/ofxTensorFlow2.git
 cd ofxTensorFlow2
 git submodule update --init --recursive
@@ -23,57 +46,99 @@ git submodule update --init --recursive
 
 Please find detailed instructions below.
 
-## Installation
+_Note: The TensorFlow download script grabs the CPU-optimized build by default._
 
-Clone (or download and extract) this repository to the addon folder of openframeworks. Replace OF_ROOT with the path to your openFrameworks installation
-```bash
+Build Requirements
+------------------
+
+To use ofxTensorFlow2, first you need to download and install openFrameworks. The examples are developed against the latest release version of openFrameworks on <http://openframeworks.cc/download>.
+
+[OF github repository](https://github.com/openframeworks/openFrameworks)
+
+Currently, ofxTensorFlow2 is being developed on Linux and macOS. Windows *should* work but has not yet been tested.
+
+Installation and Build
+----------------------
+
+Clone (or download and extract) this repository to the addon folder of openFrameworks. Replace OF_ROOT with the path to your openFrameworks installation
+
+```shell
 cd OF_ROOT/addons
 git clone git@hertz-gitlab.zkm.de:Hertz-Lab/Research/intelligent-museum/ofxTensorFlow2.git
 ```
 
 ### Dependencies
 
-Since TensorFlow does not ship a C++ Library we make use of [cppFlow2](https://github.com/serizba/cppflow/tree/cppflow2), which is a C++ wrapper around TensorFlows C API.
-
-
 * cppflow
 * tensorflow2
 
-Pull cppflow to libs/cppflow and checkout cppflow2:
-```bash
+Since TensorFlow does not ship a C++ Library we make use of [cppflow2](https://github.com/serizba/cppflow/tree/cppflow2), which is a C++ wrapper around the TensorFlow 2 C API.
+
+Pull cppflow to `libs/cppflow` and checkout cppflow2:
+
+```shell
 cd ofxTensorFlow2
 git submodule update --init --recursive
 ```
 
-Download [TensorFlow2 C API](https://www.tensorflow.org/install/lang_c) and extract the following folders to their destination:
-  - include/ --> libs/tensorflow2/include
-  - lib/ --> libs/tensorflow2/lib/[osx/linux64/msys2/vs]
+Next, download the pre-built [TensorFlow2 C library](https://www.tensorflow.org/install/lang_c) and extract the following folders to their destination:
 
-To make this quick, you can also use a script which automates the download:
+~~~
+include/ --> libs/tensorflow2/include
+lib/ --> libs/tensorflow2/lib/[osx/linux64/msys2/vs]
+~~~
+
+To make this quick, you can use a script which automates the download:
+
 ```shell
 ./scripts/download_tensorflow.sh
 ```
-When opting for GPU support run
+When opting for GPU support set the `TYPE` script variable:
+
 ```shell 
 TYPE=gpu ./scripts/download_tensorflow.sh
 ```
 
+See <https://www.tensorflow.org/install/gpu> for more information on GPU support for TensorFlow.
+
 ### Ubuntu / Linux
 
-Add the lib folder to the LD_LIBRARY_PATH. Replace OF_ROOT with the path to your openFrameworks installation.
+To run applications using ofxTensorFlow2, the path to the addon's `lib/tensorflow` subdirectory needs to be added to the `LD_LIBRARY_PATH` environment variable.
+
+#### Temporary Lib Path Export
+
+The path can be temporarily added via an export on the commandline (replace `OF_ROOT` with the path to your openFrameworks installation) before running the application:
+
 ```bash
 export LD_LIBRARY_PATH=OF_ROOT/addons/ofxTensorFlow2/libs/tensorflow2/lib/linux64/:$LD_LIBRARY_PATH
+make run
 ```
-[optional] write the previous line to the end of `~/.bashrc` for permanent modification of LD_LIBRARY_PATH
 
-[optional] for GPU support: refer to https://www.tensorflow.org/install/gpu and install driver and packages
+This step can also be automated by additional makefile targets provided by the `addon_targets.mk` file. To use it, add the following to the end of the project's `Makefile`:
+
+```makefile
+# ofxTensorFlow2
+include $(OF_ROOT)/addons/ofxTensorFlow2/addon_targets.mk
+```
+
+This adds two additional targets, one for Debug and the other for Release, which run the application after exporting the `LD_LIBRARY_PATH`. For example, to run a debug version of the application:
+
+    make RunDebugTF2
+
+ Similarly, for release builds use:
+
+    make RunReleaseTF2
+
+#### Permanent Lib Path Export
+
+For a permanent "set and forget" solution, the export line can be added to the end of your shell's user startup script, ie. `~/.zshrc` or `/.bash_profile` to add the path whenever a new shell session is opened. Once set, the manual export is no longer required when running an ofxTensorFlow2 application.
 
 #### Using libtensorflow Installed to the System
 
 To use libtensorflow installed to a system path, ie. by your system's package manager, the path(s) need to be added to the project header include and library search paths and the libraries need to be passed to the linker.
 
 1. If libtensorflow was downloaded to `libs/tensorflow2/`, remove all files in this directory
-2. Edit `addon_config.mk` under the "linux64" build taget: comment the "local path" sections
+2. Edit `addon_config.mk` under the "linux64" build target: comment the "local path" sections
 3. If using the OF Project Generator, (re)regenerate project files for projects using the addon
 
 _Note: When using libtensorflow installed to the system, the `LD_LIBRARY_PATH` export is not needed._
@@ -112,16 +177,14 @@ Enable C++14 features by changing `-std=c+=11` to `-std=c++14` on line 142 in `O
 PLATFORM_CXXFLAGS += -std=c++14
 ```
 
-When building an application using the makefiles, an additional step is required to install & configure the tensorflow2 dylibs into the project .app. This is partially automated by the `scripts/macos_install_libs.sh` script which is called from the `addon_targets.mk` file. To use it, add the following to the end of the Project's `Makefile`:
+When building an application using the makefiles, an additional step is required to install & configure the tensorflow2 dylibs into the project .app. This is partially automated by the `scripts/macos_install_libs.sh` script which is called from the `addon_targets.mk` file. To use it, add the following to the end of the project's `Makefile`:
 
 ```makefile
 # ofxTensorFlow2
 include $(OF_ROOT)/addons/ofxTensorFlow2/addon_targets.mk
 ```
 
-This adds two additional targets, one for Debug and the other for Release, which call the script to install the .dylibs.
-
-For example, to build a debug version of the application *and* install the libs, simply run:
+This adds two additional targets, one for Debug and the other for Release, which call the script to install the .dylibs. For example, to build a debug version of the application *and* install the libs, simply run:
 
     make DebugTF2
 
@@ -139,60 +202,134 @@ This will also work when building the normal targets using two steps, for exampl
 To use libtensorflow installed to a system path, ie. from a package manager like Homebrew, the path(s) need to be added to the project header include and library search paths and the libraries need to be passed to the linker. The `scripts/macos_install_libs.sh` is not needed.
 
 1. If libtensorflow was downloaded to `libs/tensorflow2/`, remove all files in this directory
-2. Edit `addon_config.mk` under the "osx" build taget:
+2. Edit `addon_config.mk` under the "osx" build target:
   * comment the "local path" sections and uncomment the "system path" sections
   * If needed, change the path for your system, ie. `/usr/local` to `/usr/opt` etc
 3. If using the OF Project Generator, (re)regenerate project files for projects using the addon
 
-## Usage
-Each example contains code to create a neural network and export it as SavedModel. Neural networks require training which may take hours or days in order to produce a satisfying output.
-Therefor, we provide already trained models. Check the assets of this repository to find the trained models.
 
-When referring to the SavedModel we mean the parent folder of the exported neural network containing two subfolders assets and variables and a saved_model.pb file. Do not change anything inside this folder. However renaming the folder is permited.
 
-By default, the example applications try to load a SavedModel named "model" (or "models" depending on the example) located in "example_XXXX/bin/data/". When downloading or training a model please make sure the SavedModel is at this location and has the right name.
+Running the Example Projects
+----------------------------
 
-Afterwards compile and execute the example. For example using make:
-```bash
+The example projects are located in the `example_XXXX` directories.
+
+### Downloading Pre-Trained Models
+
+Each example contains code to create a neural network and export it in the [SavedModel format](https://www.tensorflow.org/guide/saved_model). Neural networks require training which may take hours or days in order to produce a satisfying output, therefore we provide pre-trained models:
+
+_TODO: Update this with a link for GitHub?_
+
+Check the assets of this repository to find the a zip for for each example.
+
+By default, the example applications try to load a SavedModel named "model" (or "models" depending on the example) located in `example_XXXX/bin/data/`. When downloading or training a model, please make sure the SavedModel is at this location and has the right name, otherwise update the model load path string.
+
+### Generating Project Files
+
+Project files for the examples are not included so you will need to generate the project files for your operating system and development environment using the OF ProjectGenerator which is included with the openFrameworks distribution.
+
+To (re)generate project files for an *existing* project:
+
+* click the "Import" button in the ProjectGenerator
+* navigate the to base folder for the project ie. "luaExample"
+* click the "Update" button
+
+If everything went Ok, you should now be able to open the generated project and build/run the example.
+
+### macOS
+
+Open the Xcode project, select the "example_XXXX Debug" scheme, and hit "Run".
+
+For a Makefile build, build and run an example on the terminal:
+
+```shell
 cd example_XXXX
-make
+make ReleaseTF2
 make RunRelease
 ```
 
-**Note**: When creating a new project make sure to copy the Makefile from any example provided and the name of this addon is given in addons.make 
+### Linux
 
+For a Makefile build, build and run an example on the terminal:
 
-## Training (GPU support recommended)
+```shell
+cd example_XXXX
+make Release
+make RunReleaseTF2
+```
+
+Create a New ofxTensorFlow2 Project
+-----------------------------------
+
+Simply select ofxTensorFlow2 from the available addons in the OF ProjectGenerator before generating a new project. Make sure that all dependencies are installed and downloaded beforehand, otherwise the PG may miss some paths.
+
+Training Models
+---------------
+
+_Note: GPU support recommended_
+
+#### Model Format
+
+ofxTensorFlow2 works with the TensorFlow 2 [SavedModel format](https://www.tensorflow.org/guide/saved_model).
+
+When referring to the "SavedModel" we mean the parent folder of the exported neural network containing two subdirectory assets and variables and a `saved_model.pb` file. Do not change anything inside this folder, however renaming the folder is permitted as long as you you change the file path used within the application to match.
+
 #### Requirements
-python3: for ease of use install [anaconda](https://docs.anaconda.com/anaconda/install/) or the smaller [miniconda](https://docs.conda.io/en/latest/miniconda.html) (both include conda which we will use to create virtual environments, however only python required)
 
-pip3
-```bash
+* python3
+* [anaconda](https://docs.anaconda.com/anaconda/install/) / [miniconda](https://docs.conda.io/en/latest/miniconda.html) (suggested)
+
+For building a dataset and training a model for use with the ofxTensorFlow2 addon, use Python 3. For ease of use with dependency handling, using virtual environments is recommended. One such tool for this is anaconda or the smaller miniconda.
+
+Install anaconda or miniconda, then install the pip3 package manager using `conda`:
+
+```shell
 conda install pip3
 ```
 
-#### Execution
-For each example create a new virtual environment. We will use conda to do so:
-```bash
+#### Included Example Projects
+
+For each example project, create a new virtual environment. We will use `conda` to do so:
+
+```shell
+
 cd example_XXXX/python
 conda create -n myEnv python=3.7
 conda activate myEnv
 ```
-Install required python packages
-```bash
+
+Install required python packages:
+
+```shell
 pip3 install -r requirements.txt
 ```
+
 Run the python script to start training
-```bash
+```shell
 python3 main.py
 ```
-To configure the training process refer to the README of each example.
 
+To configure the training process refer to the README.md of each example.
 
-## Known issues
+#### Creating Your Own Project Models
 
-TODO: chnage this to a GitHub link since the Gitlab project is not public?
-please take a look at the [issues](https://hertz-gitlab.zkm.de/Hertz-Lab/Research/intelligent-museum/ofxTensorFlow2/-/issues?scope=all&utf8=%E2%9C%93&state=all)
+_TODO: Add some basic info on how to start from scratch with your own project. Perhaps suggestions for directory & file structure as well as notes on adapting existing models, etc._
+
+#### References
+
+TensorFlow beginner tutorial: <https://www.tensorflow.org/tutorials>
+
+Developing
+----------
+
+You can help develop ofxTensorFlow2 on GitHub: <https://github.com/zkmkalrsruhe/ofxTensorFlow2>
+
+Create an account, clone or fork the repo, then request a push/merge.
+
+If you find any bugs or suggestions please log them to GitHub as well.
+
+Known Issues
+------------
 
 ### EXC_BAD_INSTRUCTION Crash on macOS
 
@@ -215,7 +352,11 @@ sysctl -a | grep cpu.feat
 sysctl -a | grep cpu.feat | grep AVX
 ```
 
-## The Intelligent Museum
+Systems confirmed: Mac Pro (Mid 2012)
+
+The Intelligent Museum
+----------------------
+
 An artistic-curatorial field of experimentation for deep learning and visitor participation
 
 The [ZKM | Center for Art and Media](https://zkm.de/en) and the [Deutsches Museum Nuremberg](https://www.deutsches-museum.de/en/nuernberg/information/) cooperate with the goal of implementing an AI-supported exhibition. Together with researchers and international artists, new AI-based works of art will be realized during the next four years (2020-2023).  They will be embedded in the AI-supported exhibition in both houses. The Project „The Intelligent Museum“ is funded by the Digital Culture Programme of the [Kulturstiftung des Bundes](https://www.kulturstiftung-des-bundes.de/en) (German Federal Cultural Foundation).
