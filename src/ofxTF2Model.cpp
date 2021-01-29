@@ -28,7 +28,7 @@ ofxTF2Model::~ofxTF2Model(){
 }
 
 bool ofxTF2Model::load(const std::string & modelPath) {
-	clear();
+	ofxTF2Model::clear();
 	std::string path = ofToDataPath(modelPath);
 	if (!ofDirectory::doesDirectoryExist(path)){
 		ofLogError() << "ofxTF2Model: model path not found: " << modelPath;
@@ -45,7 +45,6 @@ bool ofxTF2Model::load(const std::string & modelPath) {
 	ofLogVerbose() << "ofxTF2Model: loaded model: " << modelPath_;
 	return true;
 }
-
 
 void ofxTF2Model::clear() {
 	if (model_){

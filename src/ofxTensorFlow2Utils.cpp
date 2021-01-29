@@ -33,9 +33,55 @@ static setenv(const char *name, const char *value, int overwrite) {
 }
 #endif
 
+namespace ofxTF2 {
+
+std::vector<shape_t> getTensorShape(const cppflow::tensor & tensor){
+	return tensor.shape().get_data<shape_t>();
+}
+
+bool isSameShape (const std::vector<shape_t> & lhs,
+	const std::vector<shape_t> & rhs) {
+
+	if (lhs.size() != rhs.size()){
+			ofLogWarning() << "ofxTensorFlow2: incompatible amount of dimensions "
+							<< " for lhs " << std::to_string(lhs.size())
+							<< " and rhs " << std::to_string(rhs.size());
+			return false;
+	}
+	for (int i = 0; i < lhs.size(); i++) {
+		if (lhs[i] != rhs[i]){
+			ofLogWarning() << "ofxTensorFlow2: shape mismatch at dimension " << i
+							<< " for lhs " << vectorToString(lhs)
+							<< " and rhs " << vectorToString(rhs);
+			return false;
+		}
+	}
+	return true;
+}
+
+cppflow::tensor mapTensorValues(const cppflow::tensor & inputTensor, float inputMin,
+	float inputMax, float outputMin, float outputMax) {
+
+	if (fabs(inputMin - inputMax) < FLT_EPSILON){
+		ofLogWarning() << "ofxTensorFlow2: avoiding possible divide by zero, \
+			check inputMin and inputMax: " << inputMin << " " << inputMax;
+		return cppflow::tensor(-1);
+	} else {
+		// outVal = ((value - inputMin) / (inputMax - inputMin)
+		// outVal = outVal * (outputMax - outputMin) + outputMin);
+		float divider = inputMax - inputMin;
+		float multiplier = outputMax - outputMin;
+		auto result = cppflow::sub(inputTensor, inputMin);
+		result = cppflow::div(result, divider);
+		result = cppflow::mul(result, multiplier);
+		result = cppflow::add(result, outputMin);
+		return result;
+	}
+}
+
 // the TensorFlow log level is set via the TF_CPP_MIN_LOG_LEVEL env variable,
 // TF log const ints are defined in tensorflow/core/platform/default/logging.h
-void ofxTensorFlow2::setLogLevel(ofLogLevel level) {
+void setLogLevel(ofLogLevel level) {
 	int tfLogLevel;
 	switch(level) {
 		default:
@@ -56,56 +102,9 @@ void ofxTensorFlow2::setLogLevel(ofLogLevel level) {
 	const std::string n = "TF_CPP_MIN_LOG_LEVEL";
 	std::string v = ofToString(tfLogLevel);
 	if(setenv(n.c_str(), v.c_str(), 1) == -1) {
-		ofLogError() << "ofxTF2: unable to set TF_CPP_MIN_LOG_LEVEL: "
+		ofLogError() << "ofxTensorFlow2: unable to set TF_CPP_MIN_LOG_LEVEL: "
 		             << errno << " " << strerror(errno);
 	}
 }
-
-namespace ofxTF2 {
-
-	std::vector<shape_t> getTensorShape(const tensor & tensor){
-		return tensor.shape().get_data<shape_t>();
-	}
-
-	bool isSameShape (const std::vector<shape_t> & lhs, 
-		const std::vector<shape_t> & rhs) {
-			
-		if (lhs.size() != rhs.size()){
-				ofLogWarning() << "ofxTF2: incompatible amount of dimensions "
-								<< " for lhs " << std::to_string(lhs.size())
-								<< " and rhs " << std::to_string(rhs.size());
-				return false;
-		}
-		for (int i = 0; i < lhs.size(); i++) {
-			if (lhs[i] != rhs[i]){
-				ofLogWarning() << "ofxTF2: shape mismatch at dimension " << i
-								<< " for lhs " << vectorToString(lhs)
-								<< " and rhs " << vectorToString(rhs);
-				return false;
-			}
-		}
-		return true;
-	}
-
-	tensor mapTensorValues(const tensor & inputTensor, float inputMin,
-		float inputMax, float outputMin, float outputMax) {
-
-		if (fabs(inputMin - inputMax) < FLT_EPSILON){
-			ofLogWarning() << "ofxTF2: avoiding possible divide by zero, \
-				check inputMin and inputMax: " << inputMin << " " << inputMax;
-			return tensor(-1);
-		} else {
-			// outVal = ((value - inputMin) / (inputMax - inputMin)
-			// outVal = outVal * (outputMax - outputMin) + outputMin);
-			float divider = inputMax - inputMin;
-			float multiplier = outputMax - outputMin;
-			auto result = sub(inputTensor, inputMin);
-			result = div(result, divider);
-			result = mul(result, multiplier);
-			result = add(result, outputMin);
-		
-			return result;
-		}
-	}
 
 };

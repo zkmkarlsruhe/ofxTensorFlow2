@@ -66,12 +66,12 @@ public:
 	virtual ~ofxTF2Model();
 
 	/// load a SavedModel directory relative to bin/data
-	/// directories for SavedModels includes assets, variables and a .pb file
+	/// directories for SavedModels include assets, variables, and a .pb file
 	/// returns true on success
-	bool load(const std::string & modelPath);
+	virtual bool load(const std::string & modelPath);
 
 	/// clear model
-	void clear();
+	virtual void clear();
     
     /// run model on input, blocks until returning output
     /// implement in a subclass to add custom pre / post processing
