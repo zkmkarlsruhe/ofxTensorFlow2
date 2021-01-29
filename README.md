@@ -15,7 +15,7 @@ WARRANTIES, see the file, "LICENSE.txt," in this distribution.
 Description
 -----------
 
-ofxTensorFlow2 is an openFrameworks addon for loading and running ML models trained with the Tensorflow 2 ML (Machine Learning) library:
+ofxTensorFlow2 is an openFrameworks addon for loading and running ML models trained with the TensorFlow 2 ML (Machine Learning) library:
 
 >TensorFlow is an end-to-end open source platform for machine learning. It has a comprehensive, flexible ecosystem of tools, libraries and community resources that lets researchers push the state-of-the-art in ML and developers easily build and deploy ML powered applications.
 
@@ -23,7 +23,7 @@ ofxTensorFlow2 is an openFrameworks addon for loading and running ML models trai
 
 The addon utilizes the TensorFlow 2 C library wrapped by the open source cppflow 2 C++ interface:
 
->Run TensorFlow models in c++ without Bazel, without TensorFlow installation and without compiling Tensorflow. Perform tensor manipulation, use eager execution and run saved models directly from C++.
+>Run TensorFlow models in c++ without Bazel, without TensorFlow installation and without compiling TensorFlow. Perform tensor manipulation, use eager execution and run saved models directly from C++.
 
 <https://github.com/serizba/cppflow/tree/cppflow2>
 
@@ -69,8 +69,8 @@ git clone git@hertz-gitlab.zkm.de:Hertz-Lab/Research/intelligent-museum/ofxTenso
 
 ### Dependencies
 
-* cppflow
-* tensorflow2
+* TensorFlow 2
+* cppflow 2
 
 Since TensorFlow does not ship a C++ Library we make use of [cppflow2](https://github.com/serizba/cppflow/tree/cppflow2), which is a C++ wrapper around the TensorFlow 2 C API.
 
@@ -84,8 +84,8 @@ git submodule update --init --recursive
 Next, download the pre-built [TensorFlow2 C library](https://www.tensorflow.org/install/lang_c) and extract the following folders to their destination:
 
 ~~~
-include/ --> libs/tensorflow2/include
-lib/ --> libs/tensorflow2/lib/[osx/linux64/msys2/vs]
+include/ --> libs/tensorflow/include
+lib/ --> libs/tensorflow/lib/[osx/linux64/msys2/vs]
 ~~~
 
 To make this quick, you can use a script which automates the download:
@@ -110,7 +110,7 @@ To run applications using ofxTensorFlow2, the path to the addon's `lib/tensorflo
 The path can be temporarily added via an export on the commandline (replace `OF_ROOT` with the path to your openFrameworks installation) before running the application:
 
 ```bash
-export LD_LIBRARY_PATH=OF_ROOT/addons/ofxTensorFlow2/libs/tensorflow2/lib/linux64/:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=OF_ROOT/addons/ofxTensorFlow2/libs/tensorflow/lib/linux64/:$LD_LIBRARY_PATH
 make run
 ```
 
@@ -137,7 +137,7 @@ For a permanent "set and forget" solution, the export line can be added to the e
 
 To use libtensorflow installed to a system path, ie. by your system's package manager, the path(s) need to be added to the project header include and library search paths and the libraries need to be passed to the linker.
 
-1. If libtensorflow was downloaded to `libs/tensorflow2/`, remove all files in this directory
+1. If libtensorflow was downloaded to `libs/tensorflow/`, remove all files in this directory
 2. Edit `addon_config.mk` under the "linux64" build target: comment the "local path" sections
 3. If using the OF Project Generator, (re)regenerate project files for projects using the addon
 
@@ -201,7 +201,7 @@ This will also work when building the normal targets using two steps, for exampl
 
 To use libtensorflow installed to a system path, ie. from a package manager like Homebrew, the path(s) need to be added to the project header include and library search paths and the libraries need to be passed to the linker. The `scripts/macos_install_libs.sh` is not needed.
 
-1. If libtensorflow was downloaded to `libs/tensorflow2/`, remove all files in this directory
+1. If libtensorflow was downloaded to `libs/tensorflow/`, remove all files in this directory
 2. Edit `addon_config.mk` under the "osx" build target:
   * comment the "local path" sections and uncomment the "system path" sections
   * If needed, change the path for your system, ie. `/usr/local` to `/usr/opt` etc

@@ -1,8 +1,8 @@
 # libs
-libs/tensorflow2/lib
-libs/tensorflow2/include
-libs/tensorflow2/LICENSE
-libs/tensorflow2/THIRD_PARTY_TF_C_LICENSES
+libs/tensorflow/lib
+libs/tensorflow/include
+libs/tensorflow/LICENSE
+libs/tensorflow/THIRD_PARTY_TF_C_LICENSES
 
 # examples
 example_*/bin/*

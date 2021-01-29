@@ -92,9 +92,9 @@ vs:
 linux64:
 	ADDON_LDFLAGS += -ltensorflow
 	
-	# local path: use libtensorflow in libs/tensorflow2
-	ADDON_INCLUDES += libs/tensorflow2/include
-	ADDON_LDFLAGS += -L${OF_ROOT}/addons/ofxTensorFlow2/libs/tensorflow2/lib/linux64
+	# local path: use libtensorflow in libs/tensorflow
+	ADDON_INCLUDES += libs/tensorflow/include
+	ADDON_LDFLAGS += -L${OF_ROOT}/addons/ofxTensorFlow2/libs/tensorflow/lib/linux64
 
 # not supported
 linuxarmv6l:
@@ -110,8 +110,8 @@ android/armeabi-v7a:
 
 # supported
 osx:
-	# local path: use libtensorflow in libs/tensorflow2
-	ADDON_INCLUDES += libs/tensorflow2/include
+	# local path: use libtensorflow in libs/tensorflow
+	ADDON_INCLUDES += libs/tensorflow/include
 	
 	# system path: use libtensorflow in /usr/local
 	#ADDON_INCLUDES += /usr/local/include

@@ -24,7 +24,7 @@ endif
 ifeq ($(PLATFORM_LIB_SUBPATH),linux64)
 
 # path to local tensorflow shared libraries
-TF2_LIBRARY_PATH=$(OF_ROOT)/addons/ofxTensorFlow2/libs/
+TF2_LIBRARY_PATH=$(OF_ROOT)/addons/ofxTensorFlow2/libs/tensorflow/lib/linux64
 
 # build Debug app and run using tensorflow2 lib path
 RunDebugTF2: Debug

@@ -22,7 +22,7 @@ HOST=https://storage.googleapis.com/tensorflow/libtensorflow
 
 # locations
 SRC=libtensorflow
-DEST=../libs/tensorflow2
+DEST=../libs/tensorflow
 
 ##### detect
 
