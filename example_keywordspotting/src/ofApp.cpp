@@ -23,12 +23,27 @@ void ofApp::setup() {
 	ofSetCircleResolution(80);
 	ofBackground(54, 54, 54);
 
-	model = new cppflow::model(ofToDataPath("model"));
+	model.load("model");
+
+	downsamplingFactor = 3;
+	bufferSize = 1024;
+	bufferSizeDownsampled = bufferSize / downsamplingFactor;
+	samplingRate = 48000;
+
+	inputSeconds = 1;
+	inputSamplingRate = 16000;
+	inputSize = inputSamplingRate * inputSeconds;
+
+	recordingCounterMax = samplingRate / bufferSize;
+	minConfidence = 0.75;
+
 	previousBuffer.resize(bufferSize);
 	sample.resize(inputSize);
 
 	volHistory.assign(400, 0.0);
-		
+	
+
+	curVol		 = 0.0;
 	smoothedVol  = 0.0;
 	scaledVol    = 0.0;
 	volThreshold = 25;
@@ -56,7 +71,7 @@ void ofApp::setup() {
 
 	// neural network warm up
 	auto test = cppflow::fill({1, 16000}, 1.0f);
-	output = (*model)(test);
+	output = model.runModel(test);
 	ofLog() << "setup done";
 }
 
@@ -74,27 +89,20 @@ void ofApp::update(){
 	}
 
 	if(trigger) {
+		
+		// do inference
+		int argMax;
+		float prob;
+		model.classify(sample, argMax, prob);
 
-		ofLog() << "convert: " << sample.size();
-
-		// convert recorded sample to a single batch
-		cppflow::tensor input(sample, {1, 16000});
-
-		ofLog() << "inference";
-		// inference
-		auto output_vector = (*model)(input).get_data<float>();
-
-		ofLog() << "inference done";
-		// postprocessing
-		auto maxElem = std::max_element(output_vector.begin(), output_vector.end());
-		int argMax = std::distance(output_vector.begin(), maxElem);
-		if(*maxElem >= minConfidence) {
+		// only display label when probabilty is high enough
+		if(prob >= minConfidence) {
 			displayLabel = labelsMap[argMax];
 		}
 
 		// label look up
-		ofLog() << "Label: " << labelsMap[argMax];
-		ofLog() << "confidence: " << *maxElem;
+		ofLog() << "Label: " << labelsMap[argMax]
+				<< " probabilty: " << prob;
 		
 		// release the trigger signal
 		trigger = false;
@@ -112,12 +120,9 @@ void ofApp::draw(){
 	ofPushStyle();
 		ofPushMatrix();
 		ofTranslate(565, 170, 0);
-			
-		ofSetColor(225);
-		
-		ofSetColor(245, 58, 135);
-		ofFill();		
-		ofDrawCircle(200, 200, scaledVol * 190.0f);
+
+		// draw the threshold line
+		ofDrawLine(0, 400 - volThreshold, 400, 400-volThreshold);
 		
 		// lets draw the volume history as a graph
 		ofBeginShape();
@@ -136,25 +141,27 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::audioIn(ofSoundBuffer & input){
-	
-	float curVol = 0.0;
+
+	previousBuffers.push(input.getBuffer());
 
 	// calculate the root mean square which is a rough way to calculate volume
+	float sumVol = 0.0;
 	for(size_t i = 0; i < input.getNumFrames(); i++){
 		float vol = input[i]*0.5;
-		curVol += vol * vol;
+		sumVol += vol * vol;
 	}
+	curVol = sumVol;
 	curVol /= (float)input.getNumFrames();
 	curVol = sqrt(curVol);
-	smoothedVol *= 0.93;
-	smoothedVol += 0.07 * curVol;
+	smoothedVol *= 0.5;
+	smoothedVol += 0.5 * curVol;
 
 	for(size_t i = 0; i < previousBuffer.size(); i++){
 		previousBuffer[i] = input[i];
 	}
 
 	// trigger recording
-	if (ofMap(curVol, 0.0, 0.17, 0.0, 1.0, true) * 100 >= volThreshold && enable){
+	if (ofMap(smoothedVol, 0.0, 0.17, 0.0, 1.0, true) * 100 >= volThreshold && enable){
 		enable = false;
 		recordingCounter = 1;
 		ofLog() << "recording";
