@@ -21,14 +21,17 @@
 namespace ofxTF2{
 
 	// hack to implicitly convert a std::vector<int32_t> to a std::vector<int64_t>
-	class shape_t : public std::vector<int32_t>{
-		public:
-		shape_t(const std::vector<int32_t> & vector) : std::vector<int32_t>(vector) {}
-		shape_t(const std::initializer_list<int32_t> & initList) : std::vector<int32_t>(initList) {}
-		operator std::vector<int64_t>() const {
-			return std::vector<int64_t>(this->begin(), this->end());
-		}
-	};
+	// class shape_t : public std::vector<int32_t>{
+	// 	public:
+	// 	shape_t(const std::vector<int32_t> & vector) : std::vector<int32_t>(vector) {}
+	// 	shape_t(const std::initializer_list<int32_t> & initList) : std::vector<int32_t>(initList) {}
+	// 	operator std::vector<int64_t>() const {
+	// 		return std::vector<int64_t>(this->begin(), this->end());
+	// 	}
+	// };
+
+	typedef int64_t shape_t;
+	typedef std::vector<shape_t> shapeVector;
 
 	/// convert vector to string with a similar format to cppflow
 	/// ex: {1, 2, 3} -> "[1, 2, 3, 4]"
@@ -39,12 +42,14 @@ namespace ofxTF2{
 	cppflow::tensor mapTensorValues(const cppflow::tensor & inputTensor, float inputMin,
 		float inputMax, float outputMin, float outputMax);
 
-	// returns the shape of a tensor
-	shape_t getTensorShape(const cppflow::tensor & tensor);
+	// returns the shape of a tensor as std::vector<int64_t>
+	// as we found that a shape must be retrieved as int32_t
+	// we convert from int32_t to stick with the convention of int64_t
+	shapeVector getTensorShape(const cppflow::tensor & tensor);
 
 	// returns true if number and size of dimensions are the same
-	bool isSameShape(const shape_t & lhs, 
-		const shape_t & rhs);
+	bool isSameShape(const shapeVector & lhs, 
+		const shapeVector & rhs);
 
 	// converts a std::vector to a tensor
 	// expects shape in HWC format (height, width, channel)
@@ -53,7 +58,7 @@ namespace ofxTF2{
 	// returns tensor(-1) if not successful
 	template <typename T>
 	cppflow::tensor vectorToTensor(const std::vector<T> & srcVector, 
-		const shape_t & shape = shape_t{0});
+		const shapeVector & shape = shapeVector{0});
 
 	// converts ofPixels to a tensor
 	// only supports HWC output format (height, width, channel)
@@ -110,9 +115,9 @@ namespace ofxTF2{
 
 	template <typename T>
 	cppflow::tensor vectorToTensor(const std::vector<T> & srcVector, 
-		const shape_t & shape) {
+		const shapeVector & shape) {
 		// if shape is (0) create a flat vector
-		if (shape == shape_t{0})
+		if (shape == shapeVector{0})
 			return cppflow::tensor(srcVector);
 		else
 			return cppflow::tensor(srcVector, shape);;
@@ -209,8 +214,8 @@ namespace ofxTF2{
 				return false;
 		}
 		// check if shapes matches
-		shape_t tensorShape = {tensor_w, tensor_h, tensor_c};
-		shape_t pixelsShape = {pixels_w, pixels_h, pixels_c};
+		shapeVector tensorShape = {tensor_w, tensor_h, tensor_c};
+		shapeVector pixelsShape = {pixels_w, pixels_h, pixels_c};
 		if (!isSameShape(tensorShape, pixelsShape)) {
 			return false;
 		}

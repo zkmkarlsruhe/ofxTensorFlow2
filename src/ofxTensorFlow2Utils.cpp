@@ -35,12 +35,12 @@ static setenv(const char *name, const char *value, int overwrite) {
 
 namespace ofxTF2 {
 
-shape_t getTensorShape(const cppflow::tensor & tensor){
-	return tensor.shape().get_data<int32_t>();
+shapeVector getTensorShape(const cppflow::tensor & tensor){
+	return cast(tensor.shape(), TF_INT32, TF_INT64).get_data<int64_t>();
 }
 
-bool isSameShape (const shape_t & lhs,
-	const shape_t & rhs) {
+bool isSameShape (const shapeVector & lhs,
+	const shapeVector & rhs) {
 
 	if (lhs.size() != rhs.size()){
 			ofLogWarning() << "ofxTensorFlow2: incompatible amount of dimensions "
