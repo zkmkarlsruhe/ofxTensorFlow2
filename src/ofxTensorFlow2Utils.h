@@ -18,10 +18,17 @@
 #include "ofImage.h"
 #include "ofLog.h"
 
-	
-typedef std::vector<int32_t> shape_t;
-
 namespace ofxTF2{
+
+	// hack to implicitly convert a std::vector<int32_t> to a std::vector<int64_t>
+	class shape_t : public std::vector<int32_t>{
+		public:
+		shape_t(const std::vector<int32_t> & vector) : std::vector<int32_t>(vector) {}
+		shape_t(const std::initializer_list<int32_t> & initList) : std::vector<int32_t>(initList) {}
+		operator std::vector<int64_t>() const {
+			return std::vector<int64_t>(this->begin(), this->end());
+		}
+	};
 
 	/// convert vector to string with a similar format to cppflow
 	/// ex: {1, 2, 3} -> "[1, 2, 3, 4]"
@@ -46,7 +53,7 @@ namespace ofxTF2{
 	// returns tensor(-1) if not successful
 	template <typename T>
 	cppflow::tensor vectorToTensor(const std::vector<T> & srcVector, 
-		shape_t shape = shape_t{0});
+		const shape_t & shape = shape_t{0});
 
 	// converts ofPixels to a tensor
 	// only supports HWC output format (height, width, channel)
@@ -103,12 +110,12 @@ namespace ofxTF2{
 
 	template <typename T>
 	cppflow::tensor vectorToTensor(const std::vector<T> & srcVector, 
-		shape_t shape) {
+		const shape_t & shape) {
 		// if shape is (0) create a flat vector
 		if (shape == shape_t{0})
-			return tensor(srcVector);
+			return cppflow::tensor(srcVector);
 		else
-			return tensor(srcVector, shape);;
+			return cppflow::tensor(srcVector, shape);;
 	}
 
 	template <typename T>
@@ -202,8 +209,9 @@ namespace ofxTF2{
 				return false;
 		}
 		// check if shapes matches
-		if (!isSameShape( {tensor_w, tensor_h, tensor_c},
-							{pixels_w, pixels_h, pixels_c}) ) {
+		shape_t tensorShape = {tensor_w, tensor_h, tensor_c};
+		shape_t pixelsShape = {pixels_w, pixels_h, pixels_c};
+		if (!isSameShape(tensorShape, pixelsShape)) {
 			return false;
 		}
 		// copy to pixels
