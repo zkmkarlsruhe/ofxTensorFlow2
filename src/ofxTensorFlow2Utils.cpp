@@ -35,12 +35,12 @@ static setenv(const char *name, const char *value, int overwrite) {
 
 namespace ofxTF2 {
 
-std::vector<shape_t> getTensorShape(const cppflow::tensor & tensor){
-	return tensor.shape().get_data<shape_t>();
+shape_t getTensorShape(const cppflow::tensor & tensor){
+	return tensor.shape().get_data<int32_t>();
 }
 
-bool isSameShape (const std::vector<shape_t> & lhs,
-	const std::vector<shape_t> & rhs) {
+bool isSameShape (const shape_t & lhs,
+	const shape_t & rhs) {
 
 	if (lhs.size() != rhs.size()){
 			ofLogWarning() << "ofxTensorFlow2: incompatible amount of dimensions "
@@ -68,7 +68,7 @@ cppflow::tensor mapTensorValues(const cppflow::tensor & inputTensor, float input
 		return cppflow::tensor(-1);
 	} else {
 		// outVal = ((value - inputMin) / (inputMax - inputMin)
-		// outVal = outVal * (outputMax - outputMin) + outputMin);
+		// outVal = outVal * (outputMax - outputMin) + outputMin;
 		float divider = inputMax - inputMin;
 		float multiplier = outputMax - outputMin;
 		auto result = cppflow::sub(inputTensor, inputMin);
