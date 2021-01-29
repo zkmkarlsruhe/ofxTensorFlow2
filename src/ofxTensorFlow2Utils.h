@@ -32,7 +32,7 @@ namespace ofxTF2{
 
 	using namespace cppflow;
 	
-	// shape must be retrieved using uint32_t, however tensor() uses uint64_t
+	// shape must be retrieved using uint32_t, however tensor() uses int64_t
 	typedef uint32_t shape_t;
 
 
@@ -59,7 +59,7 @@ namespace ofxTF2{
 	// returns tensor(-1) if not successful
 	template <typename T>
 	tensor vectorToTensor(const std::vector<T> & srcVector, 
-		std::vector<uint64_t> shape);
+		std::vector<int64_t> shape = std::vector<int64_t>{0});
 
 	// converts ofPixels to a tensor
 	// only supports HWC output format (height, width, channel)
@@ -117,9 +117,9 @@ namespace ofxTF2{
 
 	template <typename T>
 	tensor vectorToTensor(const std::vector<T> & srcVector, 
-		std::vector<uint64_t> shape) {
+		std::vector<int64_t> shape) {
 		// if shape is (0) create a flat vector
-		if (shape == std::vector<uint64_t>{0})
+		if (shape == std::vector<int64_t>{0})
 			return tensor(srcVector);
 		else
 			return tensor(srcVector, shape);;
