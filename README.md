@@ -297,21 +297,26 @@ cd example_XXXX/python
 conda create -n myEnv python=3.7
 conda activate myEnv
 ```
-
-Install required python packages:
+With our virtual environment set up and activated we need to install the required python packages. A common package manager is pip. For each example we've listed the required packages using `pip3 freeze > requirements.txt`. You can easily install them by running:
 
 ```shell
 pip3 install -r requirements.txt
 ```
 
-Run the python script to start training
+As the training procedure and the way of configuring it varies a lot between the examples, please refer to the README.md provided in the python folder. Some may require to simply edit a config script and run:
 ```shell
 python3 main.py
 ```
-
-To configure the training process refer to the README.md of each example.
+while others may require to feed additional information to the main.oy script. 
 
 #### Creating Your Own Project Models
+If you want to create your own Deep Learning project, here are some tips to guide you along the way:
+- as you will be using Python choose a spezialized IDE, e.g. Spyder (included in Anaconda) or PyCharm. Make sure to set the virtual environment as the interpreter for this project. If you choose to create the virtual environment using conda you will find a directory _envs/_ in the installation folder of anaconda. This directory includes a folder for every virtual environment. Choose the right one and go to _bin/_ and select the binary _python_ as interpreter. This way the IDE can run and debug your projects.
+- get familiar with Python. The official (Python tutorial)[https://docs.python.org/3/tutorial/index.html] is a create place to start. Python has a lot of functions in its (standard library)[https://docs.python.org/3/library/index.html], but there are a lot of other external libraries to look out for:
+-- NumPy (efficient math algorithms and  data structures)
+-- Matplotlib (plotting in the style of Matlab)
+-- TensorFlow (ML library)
+- get familiar with Keras. Since TensorFlow v.2.0 Keras is the high level front-end of TensorFlow. It greatly reduces the effort of accessing common datastructures (like labeled pictures), defining a Neural Network architecture and observing the training process using callbacks.
 
 _TODO: Add some basic info on how to start from scratch with your own project. Perhaps suggestions for directory & file structure as well as notes on adapting existing models, etc._
 
