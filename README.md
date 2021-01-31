@@ -337,9 +337,11 @@ If you want to create your own Deep Learning project, here are some tips to guid
   - `requirements.txt`: contains required packages
 
 * Get familiar with __Machine Learning concepts__. There is plenty of free information out there! Here is a list of material to look into:
-  - [Coursera](coursera.org): created by ML expert Andrew Ng, lists free online courses for a lot of fields (including [Machine Learning](https://www.coursera.org/learn/machine-learning))
+  - [Coursera](coursera.org): founded by ML expert Andrew Ng, lists free online courses for a lot of fields (including Python and [Machine Learning](https://www.coursera.org/learn/machine-learning))
+  - [Deeplearning.ai](https://www.deeplearning.ai/): a website dedicated to Deep Learning - also founded by Andrew Ng.
+  - [Deep Learning book](https://www.deeplearningbook.org/): a free website accompanying the book "Deep Learning" by Ian Goodfellow (known for GANs).
   - [Stanford CS231](https://www.youtube.com/playlist?list=PL3FW7Lu3i5JvHM8ljYj-zLfQRF3EO8sYv): YouTube playlist of Stanford's Computer Vision course CS231.
-  - [Machine Learning Mastery](https://machinelearningmastery.com/): a popular blog about ML techniques. It focuses on the practical use.
+  - [Machine Learning Mastery](https://machinelearningmastery.com/): a popular blog about practical ML techniques. It focuses on the ease of use.
 
 * Get familiar with __TensorFlow's__ [__Tutorials__](https://www.tensorflow.org/tutorials). Besides learning how to write TensorFlow code, the tutorials will teach you ML concepts like overfitting and underfitting.
 
