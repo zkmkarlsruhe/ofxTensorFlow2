@@ -18,26 +18,31 @@ class FixedFifo : public std::queue<T, Container> {
         }
         std::queue<T, Container>::push(value);
     }
+	void setMaxLen(const int32_t maxLength=10) {maxLen = maxLength;}
 	private:
 	int32_t maxLen;
 };
 
-typedef FixedFifo<std::vector<float>> AudioBuffer;
+typedef std::vector<float> SimpleAudioBuffer;
+typedef FixedFifo<SimpleAudioBuffer> AudioBufferFifo;
 
 
 class AudioClassifier : public ofxTF2Model {
 
 	public:
 
-	template<typename T>
-	void classify(std::vector<T> sample, int & argMax, float & prob){
+	void classify(AudioBufferFifo & bufferFifo, const std::size_t downsamplingFactor,
+					int & argMax, float & prob){
+
+		// downsample and empty the incoming Fifo
+		downsample(bufferFifo, downsamplingFactor);
 
 		// convert recorded sample to a batch of size one
-		ofxTF2::shapeVector tensorShape {1, sample.size()};
-		cppflow::tensor input = ofxTF2::vectorToTensor<float>(sample, tensorShape);
+		ofxTF2::shapeVector tensorShape {1, static_cast<ofxTF2::shape_t>(sample_.size())};
+		auto input = ofxTF2::vectorToTensor<float>(sample_, tensorShape);
 
 		// inference
-		cppflow::tensor output = runModel(input);
+		auto output = runModel(input);
 
 		// convert the output to std::vector
 		std::vector<float> outputVector;
@@ -49,9 +54,40 @@ class AudioClassifier : public ofxTF2Model {
 		prob = *maxIt;
 	}
 
-	cppflow::tensor runModel(const cppflow::tensor & input) const {
-		// preprocessing: done inside the model (spectrogram, kapre)
-		// postprocessing: done inside the model (softmax)		
-		return ofxTF2Model::runModel(input); 
+	private: 
+
+	// downsample by an integer
+	void downsample(AudioBufferFifo & input, 
+					const std::size_t downsamplingFactor){
+		
+		// get the size of an element
+		const int bufferSize = input.front().size();
+		const int bufferSizeDownsampled = bufferSize / downsamplingFactor;
+
+		// allocate memory if neccessary
+		sample_.resize(input.size() * bufferSizeDownsampled);
+
+		// pop elements from the input buffer, downsample and save to flat buffer
+		int i = 0;
+		while(!input.empty()){
+
+			// get a buffer from fifo
+			const SimpleAudioBuffer & buffer = input.front();
+
+			// downsample by integer
+			for(int j = 0; j < bufferSizeDownsampled; j++){
+				int offset = j * downsamplingFactor;
+				float sum = 0.0; 
+				for(int k = 0; k < downsamplingFactor; k++){
+					sum += buffer[offset+k];
+				}
+				sample_[i*bufferSizeDownsampled + j] = sum / downsamplingFactor;
+			}
+			// remove buffer from fifo
+			input.pop();
+			i++;
+		}
 	}
+
+	SimpleAudioBuffer sample_;
 };

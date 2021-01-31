@@ -50,24 +50,26 @@ class ofApp : public ofBaseApp{
 		// downsamplingFactor = micSamplingRate / neuralNetworkInputSamplingRate 
 		std::size_t downsamplingFactor;
 		std::size_t bufferSize;
-		std::size_t bufferSizeDownsampled;
 		std::size_t samplingRate;
 		
-		// this buffer keeps the previous audio buffer since volume detection has some latency 
-		std::vector<float> previousBuffer;
-		AudioBuffer previousBuffers;
+		// since volume detection has some latency be buffer past buffers
+		AudioBufferFifo previousBuffers;
+		std::size_t numPreviousBuffers;
+		// sampleBuffers acts as a buffer for recording (could be fused)
+		AudioBufferFifo sampleBuffers;
+		std::size_t numBuffers;
 		
 		// volume
-		std::vector<float> volHistory;
 		float curVol;
 		float smoothedVol;
 		float scaledVol;
 		float volThreshold;
 
-		std::vector<float> sample;
+		// display
+		std::vector<float> volHistory;
 		std::string displayLabel;
 
-		// neural network
+		// neural network	
 		AudioClassifier model;
 		cppflow::tensor output;
 		std::size_t inputSeconds;
@@ -75,10 +77,9 @@ class ofApp : public ofBaseApp{
 		std::size_t inputSize;
 
 		// neural network control logic
+		std::size_t recordingCounter;
 		bool trigger;
 		bool enable;
 		bool recording;
-		int recordingCounter;
-		std::size_t recordingCounterMax;
 		float minConfidence;
 };
