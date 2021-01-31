@@ -34,7 +34,7 @@ Additional classes wrap the process of loading & running a model and utility fun
 Quick Start
 -----------
 
-Minimal quick start to clone cppflow and download pre-built TensorFlow 2 dynamic libraries, starting in the root openFrameworks folder:
+Minimal quick start for a Unix shell to clone cppflow, download pre-built TensorFlow 2 dynamic libraries and pre-trained example models, starting in the root openFrameworks folder:
 
 ```shell
 cd addons
@@ -42,13 +42,8 @@ git clone git@hertz-gitlab.zkm.de:Hertz-Lab/Research/intelligent-museum/ofxTenso
 cd ofxTensorFlow2
 git submodule update --init --recursive
 ./scripts/download_tensorflow.sh
+./scripts/download_example_models.sh
 ```
-
-To run the example projects, you will need a copy of the pre-trained ML models which you can download as ZIP files, either from the release page on GitHub or from a public shared link here:
-
-<https://cloud.zkm.de/index.php/s/gfWEjyEr9X4gyY6>
-
-Place each "model" or "models" folder into the respective examples' `bin/data` folder.
 
 For further information, please find detailed instructions below.
 
@@ -224,7 +219,12 @@ Each example contains code to create a neural network and export it in the [Save
 
 <https://cloud.zkm.de/index.php/s/gfWEjyEr9X4gyY6>
 
-Check the assets of this repository to find the a zip for for each example.
+To make this quick, a script is provided to download and install the models for each example (requires a Unix shell, curl, and unzip):
+
+```shell
+cd OF_ROOT/addons/ofxTensorFlow2
+./scripts/download_example_models.sh
+```
 
 By default, the example applications try to load a SavedModel named "model" (or "models" depending on the example) located in `example_XXXX/bin/data/`. When downloading or training a model, please make sure the SavedModel is at this location and has the right name, otherwise update the model load path string.
 
