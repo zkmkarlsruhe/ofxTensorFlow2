@@ -34,7 +34,7 @@ Additional classes wrap the process of loading & running a model and utility fun
 Quick Start
 -----------
 
-Minimal quick start to clone cppflow and download pre-built TensorFlow 2 dynamic libraries, starting in the root openFrameworks directory:
+Minimal quick start to clone cppflow and download pre-built TensorFlow 2 dynamic libraries, starting in the root openFrameworks folder:
 
 ```shell
 cd addons
@@ -48,7 +48,7 @@ To run the example projects, you will need a copy of the pre-trained ML models w
 
 <https://cloud.zkm.de/index.php/s/gfWEjyEr9X4gyY6>
 
-Place each "model" or "models" folder into the respective examples' `bin/data` directory.
+Place each "model" or "models" folder into the respective examples' `bin/data` folder.
 
 For further information, please find detailed instructions below.
 
@@ -109,7 +109,7 @@ See <https://www.tensorflow.org/install/gpu> for more information on GPU support
 
 ### Ubuntu / Linux
 
-To run applications using ofxTensorFlow2, the path to the addon's `lib/tensorflow` subdirectory needs to be added to the `LD_LIBRARY_PATH` environment variable.
+To run applications using ofxTensorFlow2, the path to the addon's `lib/tensorflow` subfolder needs to be added to the `LD_LIBRARY_PATH` environment variable.
 
 #### Temporary Lib Path Export
 
@@ -143,7 +143,7 @@ For a permanent "set and forget" solution, the export line can be added to the e
 
 To use libtensorflow installed to a system path, ie. by your system's package manager, the path(s) need to be added to the project header include and library search paths and the libraries need to be passed to the linker.
 
-1. If libtensorflow was downloaded to `libs/tensorflow/`, remove all files in this directory
+1. If libtensorflow was downloaded to `libs/tensorflow/`, remove all files in this folder
 2. Edit `addon_config.mk` under the "linux64" build target: comment the "local path" sections
 3. If using the OF Project Generator, (re)regenerate project files for projects using the addon
 
@@ -207,7 +207,7 @@ This will also work when building the normal targets using two steps, for exampl
 
 To use libtensorflow installed to a system path, ie. from a package manager like Homebrew, the path(s) need to be added to the project header include and library search paths and the libraries need to be passed to the linker. The `scripts/macos_install_libs.sh` is not needed.
 
-1. If libtensorflow was downloaded to `libs/tensorflow/`, remove all files in this directory
+1. If libtensorflow was downloaded to `libs/tensorflow/`, remove all files in this folder
 2. Edit `addon_config.mk` under the "osx" build target:
   * comment the "local path" sections and uncomment the "system path" sections
   * If needed, change the path for your system, ie. `/usr/local` to `/usr/opt` etc
@@ -276,11 +276,11 @@ _Note: GPU support recommended_
 
 ofxTensorFlow2 works with the TensorFlow 2 [SavedModel format](https://www.tensorflow.org/guide/saved_model).
 
-When referring to the "SavedModel" we mean the parent folder of the exported neural network containing two subdirectory assets and variables and a `saved_model.pb` file. Do not change anything inside this folder, however renaming the folder is permitted as long as you you change the file path used within the application to match.
+When referring to the "SavedModel" we mean the parent folder of the exported neural network containing two subfolder assets and variables and a `saved_model.pb` file. Do not change anything inside this folder, however renaming the folder is permitted as long as you you change the file path used within the application to match.
 
 #### Requirements
 
-* python3
+* Python 3
 * [anaconda](https://docs.anaconda.com/anaconda/install/) / [miniconda](https://docs.conda.io/en/latest/miniconda.html) (suggested)
 
 For building a dataset and training a model for use with the ofxTensorFlow2 addon, use Python 3. For ease of use with dependency handling, using virtual environments is recommended. One such tool for this is anaconda or the smaller miniconda.
@@ -301,47 +301,51 @@ cd example_XXXX/python
 conda create -n myEnv python=3.7
 conda activate myEnv
 ```
+
 With our virtual environment set up and activated we need to install the required python packages. A common package manager is pip. For each example we've listed the required packages using `pip3 freeze > requirements.txt`. You can easily install them by running:
 
 ```shell
 pip3 install -r requirements.txt
 ```
 
-As the training procedure and the way of configuring it varies a lot between the examples, please refer to the README.md provided in the python folder. Some may require to simply edit a config script and run:
+As the training procedure and the way of configuring it varies a lot between the examples, please refer to the README.md provided in the `python` folder. Some may require to simply edit a config script and run:
+
 ```shell
 python3 main.py
 ```
-while others may require to feed additional information to the main.oy script. 
+
+Others may require to feed additional information to the `main.py` script. 
 
 #### Creating Your Own Project Models
+
 If you want to create your own Deep Learning project, here are some tips to guide you along the way:
-- get an __IDE__. As you will be using Python, choose a specialized IDE, e.g. Spyder (included in Anaconda) or PyCharm. Make sure to set the virtual environment as the interpreter for this project. If you choose to create the virtual environment using conda you will find a directory _envs/_ in the installation folder of anaconda. This directory includes a folder for every virtual environment. Choose the right one and go to _bin/_ and select the binary _python_ as interpreter. This way the IDE can run and debug your projects.
-- get familiar with __Python__. The official [Python tutorial](https://docs.python.org/3/tutorial/index.html) is a great place to start. Python has a lot of functions in its [standard library](https://docs.python.org/3/library/index.html), but there are a lot of other external packages to look out for:
-  - NumPy (efficient math algorithms and  data structures)
+
+* Get an __IDE__ (Integrated Development Environment) aka fancy text editor for development. As you will be using Python, choose a specialized IDE, e.g. Spyder (included in Anaconda) or PyCharm. Make sure to set the virtual environment as the interpreter for this project. If you choose to create the virtual environment using conda you will find a subfolder `envs` in the installation folder of anaconda. This includes a folder for every virtual environment. Choose the right one and go to `bin` and select the binary _python_ as interpreter. This way the IDE can run and debug your projects.
+
+* Get familiar with __Python__. The official [Python tutorial](https://docs.python.org/3/tutorial/index.html) is a great place to start. Python has a lot of functions in its [standard library](https://docs.python.org/3/library/index.html), but there are a lot of other external packages to look out for:
+  - NumPy (efficient math algorithms and data structures)
   - Matplotlib (plotting in the style of Matlab)
-  - TensorFlow (ML library)
-- get familiar with __Keras__. Since TensorFlow v.2 Keras is the high level 
-front-end of TensorFlow. It greatly reduces the effort of accessing common data 
-structures (like labeled pictures), defining a Neural Network architecture and 
-observing the training process using callbacks. Besides that, you can always call TensorFlow's core functions such as data pipelines.
-- get some __structure__ for your project. Your project could look a little bit like this:
-  - data/: stores scripts to download and maybe process some data
-  - src/: contains python code for the model, preprocessing and train, test and 
-eval procedures.
-  - main.py: often serves as a front to call the train, eval or test scripts
-  - config.py: stores high level parameters such as learning rate, batch size, etc.
-Edit this file for different experiments. Other formats than .py are fine too, 
-but it's very easy to integrate. It's a good choice to save this file along with 
-trained models.
-  - requirements.txt: contains required packages
-- get familiar with __Machine Learning concepts__. There is plenty of free information out there! Here is a list of material to look into:
+  - TensorFlow 2 (ML library)
+
+* Get familiar with __Keras__. Since TensorFlow 2, [Keras](https://keras.io) is the high level front-end of TensorFlow. It greatly reduces the effort of accessing common data structures (like labeled pictures), defining a Neural Network architecture and observing the training process using callbacks. Besides that, you can always call TensorFlow's core functions such as data pipelines.
+
+* Get some __structure__ for your project. Your project could look a little bit like this:
+  - `data`: stores scripts to download and maybe process some data
+  - `src`: contains Python code for the model, preprocessing and train, test and eval procedures.
+  - `main.py`: often serves as a front to call the train, eval or test scripts
+  - `config.py`: stores high level parameters such as learning rate, batch size, etc. Edit this file for different experiments. Formats other than .py are fine too, but it's very easy to integrate. It's a good choice to save this file along with trained models.
+  - `requirements.txt`: contains required packages
+
+* Get familiar with __Machine Learning concepts__. There is plenty of free information out there! Here is a list of material to look into:
   - [Coursera](coursera.org): created by ML expert Andrew Ng, lists free online courses for a lot of fields (including [Machine Learning](https://www.coursera.org/learn/machine-learning))
   - [Stanford CS231](https://www.youtube.com/playlist?list=PL3FW7Lu3i5JvHM8ljYj-zLfQRF3EO8sYv): YouTube playlist of Stanford's Computer Vision course CS231.
   - [Machine Learning Mastery](https://machinelearningmastery.com/): a popular blog about ML techniques. It focuses on the practical use.
-- get familiar with __TensorFlow's__ [__Tutorials__](https://www.tensorflow.org/tutorials). Besides learning how to write TensorFlow code, the tutorials will teach you ML concepts like over- and underfitting.
-- get to know common __datasets__. A great place to start is [Kaggle](kaggle.com). Here you can find thousands of datasets and accompanying code (in form of pyhton notebooks that run in your browser).
-- get __inspired__ and risk making __errors__! We can not help you with the latter but checkout this [repo](https://github.com/vibertthio/awesome-machine-learning-art) for some inspiration.
 
+* Get familiar with __TensorFlow's__ [__Tutorials__](https://www.tensorflow.org/tutorials). Besides learning how to write TensorFlow code, the tutorials will teach you ML concepts like overfitting and underfitting.
+
+* Get to know common __datasets__. A great place to start is [Kaggle](kaggle.com). Here you can find thousands of datasets and accompanying code (in form of Python notebooks that run in your browser).
+
+* Get __inspired__ and risk making __errors__! We can not help you with the latter but check out this [repo](https://github.com/vibertthio/awesome-machine-learning-art) for some inspiration.
 
 Developing
 ----------
