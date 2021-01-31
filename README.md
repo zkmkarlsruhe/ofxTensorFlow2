@@ -36,7 +36,7 @@ Quick Start
 
 Minimal quick start to clone cppflow and download pre-built TensorFlow 2 dynamic libraries, starting in the root openFrameworks directory:
 
-```bash
+```shell
 cd addons
 git clone git@hertz-gitlab.zkm.de:Hertz-Lab/Research/intelligent-museum/ofxTensorFlow2.git
 cd ofxTensorFlow2
@@ -44,7 +44,13 @@ git submodule update --init --recursive
 ./scripts/download_tensorflow.sh
 ```
 
-Please find detailed instructions below.
+To run the example projects, you will need a copy of the pre-trained ML models which you can download as ZIP files, either from the release page on GitHub or from a public shared link here:
+
+<https://cloud.zkm.de/index.php/s/gfWEjyEr9X4gyY6>
+
+Place each "model" or "models" folder into the respective examples' `bin/data` directory.
+
+For further information, please find detailed instructions below.
 
 _Note: The TensorFlow download script grabs the CPU-optimized build by default._
 
@@ -109,7 +115,7 @@ To run applications using ofxTensorFlow2, the path to the addon's `lib/tensorflo
 
 The path can be temporarily added via an export on the commandline (replace `OF_ROOT` with the path to your openFrameworks installation) before running the application:
 
-```bash
+```shell
 export LD_LIBRARY_PATH=OF_ROOT/addons/ofxTensorFlow2/libs/tensorflow/lib/linux64/:$LD_LIBRARY_PATH
 make run
 ```
@@ -207,8 +213,6 @@ To use libtensorflow installed to a system path, ie. from a package manager like
   * If needed, change the path for your system, ie. `/usr/local` to `/usr/opt` etc
 3. If using the OF Project Generator, (re)regenerate project files for projects using the addon
 
-
-
 Running the Example Projects
 ----------------------------
 
@@ -216,9 +220,9 @@ The example projects are located in the `example_XXXX` directories.
 
 ### Downloading Pre-Trained Models
 
-Each example contains code to create a neural network and export it in the [SavedModel format](https://www.tensorflow.org/guide/saved_model). Neural networks require training which may take hours or days in order to produce a satisfying output, therefore we provide pre-trained models:
+Each example contains code to create a neural network and export it in the [SavedModel format](https://www.tensorflow.org/guide/saved_model). Neural networks require training which may take hours or days in order to produce a satisfying output, therefore we provide pre-trained models which you can download as ZIP files, either from the release page on GitHub or from a public shared link here:
 
-_TODO: Update this with a link for GitHub?_
+<https://cloud.zkm.de/index.php/s/gfWEjyEr9X4gyY6>
 
 Check the assets of this repository to find the a zip for for each example.
 
