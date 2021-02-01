@@ -22,7 +22,7 @@ fi
 APP_PATH="$1"
 APP_NAME="$(basename ${APP_PATH%.*})"
 
-SRC="$OF_PATH/addons/ofxTensorFlow2/libs/tensorflow2/lib/osx"
+SRC="$OF_PATH/addons/ofxTensorFlow2/libs/tensorflow/lib/osx"
 DEST="$APP_PATH/Contents/Frameworks"
 
 echo "ofxTensorFlow2: install tensorflow libs to $APP_PATH $APP_NAME"
