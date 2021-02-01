@@ -341,7 +341,7 @@ Get familiar with __Keras__. Since TensorFlow 2, [Keras](https://keras.io) is th
 Get some __structure__ for your project. Your project could look a little bit like this:
 
 * `data`: stores scripts to download and maybe process some data
-* `src`: contains Python code for the model, preprocessing and train, test and eval procedures.
+* `src`: contains Python code for the model, preprocessing and train, test and eval procedures
 * `main.py`: often serves as a front to call the train, eval or test scripts
 * `config.py`: stores high level parameters such as learning rate, batch size, etc. Edit this file for different experiments. Formats other than .py are fine too, but it's very easy to integrate. It's a good choice to save this file along with trained models.
 * `requirements.txt`: contains required packages
@@ -351,10 +351,10 @@ Get some __structure__ for your project. Your project could look a little bit li
 Get familiar with __Machine Learning concepts__. There is plenty of free information out there! Here is a list of material to look into:
 
 * [Coursera](coursera.org): founded by ML expert Andrew Ng, lists free online courses for a lot of fields (including Python and [Machine Learning](https://www.coursera.org/learn/machine-learning))
-* [Deeplearning.ai](https://www.deeplearning.ai/): a website dedicated to Deep Learning - also founded by Andrew Ng.
-* [Deep Learning book](https://www.deeplearningbook.org/): a free website accompanying the book "Deep Learning" by Ian Goodfellow (known for GANs).
-* [Stanford CS231](https://www.youtube.com/playlist?list=PL3FW7Lu3i5JvHM8ljYj-zLfQRF3EO8sYv): YouTube playlist of Stanford's Computer Vision course CS231.
-* [Machine Learning Mastery](https://machinelearningmastery.com/): a popular blog about practical ML techniques. It focuses on the ease of use.
+* [Deeplearning.ai](https://www.deeplearning.ai/): a website dedicated to Deep Learning - also founded by Andrew Ng
+* [Deep Learning book](https://www.deeplearningbook.org/): a free website accompanying the book "Deep Learning" by Ian Goodfellow (known for GANs)
+* [Stanford CS231](https://www.youtube.com/playlist?list=PL3FW7Lu3i5JvHM8ljYj-zLfQRF3EO8sYv): YouTube playlist of Stanford's Computer Vision course CS231
+* [Machine Learning Mastery](https://machinelearningmastery.com/): a popular blog about practical ML techniques. It focuses on the ease of use
 
 ##### TensorFlow
 
