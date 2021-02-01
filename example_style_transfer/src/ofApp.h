@@ -21,6 +21,22 @@
 #define USE_LIVE_VIDEO // uncomment this to use a live camera
 					// otherwise, we'll use an image file
 
+class ImageToImageModel : public ofxTF2ThreadedModel {
+
+	public:
+	// override the runModel function of ofxTF2ThreadedModel
+	// this way the thread will take this augmented function 
+	// otherwise it would call runModel with no way of pre/post-processing
+    cppflow::tensor runModel(const cppflow::tensor & input) const override {
+		// cast data type and expand to batch size of 1
+		auto inputExpanded = cppflow::expand_dims(input, 0);
+		// call to super 
+		auto output = ofxTF2Model::runModel(inputExpanded);
+		// postprocess: last layer = (tf.nn.tanh(x) * 150 + 255. / 2)
+		return ofxTF2::mapTensorValues(output, -22.5f, 277.5f, 0.0f, 255.0f);
+	}
+};
+
 class ofApp : public ofBaseApp{
 
 	public:
@@ -47,7 +63,7 @@ class ofApp : public ofBaseApp{
 
 		std::vector<std::string> modelPaths;
 		
-		ofxTF2ThreadedModel model;
+		ImageToImageModel model;
 		cppflow::tensor input;
 		cppflow::tensor output;
 		int nnWidth;

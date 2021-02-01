@@ -53,6 +53,23 @@
 ///
 ///     model.waitForThread(bool callStopThread, long milliseconds);
 ///
+///
+/// \brief specify pre and postprocessing in a derived class by overriding the
+///			runModel function. The way you handle the class stays the same as
+///			described above.
+///
+/// class MyThreadedModel : public ofxTF2ThreadedModel {
+/// 	public:
+///     cppflow::tensor runModel(const cppflow::tensor & input) const override {
+///			// preprocess: add one
+///			auto modifiedInput = cppflow::add(input, {1});
+/// 		// call to super runModel! Keep the call but change the input.
+/// 		auto output = ofxTF2Model::runModel(modifiedInput);
+/// 		// postprocess: multiply by minus one
+/// 		return cppflow::mul(output, {-1});
+/// 	}
+/// };
+
 class ofxTF2ThreadedModel : public ofxTF2Model, public ofThread {
 
 public:
@@ -61,10 +78,10 @@ public:
 	virtual ~ofxTF2ThreadedModel();
 
 	/// thread-safe call to ofxTF2Model::load()
-	bool load(const std::string & modelPath);
+	bool load(const std::string & modelPath) override;
 
 	/// thread-safe call to ofxTF2Model::clear()
-	void clear();
+	void clear() override;
 
 	/// returns true if the model is idle and ready for new input
 	bool readyForInput();
@@ -87,6 +104,9 @@ public:
 	/// lower values will check for input more often at the expense of cpu time
 	/// note: do not call this while the thread is running
 	void setIdleTime(unsigned int ms);
+
+	// override the runModel function so derived classes can redefine it
+	virtual cppflow::tensor runModel(const cppflow::tensor & input) const override;
 
 protected:
 
