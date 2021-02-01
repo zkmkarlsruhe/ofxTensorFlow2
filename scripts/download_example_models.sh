@@ -13,7 +13,7 @@ set -e
 URL=https://cloud.zkm.de/index.php/s/gfWEjyEr9X4gyY6/download
 
 SRC=example_models
-DEST=../../
+DEST=../..
 
 ##### go
 
