@@ -16,12 +16,13 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxTensorFlow2.h"
 
-#include "cppflow/cppflow.h"
-
-// #define USE_LIVE_VIDEO // uncomment this to use a live camera
+//#define USE_LIVE_VIDEO // uncomment this to use a live camera
 						 // otherwise, we'll use an image file
 
+// TODO: add "draw a shoe" canvas for live input?
+// FIXME: does live camera input make sense for the model?
 class ofApp : public ofBaseApp{
 
 	public:
@@ -41,17 +42,25 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
-		cppflow::model *model = nullptr;
+		// unless your computer is fast, use the threaded model so as not to
+		// block the GUI while the model is processing
+		ofxTF2ThreadedModel model;
 		cppflow::tensor input;
 		cppflow::tensor output;
 		int nnWidth;
 		int nnHeight;
 
 		#ifdef USE_LIVE_VIDEO
-			ofVideoGrabber vidIn;
+			ofVideoGrabber vidSrc;
 			int camWidth;
 			int camHeight;
+		#else
+			ofImage imgSrc;
 		#endif
 		ofImage imgIn;
 		ofImage imgOut;
+
+		// time metrics
+		std::chrono::time_point<std::chrono::system_clock> start;
+		std::chrono::time_point<std::chrono::system_clock> end;
 };

@@ -1,3 +1,16 @@
+# ofxTensorFlow2
+#
+# Copyright (c) 2021 ZKM | Hertz-Lab
+# Paul Bethge <bethge@zkm.de>
+#
+# BSD Simplified License.
+# For information on usage and redistribution, and for a DISCLAIMER OF ALL
+# WARRANTIES, see the file, "LICENSE.txt," in this distribution.
+#
+# This code has been developed at ZKM | Hertz-Lab as part of „The Intelligent 
+# Museum“ generously funded by the German Federal Cultural Foundation.
+
+
 from modules.utils import tensor_to_image, load_img, clip_0_1, resolve_video
 from modules.forward import feed_forward
 import tensorflow as tf
@@ -28,12 +41,12 @@ def convert(src_dir, dest_dir, shape):
 
 if __name__ == "__main__":
 
-    #parser = argparse.ArgumentParser(
-    #    description='Fast Style Transfer')
-    #parser.add_argument('--path', required=True, type=str)
+    path = os.path.dirname('../bin/data/models_checkpoint/')
+    dest = os.path.dirname('../bin/data/models/')
+    shape = [None, 480, 640, 3]
 
-    path = os.path.dirname('../bin/data/chkpt_models/wave/')
-    dest = os.path.dirname('../bin/data/')
-    shape = [None, 512, 512, 3]
+    subfolders = [ f.path for f in os.scandir(path) if f.is_dir() ]
+    for subpath in subfolders:
+        print("Converting", shape, ": ", subpath, " to ", dest)
+        convert(subpath, dest, shape)
 
-    convert(path, dest, shape)

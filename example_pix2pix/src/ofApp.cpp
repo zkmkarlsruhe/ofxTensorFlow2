@@ -21,7 +21,7 @@ void ofApp::setup(){
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("example_pix2pix");
 
-	model = new cppflow::model(ofToDataPath("model"));
+	model.load("model");
 
 	nnWidth = 256;
 	nnHeight = 256;
@@ -29,93 +29,130 @@ void ofApp::setup(){
 	// try to grab at this size
 	camWidth = 640;
 	camHeight = 360;
-	vidIn.setDesiredFrameRate(30);
-	vidIn.setup(camWidth, camHeight);
+	vidSrc.setDesiredFrameRate(30);
+	vidSrc.setup(camWidth, camHeight);
+#else
+	// note: model expects RGB only, no alpha!
+	imgSrc.load("shoe.png");
+	if(imgSrc.getWidth() != nnWidth || imgSrc.getHeight() != nnHeight) {
+		ofLog() << "resizing source to " << nnWidth << "x" << nnHeight;
+		imgSrc.resize(nnWidth, nnHeight);
+	}
 #endif
 	imgIn.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
 	imgOut.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
+
+	// shorten idle time to have model check for input more frequently,
+	// this may increase responsivity on faster machines but will use more cpu
+	model.setIdleTime(10);
+
+	// start the model background thread
+	model.startThread();
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+	bool newInput = false;
 
 #ifdef USE_LIVE_VIDEO
 	// create tensor from video
-	vidIn.update();
-	if(vidIn.isFrameNew()){
+	vidSrc.update();
+	if(vidSrc.isFrameNew() && model.readyForInput()){
 
 		// get the frame
-		ofPixels & pixels = vidIn.getPixels();
+		ofPixels & pixels = vidSrc.getPixels();
 
 		// resize pixels
 		ofPixels resizedPixels(pixels);
 		resizedPixels.resize(nnWidth, nnHeight);
 
 		// copy to tensor
-		input = cppflow::tensor(
-			  std::vector<float>(resizedPixels.begin(),
-								  resizedPixels.end()),
-							  {nnWidth, nnHeight, 3});
-	}
-	else{
-		// try again later
-		return;
+		input = ofxTF2::pixelsToTensor<float>(resizedPixels);
+		newInput = true;
 	}
 #else
-	// create tensor from image file
-	input = cppflow::decode_jpeg(cppflow::read_file(ofToDataPath("cat2.jpg")));
+	if(model.readyForInput()) {
+		// create tensor from image
+		input = ofxTF2::imageToTensor<float>(imgSrc);
+		newInput = true;
+	}
 #endif
 
-	// cast data type and expand to batch size of 1
-	input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
-	input = cppflow::expand_dims(input, 0);
+	// process any input
+	if(newInput) {
 
-	// apply preprocessing as in python
-	input = cppflow::div(input, cppflow::tensor({127.5f}));
-	input = cppflow::add(input, cppflow::tensor({-1.0f}));
+		// cast data type and expand to batch size of 1
+		input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
+		input = cppflow::expand_dims(input, 0);
 
-	// start neural network and time measurement
-	auto start = std::chrono::system_clock::now();
-	output = (*model)(input);
-	auto end = std::chrono::system_clock::now();
-	std::chrono::duration<double> diff = end - start;
+		// apply preprocessing as in python to change range to -1 to 1
+		input = cppflow::div(input, cppflow::tensor({127.5f}));
+		input = cppflow::sub(input, cppflow::tensor({1.0f}));
+		// the above can also be written using math operators:
+		//input = (input / cppflow::tensor({127.5f})) - cppflow::tensor({1.0f});
 
-	// ofLog() << output;
-	ofLog() << "Time: " << diff.count() << "s Fps: " << ofGetFrameRate();
+		// input timestamp
+		start = std::chrono::system_clock::now();
 
-	// copy output to image
-	auto outputVector = output.get_data<float>();
-	auto & pixels = imgOut.getPixels();
-	for(int i = 0; i < pixels.size(); i++){
-		pixels[i] = (outputVector[i] + 1) * 127.5;
+		// feed input into model
+		model.update(input);
 	}
 
-	// copy input to image
-	auto inputVector = input.get_data<float>();
-	auto & inputPixels = imgIn.getPixels();
-	for(int i = 0; i < inputPixels.size(); i++){
-		inputPixels[i] = inputVector[i];
-	}
+	// process any output
+	if(model.isOutputNew()) {
 
-	imgOut.update();
-	imgIn.update();
+		// pull output from model
+		output = model.getOutput();
+
+		// output timestamp
+		end = std::chrono::system_clock::now();
+
+		// FIXME: this doesn't work, probably because passing input & output is not directly blocking?
+		// simple model run time measurement
+		//std::chrono::duration<double> diff = end - start;
+		//ofLog() << "run took: " << diff.count() << " s or ~" << (int)(1.0/diff.count()) << " fps";
+
+		// postprocess to change range to -1 to 1 and copy output to image
+		output = cppflow::add(output, cppflow::tensor({1.0f}));
+		output = cppflow::mul(output, cppflow::tensor({127.5f}));
+		// the above can also be written using math operators:
+		//output = (output + cppflow::tensor({1.0f})) * cppflow::tensor({127.5f});
+		ofxTF2::tensorToImage<float>(output, imgOut);
+
+//		// postprocess and copy input to image
+//		input = cppflow::add(input, cppflow::tensor({1.0f}));
+//		input = cppflow::mul(input, cppflow::tensor({127.5f}));
+//		cppflow::tensor_to_image(input, imgIn);
+
+		imgOut.update();
+		imgIn.update();
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+
 	ofSetColor(255);
-	imgOut.draw(0, 0);
-	imgIn.draw(0, nnHeight);
+	imgOut.draw(12, 12);
+//	imgIn.draw(12, 12 + nnHeight + 12);
 #ifdef USE_LIVE_VIDEO
-	vidIn.draw(nnWidth, 0, camWidth, camHeight);
+	vidSrc.draw(12 + nnWidth, 12, camWidth, camHeight);
+	ofColor(0);
+#else
+	imgSrc.draw(12 + nnWidth, 12);
 #endif
+
+	ofSetColor(255);
+	ofDrawBitmapString("output", 12, 10);
+//	ofDrawBitmapString("input", 12, 24 + nnHeight);
+	ofDrawBitmapString("source", 12 + nnWidth, 10);
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 #ifdef USE_LIVE_VIDEO
 	if(key == 's' || key == 'S'){
-		vidIn.videoSettings();
+		vidSrc.videoSettings();
 	}
 #endif
 }

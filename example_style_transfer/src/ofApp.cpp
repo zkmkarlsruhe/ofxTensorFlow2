@@ -14,6 +14,7 @@
  */
 
 #include "ofApp.h"
+#include "ofLog.h"
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -21,10 +22,29 @@ void ofApp::setup(){
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("example_style_transfer");
 
-	model = new cppflow::model(ofToDataPath("model"));
+	ofDirectory modelsDir(ofToDataPath("models"));
+	modelsDir.listDir();
+	
+	// go through and print out all the paths
+	for(int i = 0; i < modelsDir.size(); i++){
+		ofDirectory sub(modelsDir.getPath(i));
+		if (sub.isDirectory()){
+			auto absSubPath = sub.getAbsolutePath();
+   			ofLogNotice() << "Found model: " << absSubPath;
+			modelPaths.push_back(absSubPath);
+		}
+	}
+
+	model.loadSafely(modelPaths[0]);
+	modelCounter = 5;
+	frameCounter = 0;
+	waitNumFrames = 360; 
 
 	nnWidth = 640;
 	nnHeight = 480;
+	imgIn.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
+	imgOut.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
+
 #ifdef USE_LIVE_VIDEO
 	// try to grab at this size
 	camWidth = 640;
@@ -32,83 +52,91 @@ void ofApp::setup(){
 	vidIn.setDesiredFrameRate(30);
 	vidIn.setup(camWidth, camHeight);
 #endif
-	imgIn.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
-	imgOut.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
+
+	// start the model!
+	model.setIdleTime(1);
+	model.startThread();
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 
+	// load a new model from the directory every other waitNumFrames frames
+	if (frameCounter >= waitNumFrames){
+		frameCounter = 0;
+		loadNewModel = true;
+	}
+	if (loadNewModel){
+		loadNewModel = false;
+		if (modelCounter >= modelPaths.size())
+			modelCounter = 0;
+		ofLogNotice() << "Load model: " << modelPaths[modelCounter];
+		model.loadSafely(modelPaths[modelCounter]);
+		modelCounter++;
+	}
+
 #ifdef USE_LIVE_VIDEO
 	// create tensor from video
 	vidIn.update();
-	if(vidIn.isFrameNew()){
+	if(vidIn.isFrameNew()){	
 
-		// get the frame
+		// get the frame, resize and copy to tensor
 		ofPixels & pixels = vidIn.getPixels();
-
-		// resize pixels
 		ofPixels resizedPixels(pixels);
 		resizedPixels.resize(nnWidth, nnHeight);
+		input = ofxTF2::pixelsToTensor<float>(resizedPixels);
 
-		// copy to tensor
-		input = cppflow::tensor(
-			  std::vector<float>(resizedPixels.begin(),
-								  resizedPixels.end()),
-							  {nnWidth, nnHeight, 3});
-	}
-	else{
-		// try again later
-		return;
-	}
 #else
-	std::string imgPath(ofToDataPath("cat2.jpg"));
-	ofLog() << "Loading image: " << imgPath;
-	// create tensor from image file
-	input = cppflow::decode_jpeg(cppflow::read_file(imgPath));
-	ofLog() << "Image loaded";
+		// std::string imgPath(ofToDataPath("cat512x512.jpg"));
+		std::string imgPath(ofToDataPath("cat640x480.jpg"));
+		// create tensor from image file
+		input = cppflow::decode_jpeg(cppflow::read_file(imgPath));
 #endif
 
-	// cast data type and expand to batch size of 1
-	input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
-	input = cppflow::expand_dims(input, 0);
+		// copy input to image
+		auto & inputPixels = imgIn.getPixels();
+		ofxTF2::tensorToPixels<float>(input, inputPixels);
+		imgIn.update();
 
-	// start neural network and time measurement
-	auto start = std::chrono::system_clock::now();
-	// output = (*model)(input);
-	output = (*model)({{"serving_default_input", input}}, {"StatefulPartitionedCall"})[0];
-	auto end = std::chrono::system_clock::now();
-	std::chrono::duration<double> diff = end - start;
+		if (model.readyForInput()){
+			// cast data type and expand to batch size of 1
+			input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
+			input = cppflow::expand_dims(input, 0);
+			model.update(input);
+		}
 
-	// ofLog() << output;
-	ofLog() << "Time: " << diff.count() << "s Fps: " << ofGetFrameRate();
+		if (model.isOutputNew()){
+			auto output = model.getOutput();
 
-	// copy output to image
-	auto outputVector = output.get_data<float>();
-	auto & pixels = imgOut.getPixels();
-	for(int i = 0; i < pixels.size(); i++){
-		pixels[i] = outputVector[i];
+			// postprocess: last layer = (tf.nn.tanh(x) * 150 + 255. / 2)
+			output = ofxTF2::mapTensorValues(output, -22.5f, 277.5f, 0.0f, 255.0f);
+
+			// copy output to image
+			ofxTF2::tensorToImage<float>(output, imgOut);
+			imgOut.update();
+		}
+
+#ifdef USE_LIVE_VIDEO
+	} // close frame loop
+	else{
+		// try again later
 	}
-
-	// copy input to image
-	auto inputVector = input.get_data<float>();
-	auto & inputPixels = imgIn.getPixels();
-	for(int i = 0; i < inputPixels.size(); i++){
-		inputPixels[i] = inputVector[i];
-	}
-
-	imgOut.update();
-	imgIn.update();
+#endif
+	frameCounter++;
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+
+	int pad = 12;
+
 	ofSetColor(255);
-	imgOut.draw(0, 0);
-	imgIn.draw(0, nnHeight);
-#ifdef USE_LIVE_VIDEO
-	vidIn.draw(nnWidth, 0, camWidth, camHeight);
-#endif
+	imgOut.draw(pad, pad, nnWidth*2, nnHeight*2);
+
+	std::string text("Loading new model in ");
+	text += std::to_string(waitNumFrames - frameCounter);
+	text += " frames";
+	ofDrawBitmapString(text, pad, pad);
 }
 
 //--------------------------------------------------------------

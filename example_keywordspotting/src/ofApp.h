@@ -16,12 +16,15 @@
 #pragma once
 
 #include "ofMain.h"
-#include "cppflow/cppflow.h"
+#include "ofxTensorFlow2.h"
 #include "labels.h"
+
+#include "utils.h"
 
 class ofApp : public ofBaseApp{
 
 	public:
+
 		void setup();
 		void update();
 		void draw();
@@ -45,35 +48,38 @@ class ofApp : public ofBaseApp{
 
 		// for ease of use: we want to keep the buffersize a multiple of the downsampling factor
 		// downsamplingFactor = micSamplingRate / neuralNetworkInputSamplingRate 
-		static constexpr std::size_t downsamplingFactor = 3;
-		static constexpr std::size_t bufferSize = 1024;
-		static constexpr std::size_t bufferSizeDownsampled = bufferSize / downsamplingFactor;
-		static constexpr std::size_t samplingRate = 48000;
+		std::size_t downsamplingFactor;
+		std::size_t bufferSize;
+		std::size_t samplingRate;
 		
-		// this buffer keeps the previous audio buffer since volume detection has some latency 
-		std::vector<float> previousBuffer;
+		// since volume detection has some latency be buffer past buffers
+		AudioBufferFifo previousBuffers;
+		std::size_t numPreviousBuffers;
+		// sampleBuffers acts as a buffer for recording (could be fused)
+		AudioBufferFifo sampleBuffers;
+		std::size_t numBuffers;
 		
 		// volume
-		std::vector<float> volHistory;
+		float curVol;
 		float smoothedVol;
 		float scaledVol;
 		float volThreshold;
 
-		std::vector<float> sample;
+		// display
+		std::vector<float> volHistory;
 		std::string displayLabel;
 
-		// neural network
-		cppflow::model *model = nullptr;
+		// neural network	
+		AudioClassifier model;
 		cppflow::tensor output;
-		static constexpr std::size_t inputSeconds = 1;
-		static constexpr std::size_t inputSamplingRate = 16000;
-		static constexpr std::size_t inputSize = inputSamplingRate * inputSeconds;
+		std::size_t inputSeconds;
+		std::size_t inputSamplingRate;
+		std::size_t inputSize;
 
 		// neural network control logic
+		std::size_t recordingCounter;
 		bool trigger;
 		bool enable;
 		bool recording;
-		int recordingCounter;
-		static constexpr std::size_t recordingCounterMax = samplingRate / bufferSize;
-		static constexpr float minConfidence = 0.75;
+		float minConfidence;
 };

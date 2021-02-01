@@ -16,31 +16,49 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup() {
 	ofSetFrameRate(60);
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("example_keywordspotting");
 	ofSetCircleResolution(80);
 	ofBackground(54, 54, 54);
 
-	model = new cppflow::model(ofToDataPath(modelPath));
-	previousBuffer.reserve(bufferSize);
-	sample.reserve(inputSize);
+	model.load("model");
 
+	// audio stream settings
+	bufferSize = 1023;
+	samplingRate = 48000; // take 16kHz if available then set downsamplingFactor to 1
+
+	// Neural network input parameters
+	// downsamplingFactor must be an integer of samplingRate / inputSamplingeRate
+	// downsampling is required for microphones that do not have 16kHz sampling
+	downsamplingFactor = 3;	
+	inputSeconds = 1;
+	inputSamplingRate = 16000; // shall not be changed AI was trained on 16kHz
+
+	// recording settings
+	numPreviousBuffers = 10; // how many buffers to save before trigger happens
+	numBuffers = samplingRate * inputSeconds / bufferSize;
+	previousBuffers.setMaxLen(numPreviousBuffers);
+	sampleBuffers.setMaxLen(numBuffers);
+
+	// display 
 	volHistory.assign(400, 0.0);
-		
-	smoothedVol  = 0.0;
-	scaledVol    = 0.0;
-	volThreshold = 25;
-	
 	displayLabel = " ";
+	minConfidence = 0.75;
 
+	// control logic
 	recordingCounter = 0;
 	enable = true;
 	trigger = false;
 	recording = false;
+	// volume
+	curVol		 = 0.0;
+	smoothedVol  = 0.0;
+	scaledVol    = 0.0;
+	volThreshold = 25;
 
-	// sound stream settings
+	// apply settings to soundStream 
 	soundStream.printDeviceList();
 	ofSoundStreamSettings settings;
 	auto devices = soundStream.getMatchingDevices("default");
@@ -54,44 +72,41 @@ void ofApp::setup(){
 	settings.bufferSize = bufferSize;
 	soundStream.setup(settings);
 
-	// neural network warm up
+	// warm up: inital inference involves initalization (takes longer)
 	auto test = cppflow::fill({1, 16000}, 1.0f);
-	output = (*model)(test);
+	output = model.runModel(test);
+	ofLog() << "setup done";
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+
 	// lets scale the vol up to a 0-1 range 
 	scaledVol = ofMap(smoothedVol, 0.0, 0.17, 0.0, 1.0, true);
-
 	// lets record the volume into an array
 	volHistory.push_back(scaledVol);
-	
-	// if we are bigger the the size we want to record - lets drop the oldest value
+	// if we are bigger than the size we want to record - lets drop the oldest value
 	if(volHistory.size() >= 400){
 		volHistory.erase(volHistory.begin(), volHistory.begin()+1);
 	}
 
 	if(trigger) {
-
-		// convert recorded sample to a single batch
-		cppflow::tensor input(sample, {1, 16000});
-
 		// inference
-		auto output_vector = model(input).get_data<float>();
+		int argMax;
+		float prob;
+		model.classify(sampleBuffers, downsamplingFactor, argMax, prob);
 
-		// postprocessing
-		auto maxElem = std::max_element(output_vector.begin(), output_vector.end());
-		int argMax = std::distance(output_vector.begin(), maxElem);
-		if(*maxElem >= minConfidence) {
+		// only display label when probabilty is high enough
+		if(prob >= minConfidence) {
 			displayLabel = labelsMap[argMax];
 		}
 
-		// label look up
+		// look up label
 		ofLog() << "Label: " << labelsMap[argMax];
-		ofLog() << "confidence: " << *maxElem;
-		
-		// release the trigger signal
+		ofLog() << "Probabilty: " << prob;
+		ofLog() << "============================";
+
+		// release the trigger signal and emit enable
 		trigger = false;
 		enable = true;
 	}
@@ -99,29 +114,31 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	ofSetColor(225);
+
+	std::size_t historyWidth = 400;
+	std::size_t historyHeight = 150;
+
+	ofSetColor(64, 245, 221);
 	ofNoFill();
 	ofDrawBitmapString(displayLabel, 50, 50);
-	
+
 	// draw the average volume
 	ofPushStyle();
 		ofPushMatrix();
-		ofTranslate(565, 170, 0);
-			
-		ofSetColor(225);
-		
-		ofSetColor(245, 58, 135);
-		ofFill();		
-		ofDrawCircle(200, 200, scaledVol * 190.0f);
+		ofTranslate(50, 50);
+
+		// draw the threshold line
+		ofDrawLine(0, historyHeight - volThreshold, 
+				historyWidth, historyHeight - volThreshold);
+
+		ofSetColor(255);
 		
 		// lets draw the volume history as a graph
 		ofBeginShape();
 		for (unsigned int i = 0; i < volHistory.size(); i++){
-			if( i == 0 ) ofVertex(i, 400);
-
-			ofVertex(i, 400 - volHistory[i] * 70);
-			
-			if( i == volHistory.size() -1 ) ofVertex(i, 400);
+			if( i == 0 ) ofVertex(i, historyHeight);
+			ofVertex(i, historyHeight - volHistory[i] * 100);
+			if( i == volHistory.size() -1 ) ofVertex(i, historyHeight);
 		}
 		ofEndShape(false);
 			
@@ -130,63 +147,53 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void audioIn(ofSoundBuffer & input){
-	
-	float curVol = 0.0;
+void ofApp::audioIn(ofSoundBuffer & input){
 
 	// calculate the root mean square which is a rough way to calculate volume
+	float sumVol = 0.0;
 	for(size_t i = 0; i < input.getNumFrames(); i++){
-		float vol = input[i]*0.5;
-		curVol += vol * vol;
+		float vol = input[i];
+		sumVol += vol * vol;
 	}
-	curVol /= (float)input.getNumFrames();
+	curVol = sumVol / (float)input.getNumFrames();
 	curVol = sqrt(curVol);
-	smoothedVol *= 0.93;
-	smoothedVol += 0.07 * curVol;
+	// smoothen the volume
+	smoothedVol *= 0.5;
+	smoothedVol += 0.5 * curVol;
 
-	for(size_t i = 0; i < previousBuffer.size(); i++){
-		previousBuffer[i] = input[i];
-	}
-
-	// trigger recording
-	if (ofMap(curVol, 0.0, 0.17, 0.0, 1.0, true) * 100 >= volThreshold && enable){
+	// trigger recording if the smoothed volume is high enough
+	if (ofMap(smoothedVol, 0.0, 0.17, 0.0, 1.0, true) * 100 >= volThreshold && enable){
 		enable = false;
-		recordingCounter = 1;
-		ofLog() << "recording";
-
-		// downsample the previous buffer
-		for(int i = 0; i < bufferSizeDownsampled; i++){
-			float sum = 0.0; int offset = i*downsamplingFactor;
-			for (int j=0; j<downsamplingFactor; j++){
-				sum += previousBuffer[offset+j];
-			}
-			sample[i] = sum / downsamplingFactor;
-		}
+		ofLog() << "Start recording...";
+		// copy previous buffers to the recording
+		sampleBuffers = previousBuffers;
+		sampleBuffers.setMaxLen(numBuffers); // just to make sure (not tested)
+		recordingCounter = sampleBuffers.size();
+		// trigger recording in the next function call
 		recording = true;
 	}
-
-	// save and downsample a recordings
-	// then trigger the neural network
-	if(recording == true){
-
-		// downsample by an integer
-		int recOffset = recordingCounter * bufferSizeDownsampled;
-		for(int i = 0; i < bufferSizeDownsampled; i++){
-			float sum = 0.0; int offset = i*downsamplingFactor;
-			for(int j = 0; j < downsamplingFactor; j++){
-				sum += input[offset+j];
+	// if we didnt just trigger
+	else { 
+		// if recording: save the incoming buffer to the recording
+		// then trigger the neural network
+		if(recording == true){
+			sampleBuffers.push(input.getBuffer());
+			recordingCounter++;
+			if(recordingCounter >= numBuffers){
+				recording = false;
+				trigger = true;
+				ofLog() << "done!";
 			}
-			sample[recOffset + i] = sum / downsamplingFactor;
+		}
+		// if not recording: save the incoming buffer to the previous buffer fifo
+		else {
+			previousBuffers.push(input.getBuffer());
 		}
 
-		recordingCounter++;
-		if(recordingCounter >= recordingCounterMax){
-			recording = false;
-			trigger = true;
-			ofLog() << "trigger";
-		}
 	}
+
 }
+
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){

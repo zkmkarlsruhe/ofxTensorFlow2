@@ -1,10 +1,9 @@
 # Fast Style Transfer
 The code has been taken from [this repo](https://github.com/cryu854/FastStyle).
 
-We modified the script train.py to export a SavedModel with specific input dimensions. In our experiments the specific input dimensions were necessary to correctly load and execute the model in C++. 
+We modified the script train.py to export a SavedModel with specific input dimensions. In our experiments the specific input dimensions were necessary to correctly load and execute the model in C++.
 
-### TODO 
-* script to edit input signature of SavedModels to execute the model for other input dimensions
+Futhermore, the script "checkpoint2SavedModel.py" can convert checkpoints to _SavedModels_ with its input dimensions defined.
 
 Please find the original README below...
 # Fast Style Transfer in TensorFlow 2 
@@ -13,38 +12,6 @@ This is an implementation of Fast-Style-Transfer on Python 3 and Tensorflow 2.
 The neural network is a combination of Gatys' [A Neural Algorithm of Artistic Style](https://arxiv.org/abs/1508.06576), Johnson's [Perceptual Losses for Real-Time Style Transfer and Super-Resolution](http://cs.stanford.edu/people/jcjohns/eccv16/), and Ulyanov's [Instance Normalization](https://arxiv.org/abs/1607.08022). 
 
 
-
-## Image Stylization :art:
-Added styles from various paintings to a photo of Chicago. Check the ./images/results folder to see more images.
-
-
-<div align='center'>
-<img src = 'images/content/chicago.jpg' height="200px">
-</div>
-<div align = 'center'>
-<a href = 'images/style/wave.jpg'><img src = 'images/thumbs/wave.jpg' height = '200px'></a>
-<img src = 'images/results/wave.jpg' height = '200px'>
-<img src = 'images/results/africa.jpg' height = '200px'>
-<a href = 'images/style/africa.jpg'><img src = 'images/thumbs/africa.jpg' height = '200px'></a>
-<br>
-<a href = 'images/style/aquarelle.jpg'><img src = 'images/thumbs/aquarelle.jpg' height = '200px'></a>
-<img src = 'images/results/aquarelle.jpg' height = '200px'>
-<img src = 'images/results/shipwreck.jpg' height = '200px'>
-<a href = 'images/style/the_shipwreck_of_the_minotaur.jpg'><img src = 'images/thumbs/the_shipwreck_of_the_minotaur.jpg' height = '200px'></a>
-<br>
-<a href = 'images/style/starry_night.jpg'><img src = 'images/thumbs/starry_night.jpg' height = '200px'></a>
-<img src = 'images/results/starry_night.jpg' height = '200px'>
-<img src = 'images/results/hampson.jpg' height = '200px'>
-<a href = 'images/style/hampson.jpg'><img src = 'images/thumbs/hampson.jpg' height = '200px'></a>
-<br>
-<a href = 'images/style/chinese_style.jpg'><img src = 'images/thumbs/chinese_style.jpg' height = '200px'></a>
-<img src = 'images/results/chinese_style.jpg' height = '200px'>
-<img src = 'images/results/udnie.jpg' height = '200px'>
-<a href = 'images/style/udnie.jpg'><img src = 'images/thumbs/udnie.jpg' height = '200px'></a>
-</div>
-<p align = 'center'>
-All the models were trained on the same default settings.
-</p>
 
 ## Implementation Details
 
