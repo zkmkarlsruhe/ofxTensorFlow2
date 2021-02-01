@@ -318,34 +318,53 @@ Others may require to feed additional information to the `main.py` script.
 
 #### Creating Your Own Project Models
 
-If you want to create your own Deep Learning project, here are some tips to guide you along the way:
+If you want to create your own Deep Learning project, here are some tips to guide you along the way.
 
-* Get an __IDE__ (Integrated Development Environment) aka fancy text editor for development. As you will be using Python, choose a specialized IDE, e.g. Spyder (included in Anaconda) or PyCharm. Make sure to set the virtual environment as the interpreter for this project. If you choose to create the virtual environment using conda you will find a subfolder `envs` in the installation folder of anaconda. This includes a folder for every virtual environment. Choose the right one and go to `bin` and select the binary _python_ as interpreter. This way the IDE can run and debug your projects.
+##### IDE
 
-* Get familiar with __Python__. The official [Python tutorial](https://docs.python.org/3/tutorial/index.html) is a great place to start. Python has a lot of functions in its [standard library](https://docs.python.org/3/library/index.html), but there are a lot of other external packages to look out for:
-  - NumPy (efficient math algorithms and data structures)
-  - Matplotlib (plotting in the style of Matlab)
-  - TensorFlow 2 (ML library)
+Get an __IDE__ (Integrated Development Environment) aka fancy text editor for development. As you will be using Python, choose a specialized IDE, e.g. Spyder (included in Anaconda) or PyCharm. Make sure to set the virtual environment as the interpreter for this project. If you choose to create the virtual environment using conda you will find a subfolder `envs` in the installation folder of anaconda. This includes a folder for every virtual environment. Choose the right one and go to `bin` and select the binary _python_ as interpreter. This way the IDE can run and debug your projects.
 
-* Get familiar with __Keras__. Since TensorFlow 2, [Keras](https://keras.io) is the high level front-end of TensorFlow. It greatly reduces the effort of accessing common data structures (like labeled pictures), defining a Neural Network architecture and observing the training process using callbacks. Besides that, you can always call TensorFlow's core functions such as data pipelines.
+##### Python
 
-* Get some __structure__ for your project. Your project could look a little bit like this:
-  - `data`: stores scripts to download and maybe process some data
-  - `src`: contains Python code for the model, preprocessing and train, test and eval procedures.
-  - `main.py`: often serves as a front to call the train, eval or test scripts
-  - `config.py`: stores high level parameters such as learning rate, batch size, etc. Edit this file for different experiments. Formats other than .py are fine too, but it's very easy to integrate. It's a good choice to save this file along with trained models.
-  - `requirements.txt`: contains required packages
+Get familiar with __Python__. The official [Python tutorial](https://docs.python.org/3/tutorial/index.html) is a great place to start. Python has a lot of functions in its [standard library](https://docs.python.org/3/library/index.html), but there are a lot of other external packages to look out for:
 
-* Get familiar with __Machine Learning concepts__. There is plenty of free information out there! Here is a list of material to look into:
-  - [Coursera](coursera.org): created by ML expert Andrew Ng, lists free online courses for a lot of fields (including [Machine Learning](https://www.coursera.org/learn/machine-learning))
-  - [Stanford CS231](https://www.youtube.com/playlist?list=PL3FW7Lu3i5JvHM8ljYj-zLfQRF3EO8sYv): YouTube playlist of Stanford's Computer Vision course CS231.
-  - [Machine Learning Mastery](https://machinelearningmastery.com/): a popular blog about ML techniques. It focuses on the practical use.
+* NumPy (efficient math algorithms and data structures)
+* Matplotlib (plotting in the style of Matlab)
+* TensorFlow 2 (ML library)
 
-* Get familiar with __TensorFlow's__ [__Tutorials__](https://www.tensorflow.org/tutorials). Besides learning how to write TensorFlow code, the tutorials will teach you ML concepts like overfitting and underfitting.
+##### Keras
 
-* Get to know common __datasets__. A great place to start is [Kaggle](kaggle.com). Here you can find thousands of datasets and accompanying code (in form of Python notebooks that run in your browser).
+Get familiar with __Keras__. Since TensorFlow 2, [Keras](https://keras.io) is the high level front-end of TensorFlow. It greatly reduces the effort of accessing common data structures (like labeled pictures), defining a Neural Network architecture and observing the training process using callbacks. Besides that, you can always call TensorFlow's core functions such as data pipelines.
 
-* Get __inspired__ and risk making __errors__! We can not help you with the latter but check out this [repo](https://github.com/vibertthio/awesome-machine-learning-art) for some inspiration.
+##### Project Structure
+
+Get some __structure__ for your project. Your project could look a little bit like this:
+
+* `data`: stores scripts to download and maybe process some data
+* `src`: contains Python code for the model, preprocessing and train, test and eval procedures.
+* `main.py`: often serves as a front to call the train, eval or test scripts
+* `config.py`: stores high level parameters such as learning rate, batch size, etc. Edit this file for different experiments. Formats other than .py are fine too, but it's very easy to integrate. It's a good choice to save this file along with trained models.
+* `requirements.txt`: contains required packages
+
+##### Machine Learning
+
+Get familiar with __Machine Learning concepts__. There is plenty of free information out there! Here is a list of material to look into:
+
+* [Coursera](coursera.org): created by ML expert Andrew Ng, lists free online courses for a lot of fields (including [Machine Learning](https://www.coursera.org/learn/machine-learning))
+* [Stanford CS231](https://www.youtube.com/playlist?list=PL3FW7Lu3i5JvHM8ljYj-zLfQRF3EO8sYv): YouTube playlist of Stanford's Computer Vision course CS231.
+* [Machine Learning Mastery](https://machinelearningmastery.com/): a popular blog about ML techniques. It focuses on the practical use.
+
+##### TensorFlow
+
+Get familiar with __TensorFlow's__ [__Tutorials__](https://www.tensorflow.org/tutorials). Besides learning how to write TensorFlow code, the tutorials will teach you ML concepts like overfitting and underfitting.
+
+##### Datasets
+
+Get to know common __datasets__. A great place to start is [Kaggle](kaggle.com). Here you can find thousands of datasets and accompanying code (in form of Python notebooks that run in your browser).
+
+##### Inspiration
+
+Get __inspired__ and take the risk of making __errors__! We can not help you with the latter but check out this [repo](https://github.com/vibertthio/awesome-machine-learning-art) for some inspiration.
 
 Developing
 ----------
