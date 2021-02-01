@@ -18,14 +18,14 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	ofSetFrameRate(60);
+	ofSetFrameRate(30);
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("example_style_transfer");
 
 	ofDirectory modelsDir(ofToDataPath("models"));
 	modelsDir.listDir();
 	
-	// go through and print out all the paths
+	// go through the directory and print out all the paths
 	for(int i = 0; i < modelsDir.size(); i++){
 		ofDirectory sub(modelsDir.getPath(i));
 		if (sub.isDirectory()){
@@ -35,10 +35,10 @@ void ofApp::setup(){
 		}
 	}
 
-	model.loadSafely(modelPaths[0]);
+	model.load(modelPaths[0]);
 	modelCounter = 5;
 	frameCounter = 0;
-	waitNumFrames = 360; 
+	waitNumFrames = 150; 
 
 	nnWidth = 640;
 	nnHeight = 480;
@@ -71,7 +71,7 @@ void ofApp::update(){
 		if (modelCounter >= modelPaths.size())
 			modelCounter = 0;
 		ofLogNotice() << "Load model: " << modelPaths[modelCounter];
-		model.loadSafely(modelPaths[modelCounter]);
+		model.load(modelPaths[modelCounter]);
 		modelCounter++;
 	}
 
@@ -91,6 +91,7 @@ void ofApp::update(){
 		std::string imgPath(ofToDataPath("cat640x480.jpg"));
 		// create tensor from image file
 		input = cppflow::decode_jpeg(cppflow::read_file(imgPath));
+		input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
 #endif
 
 		// copy input to image
@@ -98,20 +99,14 @@ void ofApp::update(){
 		ofxTF2::tensorToPixels<float>(input, inputPixels);
 		imgIn.update();
 
+		// thread-safe conditional input update
 		if (model.readyForInput()){
-			// cast data type and expand to batch size of 1
-			input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
-			input = cppflow::expand_dims(input, 0);
 			model.update(input);
 		}
 
+		// thread-safe conditional output update
 		if (model.isOutputNew()){
 			auto output = model.getOutput();
-
-			// postprocess: last layer = (tf.nn.tanh(x) * 150 + 255. / 2)
-			output = ofxTF2::mapTensorValues(output, -22.5f, 277.5f, 0.0f, 255.0f);
-
-			// copy output to image
 			ofxTF2::tensorToImage<float>(output, imgOut);
 			imgOut.update();
 		}
