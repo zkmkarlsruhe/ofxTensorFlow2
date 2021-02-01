@@ -28,18 +28,38 @@ model.save('../bin/data/model')
 
 ### openFrameworks
 
-***Note***: when we created the graph in Python we solely definded the last dimension of the input. The first channel is the number of batches which is never named and always variable (None). Hence the graph has an input structure of (NONE, NONE, NONE, 3).
+***Note***: when we created the graph in Python we solely defined the last dimension of the input. The first channel is the number of batches which is never named and always variable (None). Hence the graph has an input structure of (NONE, NONE, NONE, 3).
 
-Allocate and fill a tensor of arbitrary shape in C++.
-```c++
-auto input = cppflow::fill({10, 9, 17, 3}, 1.0f);
+This addon builds upon cppflow. Cppflow wraps the TensorFlow C API library and adds a tensor and model class.
+
+#### cppflow:: ops, tensor & model
+
+Call to TensorFlow's fill function which returns a tensor of arbitrary shape.
+```C++
+cppflow::tensor input = cppflow::fill({10, 9, 17, 3}, 1.0f);
 ```
-Load the model created in python
-```c++
+Load the model created in Python
+```C++
 cppflow::model model(ofToDataPath("model"));
 ```
 Infer the model and retrieve the output
-```c++
-auto output = model(input);
-std::cout << output << std::endl;
+```C++
+cppflow::tensor output = model(input);
+```
+
+
+#### ofxTF2Model
+We define a base model class `ofxTF2Model` that wraps around `cppflow::model` class and mainly allows to load and infer a model relative to _bin/data_. It expects and returns `cppflow::tensor`.
+```C++
+ofxTF2Model ofModel("model");
+output = ofModel.runModel(input);
+```
+Other example use a derivated `ofxTF2ThreadedModel`
+
+#### ofxTF2:: namespace
+The `ofxTF2` namespace defines some utility functions that simplfy the integration with openFrameworks. For example, you can convert a `cppflow::tensor` to `std::vector`, `ofPixels` or `ofImage` and backwards.
+```C++
+std::vector<float> outputVector;
+ofxTF2::tensorToVector<float>(output, outputVector);
+cppflow::tensor out = ofxTF2::vectorToTensor<float>(outputVector);
 ```
