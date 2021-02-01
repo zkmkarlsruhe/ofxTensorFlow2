@@ -21,28 +21,35 @@ void ofApp::setup(){
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("example_effnet");
 
+	// load and infer the model
+	ofxTF2Model model("model");
+
+	std::string path(ofToDataPath("my_cat.jpg"));
+	ofLog() << "Loading image: " << path;
+
 	// use TensorFlow ops through the cppflow wrappers
 	// load a jpeg picture cast it to float and add a dimension for batches
-	auto input = cppflow::decode_jpeg(cppflow::read_file(ofToDataPath("my_cat.jpg")));
+	auto input = cppflow::decode_jpeg(cppflow::read_file(path));
 	input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
 	input = cppflow::expand_dims(input, 0);
 
-	// load and infer the model
-	cppflow::model model(ofToDataPath("model"));
-	auto output = model(input);
+	auto output = model.runModel(input);
 
 	// interpret the output
 	auto maxLabel = cppflow::arg_max(output, 1);
 	ofLog() << "Maximum likelihood: " << maxLabel;
 
 	// access each element via the internal vector
-	auto outputVector = output.get_data<float>();
+	std::vector<float> outputVector;
+	ofxTF2::tensorToVector<float>(output, outputVector);
 	
 	ofLog() << "[281] tabby cat: " << outputVector[281];
 	ofLog() << "[282] tiger cat: " << outputVector[282];
 	ofLog() << "[283] persian cat: " << outputVector[283];
 	ofLog() << "[284] siamese cat: " << outputVector[284];
 	ofLog() << "[285] egyptian cat: " << outputVector[285];
+
+	ofExit();
 }
 
 //--------------------------------------------------------------

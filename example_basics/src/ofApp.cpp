@@ -21,6 +21,10 @@ void ofApp::setup(){
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("example_basics");
 
+	ofxTF2Model model;
+	cppflow::tensor input;
+	cppflow::tensor output;
+
 	// create an input tensor of an arbitrary shape and fill it
 	input = cppflow::fill({10, 9, 17, 3}, 1.0f);
 
@@ -34,6 +38,7 @@ void ofApp::setup(){
 	std::vector<float> outputVector;
 	ofxTF2::tensorToVector<float>(output, outputVector);
 	ofLog() << ofxTF2::vectorToString(outputVector);
+	ofExit();
 }
 
 //--------------------------------------------------------------

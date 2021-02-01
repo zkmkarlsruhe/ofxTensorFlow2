@@ -36,8 +36,4 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-
-		ofxTF2Model model;
-		cppflow::tensor input;
-		cppflow::tensor output;
 };

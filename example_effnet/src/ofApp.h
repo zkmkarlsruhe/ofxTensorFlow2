@@ -16,8 +16,7 @@
 #pragma once
 
 #include "ofMain.h"
-
-#include "cppflow/cppflow.h"
+#include "ofxTensorFlow2.h"
 
 class ofApp : public ofBaseApp{
 
