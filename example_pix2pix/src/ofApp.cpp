@@ -39,7 +39,6 @@ void ofApp::setup(){
 		imgSrc.resize(nnWidth, nnHeight);
 	}
 #endif
-	imgIn.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
 	imgOut.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
 
 	// shorten idle time to have model check for input more frequently,
@@ -81,18 +80,10 @@ void ofApp::update(){
 	// process any input
 	if(newInput) {
 
-		// cast data type and expand to batch size of 1
-		input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
-		input = cppflow::expand_dims(input, 0);
-
-		// apply preprocessing as in python to change range to -1 to 1
-		input = cppflow::div(input, cppflow::tensor({127.5f}));
-		input = cppflow::sub(input, cppflow::tensor({1.0f}));
-		// the above can also be written using math operators:
-		//input = (input / cppflow::tensor({127.5f})) - cppflow::tensor({1.0f});
-
-		// input timestamp
-		start = std::chrono::system_clock::now();
+		// end measuremnt
+		end = std::chrono::system_clock::now();
+		std::chrono::duration<double> diff = end - start;
+		ofLog() << "run took: " << diff.count() << " s or ~" << (int)(1.0/diff.count()) << " fps";
 
 		// feed input into model
 		model.update(input);
@@ -104,28 +95,11 @@ void ofApp::update(){
 		// pull output from model
 		output = model.getOutput();
 
-		// output timestamp
-		end = std::chrono::system_clock::now();
+		// start new measurement
+		start = std::chrono::system_clock::now();
 
-		// FIXME: this doesn't work, probably because passing input & output is not directly blocking?
-		// simple model run time measurement
-		//std::chrono::duration<double> diff = end - start;
-		//ofLog() << "run took: " << diff.count() << " s or ~" << (int)(1.0/diff.count()) << " fps";
-
-		// postprocess to change range to -1 to 1 and copy output to image
-		output = cppflow::add(output, cppflow::tensor({1.0f}));
-		output = cppflow::mul(output, cppflow::tensor({127.5f}));
-		// the above can also be written using math operators:
-		//output = (output + cppflow::tensor({1.0f})) * cppflow::tensor({127.5f});
 		ofxTF2::tensorToImage<float>(output, imgOut);
-
-//		// postprocess and copy input to image
-//		input = cppflow::add(input, cppflow::tensor({1.0f}));
-//		input = cppflow::mul(input, cppflow::tensor({127.5f}));
-//		cppflow::tensor_to_image(input, imgIn);
-
 		imgOut.update();
-		imgIn.update();
 	}
 }
 
@@ -134,7 +108,6 @@ void ofApp::draw(){
 
 	ofSetColor(255);
 	imgOut.draw(12, 12);
-//	imgIn.draw(12, 12 + nnHeight + 12);
 #ifdef USE_LIVE_VIDEO
 	vidSrc.draw(12 + nnWidth, 12, camWidth, camHeight);
 	ofColor(0);

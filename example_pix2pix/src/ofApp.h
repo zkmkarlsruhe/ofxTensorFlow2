@@ -23,6 +23,32 @@
 
 // TODO: add "draw a shoe" canvas for live input?
 // FIXME: does live camera input make sense for the model?
+
+class ImageToImageModel : public ofxTF2ThreadedModel {
+
+	public:
+	// override the runModel function of ofxTF2ThreadedModel
+	// this way the thread will take this augmented function 
+    cppflow::tensor runModel(const cppflow::tensor & input) const override {
+		
+		// cast data type and expand to batch size of 1
+		auto tempInput = cppflow::cast(input, TF_UINT8, TF_FLOAT);
+		tempInput = cppflow::expand_dims(tempInput, 0);
+
+		// apply preprocessing as in python to change range to -1 to 1
+		tempInput = cppflow::div(tempInput, cppflow::tensor({127.5f}));
+		tempInput = cppflow::sub(tempInput, cppflow::tensor({1.0f}));
+
+		// call to super 
+		auto output = ofxTF2Model::runModel(tempInput);
+
+		// postprocess to change range to -1 to 1 and copy output to image
+		output = cppflow::add(output, cppflow::tensor({1.0f}));
+		output = cppflow::mul(output, cppflow::tensor({127.5f}));
+		return output;
+	}
+};
+
 class ofApp : public ofBaseApp{
 
 	public:
@@ -44,7 +70,7 @@ class ofApp : public ofBaseApp{
 
 		// unless your computer is fast, use the threaded model so as not to
 		// block the GUI while the model is processing
-		ofxTF2ThreadedModel model;
+		ImageToImageModel model;
 		cppflow::tensor input;
 		cppflow::tensor output;
 		int nnWidth;

@@ -76,7 +76,7 @@ void ofxTF2ThreadedModel::setIdleTime(unsigned int ms) {
 }
 
 cppflow::tensor ofxTF2ThreadedModel::runModel(const cppflow::tensor & input) const{
-	return runModel(input);
+	return ofxTF2Model::runModel(input);
 }
 
 // ==== protected ====
