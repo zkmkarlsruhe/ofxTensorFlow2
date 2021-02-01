@@ -8,6 +8,7 @@
 #include <iostream>
 
 
+// a simple Fifo with adjustable max length
 template <typename T, typename Container=std::deque<T>>
 class FixedFifo : public std::queue<T, Container> {
 	public:
@@ -57,22 +58,22 @@ class AudioClassifier : public ofxTF2Model {
 	private: 
 
 	// downsample by an integer
-	void downsample(AudioBufferFifo & input, 
+	void downsample(AudioBufferFifo & bufferFifo, 
 					const std::size_t downsamplingFactor){
 		
 		// get the size of an element
-		const int bufferSize = input.front().size();
+		const int bufferSize = bufferFifo.front().size();
 		const int bufferSizeDownsampled = bufferSize / downsamplingFactor;
 
 		// allocate memory if neccessary
-		sample_.resize(input.size() * bufferSizeDownsampled);
+		sample_.resize(bufferFifo.size() * bufferSizeDownsampled);
 
-		// pop elements from the input buffer, downsample and save to flat buffer
+		// pop elements from the bufferFifo, downsample and save to flat buffer
 		int i = 0;
-		while(!input.empty()){
+		while(!bufferFifo.empty()){
 
 			// get a buffer from fifo
-			const SimpleAudioBuffer & buffer = input.front();
+			const SimpleAudioBuffer & buffer = bufferFifo.front();
 
 			// downsample by integer
 			for(int j = 0; j < bufferSizeDownsampled; j++){
@@ -84,7 +85,7 @@ class AudioClassifier : public ofxTF2Model {
 				sample_[i*bufferSizeDownsampled + j] = sum / downsamplingFactor;
 			}
 			// remove buffer from fifo
-			input.pop();
+			bufferFifo.pop();
 			i++;
 		}
 	}

@@ -36,7 +36,7 @@ class AudioClassifier : public ofxTF2Model {
 	void classify(AudioBufferFifo & bufferFifo, int downsamplingFactor,
 			int & argMax, float & prob);
 	private: 
-	void downsample(AudioBufferFifo & input, int downsamplingFactor);
+	void downsample(AudioBufferFifo & bufferFifo, int downsamplingFactor);
 
 	SimpleAudioBuffer sample_;
 };
