@@ -56,7 +56,9 @@ To use ofxTensorFlow2, first you need to download and install openFrameworks. Th
 
 [OF github repository](https://github.com/openframeworks/openFrameworks)
 
-Currently, ofxTensorFlow2 is being developed on Linux and macOS. Windows *should* work but has not yet been tested.
+Currently, ofxTensorFlow2 is being developed on Linux and macOS\* Windows *should* work but has not yet been tested.
+
+\*_The pre-built libtensorflow dynamic libraries downloaded from the TensorFlow website require a minimum of macOS 10.14._
 
 Installation and Build
 ----------------------
@@ -402,6 +404,23 @@ sysctl -a | grep cpu.feat | grep AVX
 ```
 
 Systems confirmed: Mac Pro (Mid 2012)
+
+### Symbol not found: ____chkstk_darwin
+
+The pre-built libtensorflow dynamic libraries downloaded from the TensorFlow website require a minimum of macOS 10.14. On macOS 10.13 or lower, the project may build but will fail on run with a runtime loader error:
+
+```
+dyld: lazy symbol binding failed: Symbol not found: ____chkstk_darwin
+  Referenced from: /Users/na/of_v0.11.0_osx_release/addons/ofxTensorFlow2/example_basics/bin/example_basics.app/Contents/MacOS/./../Frameworks/libtensorflow.2.dylib (which was built for Mac OS X 10.15)
+  Expected in: /usr/lib/libSystem.B.dylib
+```
+
+The only solutions are:
+
+1. upgrade to macOS 10.14 or newer (easier)
+2. use libtensorflow compiled for your system:
+  * installed to system via a package manager, ie. Homebrew or Macports (harder)
+  * or, build libtensorflow manually (probably hardest)
 
 The Intelligent Museum
 ----------------------
