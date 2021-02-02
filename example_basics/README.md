@@ -26,11 +26,10 @@ After training is done export the graph as _SavedModel_ to the examples "bin/dat
 model.save('../bin/data/model')
 ```
 
+***Note***: we solely defined the last dimension of the input. The first channel is the number of batches which is never named and always variable (None). Hence the graph has an input structure of (NONE, NONE, NONE, 3).
+
 ### openFrameworks
-
-***Note***: when we created the graph in Python we solely defined the last dimension of the input. The first channel is the number of batches which is never named and always variable (None). Hence the graph has an input structure of (NONE, NONE, NONE, 3).
-
-This addon builds upon cppflow. Cppflow wraps the TensorFlow C API library and adds a tensor and model class.
+This addon builds upon cppflow. Cppflow wraps the TensorFlow C library and adds a tensor and model class.
 
 #### cppflow:: ops, tensor & model
 
@@ -63,3 +62,4 @@ std::vector<float> outputVector;
 ofxTF2::tensorToVector<float>(output, outputVector);
 cppflow::tensor out = ofxTF2::vectorToTensor<float>(outputVector);
 ```
+***Note***: for now, `tensorToVector<T>()`,`tensorToPixels<T>()`and `tensorToImage<T>()` require you to name the correct type `T` that the neural network outputs, i,e it does not convert values. For example, using an int instead of float will not result in trimmed numbers. Use `cppflow::cast` to convert the values of a tensor. 

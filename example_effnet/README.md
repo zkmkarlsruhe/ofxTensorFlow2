@@ -25,7 +25,7 @@ std::cout << "Maximum likelihood: " << maxLabel << std::endl;
 ```
 To access the underlying vector call the template function `ofxTF2::tensorToVector<T>()`.
 
-***Note***: when using `ofxTF2::` conversions such as `ofxTF2::tensorToVector<T>()` keep in mind that they will not convert values (i.e. using an int instead will not result in trimmed numbers). Use `cppflow::cast` to convert the values of a tensor.
+***Note***: for now, when using `ofxTF2::tensorToVector<T>()` keep in mind that it will not convert values. Use `cppflow::cast` to convert the values of a tensor.
 ```c++
 std::vector<float> outputVector;
 ofxTF2::tensorToVector<float>(output, outputVector);
