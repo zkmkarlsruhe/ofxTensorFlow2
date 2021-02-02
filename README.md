@@ -56,7 +56,8 @@ To use ofxTensorFlow2, first you need to download and install openFrameworks. Th
 
 [OF github repository](https://github.com/openframeworks/openFrameworks)
 
-Currently, ofxTensorFlow2 is being developed on Linux and macOS\* Windows *should* work but has not yet been tested.
+Currently, ofxTensorFlow2 is being developed on Linux and macOS\*. 
+Windows *should* work but has not yet been tested.
 
 \*_The pre-built libtensorflow dynamic libraries downloaded from the TensorFlow website require a minimum of macOS 10.14._
 
@@ -360,7 +361,7 @@ Get familiar with __Machine Learning concepts__. There is plenty of free informa
 
 ##### TensorFlow
 
-Get familiar with __TensorFlow's__ [__Tutorials__](https://www.tensorflow.org/tutorials). Besides learning how to write TensorFlow code, the tutorials will teach you ML concepts like overfitting and underfitting.
+Get familiar with __TensorFlow's__ [Tutorials](https://www.tensorflow.org/tutorials). Besides learning how to write TensorFlow code, the tutorials will teach you ML concepts like overfitting and underfitting.
 
 ##### Datasets
 
