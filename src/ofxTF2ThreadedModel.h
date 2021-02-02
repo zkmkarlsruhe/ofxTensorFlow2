@@ -23,30 +23,40 @@
 ///
 /// basic usage example:
 ///
-///     class ofApp : public ofBaseApp {
-///     public:
-///     ...
-///         ofxTF2ThreadedModel model;
-///     };
+/// class ofApp : public ofBaseApp {
+/// 	public:
+/// 		//...
+/// 		void setup();
+/// 		void update();
+/// 	private:
+/// 		ofxTF2ThreadedModel model;
+/// 		//...
+/// };
 ///
-///     void ofApp::setup() {
-///         ...
-///         model.load("path/to/modeldir");
-///         model.startThread();
-///     }
+/// void ofApp::setup() {
+/// 	// load the model and start the thread
+/// 	model.load("path/to/modeldir");
+/// 	model.startThread();
+/// 	//...
+/// }
 ///
-///     void ofApp.cpp::update() {
-///         if(model.readyForInput()) {
-///             cppflow::tensor input = ...
-///             ... prepare input
-///             model.update(input);
-///         }
-///         ...
-///         if(model.isOutputNew()) {
-///             cppflow::tensor output = model.getOutput();
-///             ... process output
-///         }
-///     }
+/// void ofApp::update() {
+/// 	// check if the model is ready to receive a new input tensor
+/// 	if(model.readyForInput()) {
+/// 		// create a tensor and feed it to the network
+/// 		cppflow::tensor input = returnTensor();
+/// 		model.update(input);
+/// 	}
+/// 	//...
+/// 	// check if the model is done with computation
+/// 	if(model.isOutputNew()) {
+/// 		// receive and process the output of the network
+/// 		cppflow::tensor output = model.getOutput();
+/// 		doSomething(output);
+/// 	}
+/// 	//...
+/// }
+/// 
 ///
 /// note: the thread is stopped & joined automatically in the destructor, if
 ///       you need to control this manually in ofApp::exit() or otherwise use:
