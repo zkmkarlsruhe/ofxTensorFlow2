@@ -120,9 +120,9 @@ namespace ofxTF2{
 
 	template <typename T>
 	cppflow::tensor pixelsToTensor(const ofPixels & pixels) {
-		const int32_t w = pixels.getWidth();
-		const int32_t h = pixels.getHeight();
-		int32_t c;
+		const shape_t w = pixels.getWidth();
+		const shape_t h = pixels.getHeight();
+		shape_t c;
 		switch(pixels.getImageType()) {
 			case OF_IMAGE_GRAYSCALE:
 				c = 1;
@@ -157,9 +157,9 @@ namespace ofxTF2{
 	bool tensorToPixels(const cppflow::tensor & srcTensor, ofPixels & pixels) {
 		// get tensor shape and check if convertible
 		auto shape = getTensorShape(srcTensor);
-		int32_t tensor_w;
-		int32_t tensor_h;
-		int32_t tensor_c;
+		shape_t tensor_w;
+		shape_t tensor_h;
+		shape_t tensor_c;
 		// tensor is not a batch
 		if (shape.size() == 3){
 			tensor_w = shape[1];
@@ -185,9 +185,9 @@ namespace ofxTF2{
 			return false;
 		}
 		// get ofPixels shape
-		int32_t pixels_w = pixels.getWidth();
-		int32_t pixels_h = pixels.getHeight();
-		int32_t pixels_c;
+		shape_t pixels_w = pixels.getWidth();
+		shape_t pixels_h = pixels.getHeight();
+		shape_t pixels_c;
 		switch(pixels.getImageType()) {
 			case OF_IMAGE_GRAYSCALE:
 				pixels_c = 1;
