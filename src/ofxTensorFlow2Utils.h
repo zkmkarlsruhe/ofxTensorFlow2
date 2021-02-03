@@ -20,16 +20,6 @@
 
 namespace ofxTF2 {
 
-	// hack to implicitly convert a std::vector<int32_t> to a std::vector<int64_t>
-	// class shape_t : public std::vector<int32_t>{
-	// 	public:
-	// 	shape_t(const std::vector<int32_t> & vector) : std::vector<int32_t>(vector) {}
-	// 	shape_t(const std::initializer_list<int32_t> & initList) : std::vector<int32_t>(initList) {}
-	// 	operator std::vector<int64_t>() const {
-	// 		return std::vector<int64_t>(this->begin(), this->end());
-	// 	}
-	// };
-
 	typedef int64_t shape_t;
 	typedef std::vector<shape_t> shapeVector;
 
