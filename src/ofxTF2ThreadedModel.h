@@ -29,7 +29,7 @@
 /// 		void setup();
 /// 		void update();
 /// 	private:
-/// 		ThreadedModel model;
+/// 		ofxTF2::ThreadedModel model;
 /// 		//...
 /// };
 ///
@@ -68,7 +68,7 @@
 ///			runModel function. The way you handle the class stays the same as
 ///			described above.
 ///
-/// class MyThreadedModel : public ThreadedModel {
+/// class MyThreadedModel : public ofxTF2::ThreadedModel {
 /// 	public:
 ///     cppflow::tensor runModel(const cppflow::tensor & input) const override {
 ///			// preprocess: add one

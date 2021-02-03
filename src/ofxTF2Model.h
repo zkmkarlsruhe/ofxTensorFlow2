@@ -25,7 +25,7 @@
 ///     class ofApp : public ofBaseApp {
 ///     public:
 ///     ...
-///         Model model;
+///         MyModel model;
 ///     };
 ///
 ///     void ofApp::setup() {
@@ -43,12 +43,12 @@
 /// to add custom built-in pre or post processing, subclass and override
 /// the runModel() virtual function:
 ///
-///     class Model : public Model {
+///     class MyModel : public ofxTF2::Model {
 ///     public:
 ///         cppflow::tensor runModel(const cppflow::tensor & input) const;
 ///     };
 ///
-///     cppflow::tensor Model::runModel(const cppflow::tensor & input) const {
+///     cppflow::tensor MyModel::runModel(const cppflow::tensor & input) const {
 ///         input = input * cppflow::tensor({-1}); // invert, etc
 ///         ... preprocess input
 ///         cppflow::tensor output = Model::runModel(input); // call super
