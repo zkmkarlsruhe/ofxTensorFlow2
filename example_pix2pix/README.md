@@ -11,7 +11,7 @@ If you want to train it by yourself you can edit the config.py file in the pytho
 Check this [post](https://www.tensorflow.org/tutorials/generative/pix2pix?hl=en) for more information on the training procedure.
 
 ### openFrameworks
-In this example we are using the threaded model. It allows to run the inference of the model asynchronous to the draw loop. This is especially helpful as it's not delaying other tasks such as drawing. The threaded model uses the following pattern.
+In this example we are using the `ThreadedModel` class. It allows to run the inference of the model asynchronous to the rest of the program. This is especially helpful as it's not delaying other tasks such as drawing. The `ThreadedModel` uses the following pattern.
 
 Declare the model as a member of the ofApp in ofApp.h:
 ```C++
@@ -21,7 +21,7 @@ class ofApp : public ofBaseApp {
 		void setup();
 		void update();
 	private:
-		ofxTF2ThreadedModel model;
+		ofxTF2::ThreadedModel model;
 		//...
 };
 ```

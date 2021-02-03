@@ -31,13 +31,10 @@ Try to adjust the sampling rate and/or audio buffer size to suit the needs of yo
 In this example you will find a specification of ofxTF2Model that adds a classification and downsampling method.
 The AudioClassifier excepts a FiFo of audio buffers, applies downsampling, infers the neural network and returns the element with the highest probability.
 ```C++
-class AudioClassifier : public ofxTF2Model {
+class AudioClassifier : public ofxTF2::Model {
 	public:
-	void classify(AudioBufferFifo & bufferFifo, int downsamplingFactor,
-			int & argMax, float & prob);
-	private: 
-	void downsample(AudioBufferFifo & bufferFifo, int downsamplingFactor);
-
-	SimpleAudioBuffer sample_;
+	void classify(AudioBufferFifo & bufferFifo, 
+		int downsamplingFactor, int & argMax, float & prob);
+	// ...
 };
 ```

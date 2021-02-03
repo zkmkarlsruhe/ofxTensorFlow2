@@ -16,7 +16,7 @@ def model_predict(input_1):
 ***Note***: you can download the checkpoints for each model from our assets and use the script _pyhton/checkpoint2SavedModel.py_ to change the input signature!
 
 ### openFrameworks
-In this example we will use the threaded version of the ofxTF2Model and augment the runModel function. This way we can modify the in and outputs inside the thread. 
+In this example we will use the `ThreadedModel` class and augment the runModel function. This way we can modify the in and outputs inside the thread. 
 
 Here, the model expects a 3D tensor (which has no dimension for batches yet) and outputs the values to be displayable without clamping (the neural network applies a weird shift).
 ```C++

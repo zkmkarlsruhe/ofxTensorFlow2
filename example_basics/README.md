@@ -40,7 +40,7 @@ cppflow::tensor input = cppflow::fill({10, 9, 17, 3}, 1.0f);
 ```
 Load the model created in Python
 ```C++
-cppflow::model model(ofToDataPath("model"));
+cppflow::model model("model");
 ```
 Infer the model and retrieve the output
 ```C++
@@ -48,18 +48,23 @@ cppflow::tensor output = model(input);
 ```
 
 
-#### ofxTF2Model
-We define a base model class `ofxTF2Model` that wraps around `cppflow::model` class and mainly allows to load and infer a model relative to _bin/data_. It expects and returns `cppflow::tensor`.
+#### ofxTF2:: namespace
+The `ofxTF2` namespace defines some models and utility functions that simplfy the integration with openFrameworks. 
+
+##### Model
+We define a base model class `ofxTF2::Model` that wraps around `cppflow::model` class and mainly allows to load and infer a model relative to _bin/data_. It expects and returns `cppflow::tensor`.
 ```C++
-ofxTF2Model ofModel("model");
+ofxTF2::Model ofModel("model");
 output = ofModel.runModel(input);
 ```
-Other example use a derivated `ofxTF2ThreadedModel`
+Later we will take a look at the advanced `ofxTF2::ThreadedModel`.
 
-#### ofxTF2:: namespace
-The `ofxTF2` namespace defines some utility functions that simplfy the integration with openFrameworks. For example, you can convert a `cppflow::tensor` to `std::vector`, `ofPixels` or `ofImage` and backwards.
+
+##### Conversions
+Furthermore, you can convert a `cppflow::tensor` to `std::vector`, `ofPixels` or `ofImage` and backwards using the conversion function defined in _ofxTensorFlow2/src/ofxTensorFlow2Utils.h_.
 ```C++
 std::vector<float> outputVector;
 ofxTF2::tensorToVector<float>(output, outputVector);
-cppflow::tensor out = ofxTF2::vectorToTensor<float>(outputVector);
+auto backToTensor = ofxTF2::vectorToTensor<float>(outputVector);
 ```
+
