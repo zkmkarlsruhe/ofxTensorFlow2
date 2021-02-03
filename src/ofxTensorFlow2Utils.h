@@ -18,7 +18,7 @@
 #include "ofImage.h"
 #include "ofLog.h"
 
-namespace ofxTF2{
+namespace ofxTF2 {
 
 	// hack to implicitly convert a std::vector<int32_t> to a std::vector<int64_t>
 	// class shape_t : public std::vector<int32_t>{
@@ -103,7 +103,7 @@ namespace ofxTF2{
 	template<typename T>
 	std::string vectorToString(const std::vector<T> & vec) {
 		std::string s("[");
-		for (int i = 0; i < vec.size(); i++) {
+		for (std::size_t i = 0; i < vec.size(); i++) {
 			s.append(std::to_string(vec[i]));
 			if (i != vec.size() - 1) {
 				s.append(", ");

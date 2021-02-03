@@ -17,7 +17,7 @@
 
 #include "cppflow/cppflow.h"
 
-/// \class ofxTF2Model
+/// \class Model
 /// \brief a wrapper for cppflow::model which processes input to output
 ///
 /// basic usage example:
@@ -25,7 +25,7 @@
 ///     class ofApp : public ofBaseApp {
 ///     public:
 ///     ...
-///         ofxTF2Model model;
+///         Model model;
 ///     };
 ///
 ///     void ofApp::setup() {
@@ -43,7 +43,7 @@
 /// to add custom built-in pre or post processing, subclass and override
 /// the runModel() virtual function:
 ///
-///     class Model : public ofxTF2Model {
+///     class Model : public Model {
 ///     public:
 ///         cppflow::tensor runModel(const cppflow::tensor & input) const;
 ///     };
@@ -51,19 +51,22 @@
 ///     cppflow::tensor Model::runModel(const cppflow::tensor & input) const {
 ///         input = input * cppflow::tensor({-1}); // invert, etc
 ///         ... preprocess input
-///         cppflow::tensor output = ofxTF2Model::runModel(input); // call super
+///         cppflow::tensor output = Model::runModel(input); // call super
 ///         ... postprocess output
 ///         output = output * cppflow::tensor({-1}); // invert back, etc
 ///         return output; // done
 ///     }
 ///
-class ofxTF2Model {
+
+namespace ofxTF2 {
+
+class Model {
 
 public:
 
-	ofxTF2Model() = default;
-	ofxTF2Model(const std::string & modelPath);
-	virtual ~ofxTF2Model();
+	Model() = default;
+	Model(const std::string & modelPath);
+	virtual ~Model();
 
 	/// load a SavedModel directory relative to bin/data
 	/// directories for SavedModels include assets, variables, and a .pb file
@@ -85,3 +88,5 @@ protected:
 	std::string modelPath_ = "";
 	cppflow::model * model_ = nullptr;
 };
+
+}; // end namespace ofxTF2

@@ -2,10 +2,10 @@
 #include "ofxTensorFlow2.h"
 
 
-class ImageToImageModel : public ofxTF2ThreadedModel {
+class ImageToImageModel : public ofxTF2::ThreadedModel {
 
 	public:
-	// override the runModel function of ofxTF2ThreadedModel
+	// override the runModel function of ThreadedModel
 	// this way the thread will take this augmented function 
     cppflow::tensor runModel(const cppflow::tensor & input) const override {
 		
@@ -18,7 +18,7 @@ class ImageToImageModel : public ofxTF2ThreadedModel {
 		tempInput = cppflow::sub(tempInput, cppflow::tensor({1.0f}));
 
 		// call to super 
-		auto output = ofxTF2Model::runModel(tempInput);
+		auto output = Model::runModel(tempInput);
 
 		// postprocess to change range to -1 to 1 and copy output to image
 		output = cppflow::add(output, cppflow::tensor({1.0f}));

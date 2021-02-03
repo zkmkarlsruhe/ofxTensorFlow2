@@ -22,7 +22,7 @@ void ofApp::setup(){
 	ofSetWindowTitle("example_effnet");
 
 	// load and infer the model
-	ofxTF2Model model("model");
+	ofxTF2::Model model("model");
 
 	std::string path(ofToDataPath("my_cat.jpg"));
 	ofLog() << "Loading image: " << path;

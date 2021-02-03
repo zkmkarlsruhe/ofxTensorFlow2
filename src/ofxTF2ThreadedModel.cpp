@@ -15,25 +15,29 @@
 
 #include "ofxTF2ThreadedModel.h"
 
-ofxTF2ThreadedModel::~ofxTF2ThreadedModel() {
+
+namespace ofxTF2 {
+
+
+ThreadedModel::~ThreadedModel() {
 	waitForThread();
 }
 
-bool ofxTF2ThreadedModel::load(const std::string & modelPath) {
+bool ThreadedModel::load(const std::string & modelPath) {
 	bool ret = false;
 	lock();
-	ret = ofxTF2Model::load(modelPath);
+	ret = Model::load(modelPath);
 	unlock();
 	return ret;
 }
 
-void ofxTF2ThreadedModel::clear() {
+void ThreadedModel::clear() {
 	lock();
-	ofxTF2Model::clear();
+	Model::clear();
 	unlock();
 }
 
-bool ofxTF2ThreadedModel::readyForInput() {
+bool ThreadedModel::readyForInput() {
 	bool ret = false;
 	if(tryLock()) {
 		ret = !newInput_;
@@ -42,7 +46,7 @@ bool ofxTF2ThreadedModel::readyForInput() {
 	return ret;
 }
 
-bool ofxTF2ThreadedModel::update(cppflow::tensor input) {
+bool ThreadedModel::update(cppflow::tensor input) {
 	bool ret = false;
 	if(tryLock()) {
 		input_ = input;
@@ -53,7 +57,7 @@ bool ofxTF2ThreadedModel::update(cppflow::tensor input) {
 	return ret;
 }
 
-bool ofxTF2ThreadedModel::isOutputNew() {
+bool ThreadedModel::isOutputNew() {
 	bool ret = false;
 	if(tryLock()) {
 		ret = newOutput_;
@@ -62,7 +66,7 @@ bool ofxTF2ThreadedModel::isOutputNew() {
 	return ret;
 }
 
-cppflow::tensor ofxTF2ThreadedModel::getOutput() {
+cppflow::tensor ThreadedModel::getOutput() {
 	cppflow::tensor ret;
 	lock();
 	ret = output_;
@@ -71,17 +75,17 @@ cppflow::tensor ofxTF2ThreadedModel::getOutput() {
 	return ret;
 }
 
-void ofxTF2ThreadedModel::setIdleTime(unsigned int ms) {
+void ThreadedModel::setIdleTime(unsigned int ms) {
 	idleMS_ = ms;
 }
 
-cppflow::tensor ofxTF2ThreadedModel::runModel(const cppflow::tensor & input) const{
-	return ofxTF2Model::runModel(input);
+cppflow::tensor ThreadedModel::runModel(const cppflow::tensor & input) const{
+	return Model::runModel(input);
 }
 
 // ==== protected ====
 
-void ofxTF2ThreadedModel::threadedFunction() {
+void ThreadedModel::threadedFunction() {
 	while(isThreadRunning()) {
 		lock();
 		if(newInput_) {
@@ -96,3 +100,5 @@ void ofxTF2ThreadedModel::threadedFunction() {
 		}
 	}
 }
+
+}; // end namespace ofxTF2

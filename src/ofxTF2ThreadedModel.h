@@ -18,8 +18,8 @@
 #include "ofxTF2Model.h"
 #include "ofThread.h"
 
-/// \class ofxTF2ThreadedModel
-/// \brief ofxTF2Model which processes input to output on a background thread
+/// \class ThreadedModel
+/// \brief Model which processes input to output on a background thread
 ///
 /// basic usage example:
 ///
@@ -29,7 +29,7 @@
 /// 		void setup();
 /// 		void update();
 /// 	private:
-/// 		ofxTF2ThreadedModel model;
+/// 		ThreadedModel model;
 /// 		//...
 /// };
 ///
@@ -68,29 +68,31 @@
 ///			runModel function. The way you handle the class stays the same as
 ///			described above.
 ///
-/// class MyThreadedModel : public ofxTF2ThreadedModel {
+/// class MyThreadedModel : public ThreadedModel {
 /// 	public:
 ///     cppflow::tensor runModel(const cppflow::tensor & input) const override {
 ///			// preprocess: add one
 ///			auto modifiedInput = cppflow::add(input, {1});
 /// 		// call to super runModel! Keep the call but change the input.
-/// 		auto output = ofxTF2Model::runModel(modifiedInput);
+/// 		auto output = Model::runModel(modifiedInput);
 /// 		// postprocess: multiply by minus one
 /// 		return cppflow::mul(output, {-1});
 /// 	}
 /// };
 
-class ofxTF2ThreadedModel : public ofxTF2Model, public ofThread {
+namespace ofxTF2 {
+
+class ThreadedModel : public Model, public ofThread {
 
 public:
 
 	/// stop and wait for thread to exit on delete
-	virtual ~ofxTF2ThreadedModel();
+	virtual ~ThreadedModel();
 
-	/// thread-safe call to ofxTF2Model::load()
+	/// thread-safe call to Model::load()
 	bool load(const std::string & modelPath) override;
 
-	/// thread-safe call to ofxTF2Model::clear()
+	/// thread-safe call to Model::clear()
 	void clear() override;
 
 	/// returns true if the model is idle and ready for new input
@@ -132,3 +134,5 @@ protected:
 	bool newInput_ = false;  //< is the input new? mutex protected
 	bool newOutput_ = false; //< is the output new? mutex protected
 };
+
+}; // end namespace ofxTF2

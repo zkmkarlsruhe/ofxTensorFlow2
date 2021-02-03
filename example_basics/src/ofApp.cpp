@@ -21,7 +21,7 @@ void ofApp::setup(){
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("example_basics");
 
-	ofxTF2Model model;
+	ofxTF2::Model model;
 	cppflow::tensor input;
 	cppflow::tensor output;
 

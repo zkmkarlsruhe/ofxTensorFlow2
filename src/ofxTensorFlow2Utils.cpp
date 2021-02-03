@@ -48,7 +48,7 @@ bool isSameShape (const shapeVector & lhs,
 							<< " and rhs " << std::to_string(rhs.size());
 			return false;
 	}
-	for (int i = 0; i < lhs.size(); i++) {
+	for (std::size_t i = 0; i < lhs.size(); i++) {
 		if (lhs[i] != rhs[i]){
 			ofLogWarning() << "ofxTensorFlow2: shape mismatch at dimension " << i
 							<< " for lhs " << vectorToString(lhs)
@@ -107,4 +107,4 @@ void setLogLevel(ofLogLevel level) {
 	}
 }
 
-};
+}; // end namespace ofxTF2

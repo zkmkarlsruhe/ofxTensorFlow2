@@ -19,52 +19,57 @@
 #include "ofUtils.h"
 #include "ofLog.h"
 
-ofxTF2Model::ofxTF2Model(const std::string & modelPath) {
+
+namespace ofxTF2 {
+
+Model::Model(const std::string & modelPath) {
 	load(modelPath);
 }
 
-ofxTF2Model::~ofxTF2Model(){
+Model::~Model(){
 	clear();
 }
 
-bool ofxTF2Model::load(const std::string & modelPath) {
-	ofxTF2Model::clear();
+bool Model::load(const std::string & modelPath) {
+	Model::clear();
 	std::string path = ofToDataPath(modelPath);
 	if (!ofDirectory::doesDirectoryExist(path)){
-		ofLogError() << "ofxTF2Model: model path not found: " << modelPath;
+		ofLogError() << "Model: model path not found: " << modelPath;
 		return false;
 	}
 	auto model = new cppflow::model(path);
 	if (!model){
 		modelPath_ = "";
-		ofLogError() << "ofxTF2Model: model could not be initialized!";
+		ofLogError() << "Model: model could not be initialized!";
 		return false;
 	}	
 	model_ = model;
 	modelPath_ = modelPath;
-	ofLogVerbose() << "ofxTF2Model: loaded model: " << modelPath_;
+	ofLogVerbose() << "Model: loaded model: " << modelPath_;
 	return true;
 }
 
-void ofxTF2Model::clear() {
+void Model::clear() {
 	if (model_){
-		ofLogVerbose() << "ofxTF2Model: clear model" << modelPath_;
+		ofLogVerbose() << "Model: clear model" << modelPath_;
 		delete model_;
 		model_ = nullptr;
 		modelPath_ = "";
 	}
 }
 
-cppflow::tensor ofxTF2Model::runModel(const cppflow::tensor & input) const {
+cppflow::tensor Model::runModel(const cppflow::tensor & input) const {
 	if (model_){
 		return (*model_)(input);
 	}
 	else{
-		ofLog() << "ofxTF2Model: no model loaded! Returning tensor containing -1.";
+		ofLog() << "Model: no model loaded! Returning tensor containing -1.";
 		return cppflow::tensor(-1);
 	}
 }
 
-bool ofxTF2Model::isLoaded() {
+bool Model::isLoaded() {
 	return model_ != nullptr;
 }
+
+}; // end namespace ofxTF2

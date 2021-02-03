@@ -191,7 +191,7 @@ void ofApp::setupDrawingTool(string model_dir) {
 	// load test image
 	ofLogVerbose() << "loading test image";
 	ofImage img;
-	img.load(ofFilePath::join(model_dir, "test_image.png"));
+	img.load(ofFilePath::join(model_dir, "shoe.png"));
 	if(img.isAllocated()) {
 		fbo.begin();
 		ofSetColor(255);
