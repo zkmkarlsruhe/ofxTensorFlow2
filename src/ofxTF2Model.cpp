@@ -30,6 +30,11 @@ Model::~Model(){
 	clear();
 }
 
+
+void Model::setup(const ModelSettings & settings) {
+	settings_ = settings;
+}
+
 bool Model::load(const std::string & modelPath) {
 	Model::clear();
 	std::string path = ofToDataPath(modelPath);
@@ -60,7 +65,7 @@ void Model::clear() {
 
 cppflow::tensor Model::runModel(const cppflow::tensor & input) const {
 	if (model_){
-		return (*model_)(input);
+		return (*model_)({{settings_.inputName_, input}}, {settings_.outputName_})[0];
 	}
 	else{
 		ofLog() << "Model: no model loaded! Returning tensor containing -1.";

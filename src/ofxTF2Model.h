@@ -60,9 +60,20 @@
 
 namespace ofxTF2 {
 
+
+struct ModelSettings {
+	std::string inputName_;
+	std::string outputName_;
+	
+	// initialize members with TF default values
+	ModelSettings() : inputName_ ({"serving_default_input_1"}), 
+					outputName_ ({"StatefulPartitionedCall"}) { }
+};
+
+
 class Model {
 
-public:
+public:	
 
 	Model() = default;
 	Model(const std::string & modelPath);
@@ -73,18 +84,22 @@ public:
 	/// returns true on success
 	virtual bool load(const std::string & modelPath);
 
+	// set parameters like in and ouput names
+	void setup(const ModelSettings & settings);
+
 	/// clear model
 	virtual void clear();
-    
-    /// run model on input, blocks until returning output
-    /// implement in a subclass to add custom pre / post processing
-    virtual cppflow::tensor runModel(const cppflow::tensor & input) const;
 
-    /// returns true if model is loaded
-    bool isLoaded();
+	/// run model on input, blocks until returning output
+	/// implement in a subclass to add custom pre / post processing
+	virtual cppflow::tensor runModel(const cppflow::tensor & input) const;
+
+	/// returns true if model is loaded
+	bool isLoaded();
 
 protected:
 
+	ModelSettings settings_;
 	std::string modelPath_ = "";
 	cppflow::model * model_ = nullptr;
 };
