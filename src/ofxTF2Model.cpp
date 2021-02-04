@@ -73,6 +73,16 @@ cppflow::tensor Model::runModel(const cppflow::tensor & input) const {
 	}
 }
 
+
+void Model::printOps(){
+	ofLog() << "============ Model Operations ==============";
+	auto ops = model_->get_operations();
+	for (auto & el : ops){
+		ofLog() << el;
+	}
+	ofLog() << "============ End ==============";
+}
+
 bool Model::isLoaded() {
 	return model_ != nullptr;
 }
