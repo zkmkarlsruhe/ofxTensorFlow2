@@ -36,7 +36,7 @@ class ImageToImageModel : public ofxTF2::ThreadedModel {
 		// call to super 
 		auto output = Model::runModel(tempInput);
 
-		// postprocess to change range to -1 to 1 and copy output to image
+		// postprocess to change range to -1 to 1
 		output = cppflow::add(output, cppflow::tensor({1.0f}));
 		output = cppflow::mul(output, cppflow::tensor({127.5f}));
 		return output;

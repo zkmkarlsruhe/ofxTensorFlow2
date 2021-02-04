@@ -35,8 +35,9 @@ void ofApp::setup(){
 	output = model.runModel(input);
 
 	// use the ofxTF2 namespace for some useful functions like conversion
-	std::vector<float> outputVector;
-	ofxTF2::tensorToVector<float>(output, outputVector);
+	// converting to int will trim the models output from float to int 
+	std::vector<int> outputVector;
+	ofxTF2::tensorToVector<int>(output, outputVector);
 	ofLog() << ofxTF2::vectorToString(outputVector);
 	ofExit();
 }

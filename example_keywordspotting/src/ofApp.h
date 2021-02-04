@@ -52,7 +52,7 @@ class ofApp : public ofBaseApp{
 		std::size_t bufferSize;
 		std::size_t samplingRate;
 		
-		// since volume detection has some latency be buffer past buffers
+		// since volume detection has some latency we keep a history of buffers
 		AudioBufferFifo previousBuffers;
 		std::size_t numPreviousBuffers;
 		// sampleBuffers acts as a buffer for recording (could be fused)
