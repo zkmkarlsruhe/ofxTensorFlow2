@@ -62,9 +62,7 @@ Later we will take a look at the advanced `ofxTF2::ThreadedModel`.
 ##### Conversions
 Furthermore, you can convert a `cppflow::tensor` to `std::vector`, `ofPixels` or `ofImage` and backwards using the conversion function defined in _ofxTensorFlow2/src/ofxTensorFlow2Utils.h_.
 ```C++
-std::vector<float> outputVector;
-ofxTF2::tensorToVector<float>(output, outputVector);
-auto backToTensor = ofxTF2::vectorToTensor<float>(outputVector);
+std::vector<int> outputVector;
+ofxTF2::tensorToVector<int>(output, outputVector);
+auto backToTensor = ofxTF2::vectorToTensor<float>(outputVector); // trimmed floats
 ```
-
-***Note***: for now, `tensorToVector<T>()`,`tensorToPixels<T>()`and `tensorToImage<T>()` require you to name the correct type `T` that the neural network outputs, i,e it does not convert values. For example, using an int instead of float will not result in trimmed numbers. Use `cppflow::cast` to convert the values of a tensor. 

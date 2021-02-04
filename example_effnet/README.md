@@ -24,8 +24,6 @@ auto maxLabel = cppflow::arg_max(output, 1);
 std::cout << "Maximum likelihood: " << maxLabel << std::endl;
 ```
 To access the underlying vector call the template function `ofxTF2::tensorToVector<T>()`.
-
-***Note***: for now, when using `ofxTF2::tensorToVector<T>()` keep in mind that it will not convert values. Use `cppflow::cast` to convert the values of a tensor.
 ```c++
 std::vector<float> outputVector;
 ofxTF2::tensorToVector<float>(output, outputVector);
