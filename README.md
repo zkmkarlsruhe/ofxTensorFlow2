@@ -175,7 +175,7 @@ $OF_PATH/addons/ofxTensorFlow2/scripts/macos_install_libs.sh "$TARGET_BUILD_DIR/
 
 #### Makefile build
 
-Enable C++14 features by changing `-std=c+=11` to `-std=c++14` on line 142 in `OF_ROOT/libs/openFrameworksCompiled/project/osx/config.osx.default.mk`:
+Enable C++14 features by changing `-std=c++11` to `-std=c++14` on line 142 in `OF_ROOT/libs/openFrameworksCompiled/project/osx/config.osx.default.mk`:
 
 ```makefile
 PLATFORM_CXXFLAGS += -std=c++14
@@ -238,7 +238,7 @@ Project files for the examples are not included so you will need to generate the
 To (re)generate project files for an *existing* project:
 
 * click the "Import" button in the ProjectGenerator
-* navigate the to base folder for the project ie. "luaExample"
+* navigate to the base folder for the example project ie. "example_XXXX"
 * click the "Update" button
 
 If everything went Ok, you should now be able to open the generated project and build/run the example.
