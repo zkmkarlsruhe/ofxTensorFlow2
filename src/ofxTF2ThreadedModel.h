@@ -91,6 +91,12 @@ public:
 
 	/// thread-safe call to Model::load()
 	bool load(const std::string & modelPath) override;
+	
+	/// thread-safe call to Model::setup()
+	void setup(
+		const std::vector<std::string> & inputNames = {{"serving_default_input_1"}},
+		const std::vector<std::string> & outputNames = {{"StatefulPartitionedCall"}})
+		override;
 
 	/// thread-safe call to Model::clear()
 	void clear() override;
@@ -100,7 +106,8 @@ public:
 
 	/// updates the model's current input
 	/// returns true if the input was set or false if the model was busy
-	bool update(cppflow::tensor input);
+	bool update(const cppflow::tensor & input);
+	bool update(const std::vector<cppflow::tensor> & inputs);
 
 	/// returns true if output is ready
 	/// note: subsequent calls will return false until the model has processed
@@ -111,6 +118,7 @@ public:
 	/// note: subsequent calls may return different output if the model has
 	///       processed new input
 	cppflow::tensor getOutput();
+	std::vector<cppflow::tensor> getOutputs();
 
 	/// set thread idle sleep time in ms, default 100
 	/// lower values will check for input more often at the expense of cpu time
@@ -119,6 +127,9 @@ public:
 
 	// override the runModel function so derived classes can redefine it
 	virtual cppflow::tensor runModel(const cppflow::tensor & input) const override;
+
+	virtual std::vector<cppflow::tensor> runMultiModel(
+					const std::vector<cppflow::tensor> & inputs) const override;
 
 protected:
 
@@ -129,8 +140,8 @@ protected:
 	/// note: not mutex protected, only set when the thread is not running
 	unsigned int idleMS_ = 16;
 
-	cppflow::tensor input_;  //< input to be processed, mutex protected
-	cppflow::tensor output_; //< processed output, mutex protected
+	std::vector<cppflow::tensor> inputs_;  //< input to be processed, mutex protected
+	std::vector<cppflow::tensor> outputs_; //< processed output, mutex protected
 	bool newInput_ = false;  //< is the input new? mutex protected
 	bool newOutput_ = false; //< is the output new? mutex protected
 };

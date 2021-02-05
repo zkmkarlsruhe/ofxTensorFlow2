@@ -15,6 +15,7 @@
 
 #pragma once
 
+#include "ofLog.h"
 #include "cppflow/cppflow.h"
 
 /// \class Model
@@ -61,15 +62,6 @@
 namespace ofxTF2 {
 
 
-struct ModelSettings {
-	std::string inputName_;
-	std::string outputName_;
-	// initialize members with TF default values
-	ModelSettings() : inputName_ ({"serving_default_input_1"}), 
-					outputName_ ({"StatefulPartitionedCall"}) { }
-};
-
-
 class Model {
 
 public:	
@@ -83,8 +75,10 @@ public:
 	/// returns true on success
 	virtual bool load(const std::string & modelPath);
 
-	// set parameters like in and ouput names
-	void setup(const ModelSettings & settings);
+	// set in and output names
+	virtual void setup(
+		const std::vector<std::string> & inputNames = {{"serving_default_input_1"}},
+		const std::vector<std::string> & outputNames = {{"StatefulPartitionedCall"}});
 
 	/// clear model
 	virtual void clear();
@@ -93,7 +87,14 @@ public:
 	/// implement in a subclass to add custom pre / post processing
 	virtual cppflow::tensor runModel(const cppflow::tensor & input) const;
 
-	// print the signature
+	/// run model on mutiple in and outputs, blocks until returning output
+	/// the inputs need to be given in the same order as defined in the settings
+	/// outputs are returned in the same manner as defined in the settings
+	/// implement in a subclass to add custom pre / post processing
+	virtual std::vector<cppflow::tensor> runMultiModel(
+					const std::vector<cppflow::tensor> & inputs) const;
+
+	/// print the signature
 	void printOps();
 
 	/// returns true if model is loaded
@@ -101,8 +102,9 @@ public:
 
 protected:
 
-	ModelSettings settings_;
 	std::string modelPath_ = "";
+	std::vector<std::string> inputNames_  = {{"serving_default_input_1"}};
+	std::vector<std::string> outputNames_ = {{"StatefulPartitionedCall"}};
 	cppflow::model * model_ = nullptr;
 };
 

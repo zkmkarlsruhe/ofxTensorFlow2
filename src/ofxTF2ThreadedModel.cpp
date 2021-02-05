@@ -31,6 +31,17 @@ bool ThreadedModel::load(const std::string & modelPath) {
 	return ret;
 }
 
+void ThreadedModel::setIdleTime(unsigned int ms) {
+	idleMS_ = ms;
+}
+
+void ThreadedModel::setup(const std::vector<std::string> & inputNames,
+			const std::vector<std::string> & outputNames){
+	lock();
+	Model::setup(inputNames_, outputNames_);
+	unlock();
+}
+
 void ThreadedModel::clear() {
 	lock();
 	Model::clear();
@@ -46,17 +57,6 @@ bool ThreadedModel::readyForInput() {
 	return ret;
 }
 
-bool ThreadedModel::update(cppflow::tensor input) {
-	bool ret = false;
-	if(tryLock()) {
-		input_ = input;
-		newInput_ = true;
-		unlock();
-		ret = true;
-	}
-	return ret;
-}
-
 bool ThreadedModel::isOutputNew() {
 	bool ret = false;
 	if(tryLock()) {
@@ -66,21 +66,41 @@ bool ThreadedModel::isOutputNew() {
 	return ret;
 }
 
+bool ThreadedModel::update(const cppflow::tensor & input) {
+	return ThreadedModel::update(std::vector<cppflow::tensor> {input});
+}
+
+bool ThreadedModel::update(const std::vector<cppflow::tensor> & inputs) {
+	bool ret = false;
+	if(tryLock()) {
+		inputs_ = inputs;
+		newInput_ = true;
+		unlock();
+		ret = true;
+	}
+	return ret;
+}
+
 cppflow::tensor ThreadedModel::getOutput() {
-	cppflow::tensor ret;
+	return getOutputs()[0];
+}
+
+std::vector<cppflow::tensor> ThreadedModel::getOutputs() {
+	std::vector<cppflow::tensor> ret;
 	lock();
-	ret = output_;
+	ret = outputs_;
 	newOutput_ = false;
 	unlock();
 	return ret;
 }
 
-void ThreadedModel::setIdleTime(unsigned int ms) {
-	idleMS_ = ms;
-}
-
 cppflow::tensor ThreadedModel::runModel(const cppflow::tensor & input) const{
 	return Model::runModel(input);
+}
+
+std::vector<cppflow::tensor> ThreadedModel::runMultiModel(
+				const std::vector<cppflow::tensor> & inputs) const {
+	return Model::runMultiModel(inputs);
 }
 
 // ==== protected ====
@@ -89,7 +109,13 @@ void ThreadedModel::threadedFunction() {
 	while(isThreadRunning()) {
 		lock();
 		if(newInput_) {
-			output_ = runModel(input_);
+			// if we have only one in and output use the simpler runModel function
+			// we dont call runMutliModel as we want users to augment runModel
+			if(inputNames_.size()<= 1 && outputNames_.size() <= 1)
+				outputs_ = {runModel(inputs_[0])};
+			// otherwise use runMultiModel function
+			else 
+				outputs_ = runMultiModel(inputs_);
 			newInput_ = false;
 			newOutput_ = true;
 			unlock();

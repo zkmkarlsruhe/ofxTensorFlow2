@@ -17,34 +17,33 @@
 
 #include "ofFileUtils.h"
 #include "ofUtils.h"
-#include "ofLog.h"
 
 
 namespace ofxTF2 {
 
 Model::Model(const std::string & modelPath) {
-	load(modelPath);
+	Model::load(modelPath);
 }
 
 Model::~Model(){
-	clear();
+	Model::clear();
 }
 
-
-void Model::setup(const ModelSettings & settings) {
-	settings_ = settings;
+void Model::setup(const std::vector<std::string> & inputNames,
+			const std::vector<std::string> & outputNames){
+	inputNames_ = inputNames;
+	outputNames_ = outputNames;
 }
 
 bool Model::load(const std::string & modelPath) {
 	Model::clear();
 	std::string path = ofToDataPath(modelPath);
 	if (!ofDirectory::doesDirectoryExist(path)){
-		ofLogError() << "Model: model path not found: " << modelPath;
+		ofLogError() << "Model: model path not found: " << modelPath; 
 		return false;
 	}
 	auto model = new cppflow::model(path);
 	if (!model){
-		modelPath_ = "";
 		ofLogError() << "Model: model could not be initialized!";
 		return false;
 	}	
@@ -63,16 +62,33 @@ void Model::clear() {
 	}
 }
 
+
 cppflow::tensor Model::runModel(const cppflow::tensor & input) const {
-	if (model_){
-		return (*model_)({{settings_.inputName_, input}}, {settings_.outputName_})[0];
-	}
-	else{
-		ofLog() << "Model: no model loaded! Returning tensor containing -1.";
-		return cppflow::tensor(-1);
-	}
+	return Model::runMultiModel(std::vector<cppflow::tensor>{input})[0];
 }
 
+
+std::vector<cppflow::tensor> Model::runMultiModel(
+				const std::vector<cppflow::tensor> & inputs) const {
+	
+	// define the type of an input argument and a vector of it
+	using inputTuple_t = std::tuple<std::string, cppflow::tensor>;
+	std::vector<inputTuple_t> inputArguments;
+
+	// add the names from the settings and the tensors to the vector of arguments
+	for (unsigned int i = 0; i < inputNames_.size(); i++){
+		inputArguments.push_back( 
+				inputTuple_t(inputNames_[i], inputs[i]) );
+	}
+	// if model exists run it with multiple in and outputs
+	if (model_){
+		return (*model_)(inputArguments, outputNames_);
+	}
+	else{
+		ofLogError() << "Model: no model loaded! Returning a vector with a single tensor containing -1.";
+		return std::vector<cppflow::tensor> ({-1});
+	}
+}
 
 void Model::printOps(){
 	ofLog() << "============ Model Operations ==============";
