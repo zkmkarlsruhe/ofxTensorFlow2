@@ -19,10 +19,10 @@ cd $(dirname "$0")
 rm -rfv "$DEST"/example_basics/bin/data/model
 
 # example_effnet
-rm -rfv "$DEST"/example_effnet/bin/data/model
+rm -rfv "$DEST"/example_basics_efficientnet/bin/data/model
 
 # example_keywordspotting
-rm -rfv "$DEST"/example_keywordspotting/bin/data/model
+rm -rfv "$DEST"/example_keyword_spotting/bin/data/model
 
 # example_pix2pix
 rm -rfv "$DEST"/example_pix2pix/bin/data/model

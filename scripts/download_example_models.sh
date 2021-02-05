@@ -34,13 +34,13 @@ mv model "$DEST"/example_basics/bin/data
 
 # example_effnet
 unzip model_effnet.zip
-rm -rf "$DEST"/example_effnet/bin/data/model
-mv model "$DEST"/example_effnet/bin/data
+rm -rf "$DEST"/example_basics_efficientnet/bin/data/model
+mv model "$DEST"/example_basics_efficientnet/bin/data
 
 # example_keywordspotting
 unzip model_keywordspotting.zip
-rm -rf "$DEST"/example_keywordspotting/bin/data/model
-mv model "$DEST"/example_keywordspotting/bin/data
+rm -rf "$DEST"/example_keyword_spotting/bin/data/model
+mv model "$DEST"/example_keyword_spotting/bin/data
 
 # example_pix2pix
 unzip model_pix2pix_edges2shoes_20epochs.zip
