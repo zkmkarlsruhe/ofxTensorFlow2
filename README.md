@@ -49,17 +49,22 @@ For further information, please find detailed instructions below.
 
 _Note: The TensorFlow download script grabs the CPU-optimized build by default._
 
-Build Requirements
-------------------
+Requirements
+------------
+
+* openFrameworks
+* Operating systems:
+  - Linux, 64-bit, x86
+  - macOS 10.14 (Mojave) or higher, 64-bit, x86
+  - Windows, 64-bit x86 (*should* work, not tested)
 
 To use ofxTensorFlow2, first you need to download and install openFrameworks. The examples are developed against the latest release version of openFrameworks on <http://openframeworks.cc/download>.
 
 [OF github repository](https://github.com/openframeworks/openFrameworks)
 
-Currently, ofxTensorFlow2 is being developed on Linux and macOS\*. 
-Windows *should* work but has not yet been tested.
+Currently, ofxTensorFlow2 is being developed on Linux and macOS. Windows *should* work but has not yet been tested.
 
-\*_The pre-built libtensorflow dynamic libraries downloaded from the TensorFlow website require a minimum of macOS 10.14._
+The main supported operating systems & architectures are those which have pre-built versions of libtensorflow [available for download](https://www.tensorflow.org/install/lang_c) from the TensorFlow website. Other system configurations are possible but may require building and/or installing libtensorflow manually.
 
 Installation and Build
 ----------------------
@@ -237,9 +242,9 @@ Project files for the examples are not included so you will need to generate the
 
 To (re)generate project files for an *existing* project:
 
-* click the "Import" button in the ProjectGenerator
-* navigate to the base folder for the example project ie. "example_XXXX"
-* click the "Update" button
+* Click the "Import" button in the ProjectGenerator
+* Navigate to the project's parent folder ie. "ofxTensorFlow2", select the base folder for the example project ie. "example_XXXX", and click the Open button
+* Click the "Update" button
 
 If everything went Ok, you should now be able to open the generated project and build/run the example.
 
