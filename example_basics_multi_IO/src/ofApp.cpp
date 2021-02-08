@@ -24,7 +24,7 @@ void ofApp::setup(){
 	// load the model
 	model.load("model");
 
-	// setup: define the in and ouput names
+	// setup: define the in and output names
 	std::vector<std::string> inputNames = {
 		"serving_default_body",
 		"serving_default_tags",
@@ -37,9 +37,9 @@ void ofApp::setup(){
 	model.setup(inputNames, outputNames);
 
 	// create tensors for each input
-	cppflow::tensor inputTitle = cppflow::fill({1, 3}, 4.0f);
-	cppflow::tensor inputBody = cppflow::fill({1, 2}, 2.0f);
-	cppflow::tensor inputTags = cppflow::fill({1, 12}, 1.0f);
+	auto inputBody = cppflow::fill({1, 2}, 2.0f);
+	auto inputTags = cppflow::fill({1, 12}, 1.0f);
+	auto inputTitle = cppflow::fill({1, 3}, 4.0f);
 
 	// convert input tensors to vectors for displaying
 	ofxTF2::tensorToVector<float>(inputTitle, titleVector);
@@ -54,12 +54,11 @@ void ofApp::setup(){
 	// inference
 	auto vectorOfOutputTensors = model.runMultiModel(vectorOfInputTensors);
 
-	// extract ouput
+	// extract output
 	auto outputPrio = vectorOfOutputTensors[0];
 	auto outputDept = vectorOfOutputTensors[1];
 	ofxTF2::tensorToVector<float>(outputPrio, prioVector);
 	ofxTF2::tensorToVector<float>(outputDept, deptVector);
-
 
 	// load a font for displaying strings
 	font.load(OF_TTF_SANS, 14);

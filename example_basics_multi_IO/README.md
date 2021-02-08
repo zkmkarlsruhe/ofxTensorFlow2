@@ -38,7 +38,7 @@ model.save('../bin/data/model')
 ### openFrameworks
 In openFrameworks we start by instanciating an `ofxTF2::Model`.
 ```C++
-ofxTF2::Model
+ofxTF2::Model model;
 model.load("model");
 ```
 Afterwars we define the in and output names of our model as a vector of strings.
@@ -60,9 +60,9 @@ model.setup(inputNames, outputNames);
 Next we define our inputs and wrap them __in the same order__ into a vector of 
 tensors.
 ```C++
-cppflow::tensor inputTitle = cppflow::fill({1, 3}, 4.0f);
 cppflow::tensor inputBody = cppflow::fill({1, 2}, 2.0f);
 cppflow::tensor inputTags = cppflow::fill({1, 12}, 1.0f);
+cppflow::tensor inputTitle = cppflow::fill({1, 3}, 4.0f);
 
 std::vector<cppflow::tensor> vectorOfInputTensors = {
 		inputBody, inputTags, inputTitle
