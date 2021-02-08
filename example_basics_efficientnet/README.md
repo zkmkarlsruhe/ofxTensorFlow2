@@ -23,7 +23,7 @@ We can use TensorFlow's arg_max op to receive the highest value in the vector.
 auto maxLabel = cppflow::arg_max(output, 1);
 std::cout << "Maximum likelihood: " << maxLabel << std::endl;
 ```
-To access the underlying vector call the template function `ofxTF2::tensorToVector<T>()`.
+To convert the ouput tensor to a vector call the template function `ofxTF2::tensorToVector<T>()`.
 ```c++
 std::vector<float> outputVector;
 ofxTF2::tensorToVector<float>(output, outputVector);

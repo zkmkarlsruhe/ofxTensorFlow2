@@ -21,25 +21,22 @@ void ofApp::setup(){
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("example_basics");
 
-	ofxTF2::Model model;
-	cppflow::tensor input;
-	cppflow::tensor output;
 
 	// create an input tensor of an arbitrary shape and fill it
-	input = cppflow::fill({10, 9, 17, 3}, 1.0f);
+	auto input = cppflow::fill({1, 2, 2, 3}, 1.0f);
 
 	// load the model
 	model.load("model");
 
 	// inference
-	output = model.runModel(input);
+	auto output = model.runModel(input);
 
 	// use the ofxTF2 namespace for some useful functions like conversion
-	// converting to int will trim the models output from float to int 
-	std::vector<int> outputVector;
-	ofxTF2::tensorToVector<int>(output, outputVector);
-	ofLog() << ofxTF2::vectorToString(outputVector);
-	ofExit();
+	ofxTF2::tensorToVector<float>(output, outputVector);
+	ofxTF2::tensorToVector<float>(input, inputVector);
+
+	// load a font for displaying strings
+	font.load(OF_TTF_SANS, 14);
 }
 
 //--------------------------------------------------------------
@@ -49,7 +46,10 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
+	font.drawString("Flattened Input: ", 20, 20);
+	font.drawString(ofxTF2::vectorToString(inputVector), 40, 40);
+	font.drawString("Flattened Output: ", 20, 60);
+	font.drawString(ofxTF2::vectorToString(outputVector), 40, 80);
 }
 
 //--------------------------------------------------------------
