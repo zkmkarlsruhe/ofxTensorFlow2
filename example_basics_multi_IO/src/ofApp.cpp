@@ -19,10 +19,9 @@
 void ofApp::setup(){
 	ofSetFrameRate(60);
 	ofSetVerticalSync(true);
-	ofSetWindowTitle("example_basics");
+	ofSetWindowTitle("example_basics_multi_IO");
 
-	// declare and load the model
-	ofxTF2::Model model;
+	// load the model
 	model.load("model");
 
 	// setup: define the in and ouput names
@@ -38,30 +37,32 @@ void ofApp::setup(){
 	model.setup(inputNames, outputNames);
 
 	// create tensors for each input
-	cppflow::tensor input_title = cppflow::fill({1, 10}, 4.0f);
-	cppflow::tensor input_body = cppflow::fill({1, 100}, 2.0f);
-	cppflow::tensor input_tags = cppflow::fill({1, 12}, 1.0f);
+	cppflow::tensor inputTitle = cppflow::fill({1, 3}, 4.0f);
+	cppflow::tensor inputBody = cppflow::fill({1, 2}, 2.0f);
+	cppflow::tensor inputTags = cppflow::fill({1, 12}, 1.0f);
 
-	// wrap tensors in a vector
-	std::vector<cppflow::tensor> vectorOfInputTensors {
-		 input_body, input_tags, input_title };
+	// convert input tensors to vectors for displaying
+	ofxTF2::tensorToVector<float>(inputTitle, titleVector);
+	ofxTF2::tensorToVector<float>(inputBody, bodyVector);
+	ofxTF2::tensorToVector<float>(inputTags, tagsVector);
+
+	// wrap input tensors in a vector for processing
+	std::vector<cppflow::tensor> vectorOfInputTensors = {
+		 inputBody, inputTags, inputTitle
+	};	
 
 	// inference
 	auto vectorOfOutputTensors = model.runMultiModel(vectorOfInputTensors);
-	
+
 	// extract ouput
 	auto outputPrio = vectorOfOutputTensors[0];
 	auto outputDept = vectorOfOutputTensors[1];
-	std::vector<float> prioVector;
-	std::vector<float> deptVector;
 	ofxTF2::tensorToVector<float>(outputPrio, prioVector);
 	ofxTF2::tensorToVector<float>(outputDept, deptVector);
 
-	// print
-	ofLog() << ofxTF2::vectorToString(prioVector);
-	ofLog() << ofxTF2::vectorToString(deptVector);
-	
-	ofExit();
+
+	// load a font for displaying strings
+	font.load(OF_TTF_SANS, 14);
 }
 
 //--------------------------------------------------------------
@@ -72,13 +73,22 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
+	font.drawString("Flattened Input titles: ", 20, 20);
+	font.drawString(ofxTF2::vectorToString(titleVector), 40, 40);
+	font.drawString("Flattened Input body: ", 20, 60);
+	font.drawString(ofxTF2::vectorToString(bodyVector), 40, 80);
+	font.drawString("Flattened Input tags: ", 20, 100);
+	font.drawString(ofxTF2::vectorToString(tagsVector), 40, 120);
+	font.drawString("Flattened Output prio:", 20, 150);
+	font.drawString(ofxTF2::vectorToString(prioVector), 40, 170);
+	font.drawString("Flattened Output dept:", 20, 190);
+	font.drawString(ofxTF2::vectorToString(deptVector), 40, 210);
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 
 }
-
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
 

@@ -1,68 +1,86 @@
 # Basic example
-
-This is an example for openFrameworks which demonstrates how to load and evaluate a _SavedModel_ created using TensorFlow2.
+This example is a proof of concept and demonstrates how to evaluate a 
+_SavedModel_ with multiple in and outputs.
 
 ### TensorFlow2
-Create a meaningless computational graph using the new high level API for TensorFlow2 called Keras. 
-
-***Note***: you can either choose the functional model or the simpler sequential model.
+We dont want to go into details about the training process of such a model. For 
+anyone interested in the the topic: the code has been taken from 
+[this example](https://www.tensorflow.org/guide/keras/functional).
+For this reason we will only create a computational graph. Keras' functional 
+model API is best suited for this type of architecture.
+Start by defining the input tensors. They may have different shapes and/or dtype.
 ```python
-import tensorflow as tf
-
-input = tf.keras.Input(shape=(None, None, 3))
-output = tf.keras.layers.Conv2D(1, (2,2), padding='same')(input)
-model = tf.keras.Model(inputs=input, outputs=output)
+title_input = keras.Input(shape=(None,), name="title")
+body_input = keras.Input(shape=(None,), name="body")
+tags_input = keras.Input(shape=(12,), name="tags")
 ```
-Compile and train (fit) the graph on random data.
+Each input may then be processed separately, but will eventually be concatenated
+with other parts of the model to form a single input to the next layer(s).
 ```python
-model.compile(optimizer="adam", loss="mean_squared_error")
-
-test_input = np.random.random((128, 32, 32, 3))
-test_target = np.random.random((128, 32, 32, 1))
-model.fit(test_input, test_target)
+x = layers.concatenate([title_features, body_features, tags_input])
 ```
-After training is done export the graph as _SavedModel_ to the examples "bin/data" folder. This way we can easily find it later on.
+The concatenated inputs are here processed by two different fully-connected layers. Those will represent our output tensors.
+```python
+priority_pred = layers.Dense(1, name="priority")(x)
+department_pred = layers.Dense(num_departments, name="department")(x)
+```
+Finally, we define the model.
+```python
+model = keras.Model(
+    inputs=[title_input, body_input, tags_input],
+    outputs=[priority_pred, department_pred])
+```
+As we are omiting the training process we export the model already at this stage.
 ```python
 model.save('../bin/data/model')
 ```
 
-***Note***: we solely defined the last dimension of the input. The first channel is the number of batches which is never named and always variable (None). Hence the graph has an input structure of (NONE, NONE, NONE, 3).
-
 ### openFrameworks
-This addon builds upon cppflow. Cppflow wraps the TensorFlow C library and adds a tensor and model class.
-
-#### cppflow:: ops, tensor & model
-
-Call to TensorFlow's fill function which returns a tensor of arbitrary shape.
+In openFrameworks we start by instanciating an `ofxTF2::Model`.
 ```C++
-cppflow::tensor input = cppflow::fill({10, 9, 17, 3}, 1.0f);
+ofxTF2::Model
+model.load("model");
 ```
-Load the model created in Python
+Afterwars we define the in and output names of our model as a vector of strings.
+These are then passed to the `setup()` function.
+***Note***: you can always check the signature using the CLI tool 
+`saved_model_cli`, e.g. `saved_model_cli show --dir path/to/model/ --tag_set serve --signature_def serving_default`.
 ```C++
-cppflow::model model("model");
+std::vector<std::string> inputNames = {
+	"serving_default_body",
+	"serving_default_tags",
+	"serving_default_title"
+};
+std::vector<std::string> outputNames = {
+	"StatefulPartitionedCall:0",
+	"StatefulPartitionedCall:1"
+};
+model.setup(inputNames, outputNames);
 ```
-Infer the model and retrieve the output
+Next we define our inputs and wrap them __in the same order__ into a vector of 
+tensors.
 ```C++
-cppflow::tensor output = model(input);
+cppflow::tensor inputTitle = cppflow::fill({1, 3}, 4.0f);
+cppflow::tensor inputBody = cppflow::fill({1, 2}, 2.0f);
+cppflow::tensor inputTags = cppflow::fill({1, 12}, 1.0f);
+
+std::vector<cppflow::tensor> vectorOfInputTensors = {
+		inputBody, inputTags, inputTitle
+};	
 ```
-
-
-#### ofxTF2:: namespace
-The `ofxTF2` namespace defines some models and utility functions that simplfy the integration with openFrameworks. 
-
-##### Model
-We define a base model class `ofxTF2::Model` that wraps around `cppflow::model` class and mainly allows to load and infer a model relative to _bin/data_. It expects and returns `cppflow::tensor`.
+Now you can infer the model using `runMultiModel()` and retrieve the individual 
+output tensors using the [ ] operator.
 ```C++
-ofxTF2::Model ofModel("model");
-output = ofModel.runModel(input);
-```
-Later we will take a look at the advanced `ofxTF2::ThreadedModel`.
+std::vector<cppflow::tensor> vectorOfOutputTensors = 
+	model.runMultiModel(vectorOfInputTensors);
 
-
-##### Conversions
-Furthermore, you can convert a `cppflow::tensor` to `std::vector`, `ofPixels` or `ofImage` and backwards using the conversion function defined in _ofxTensorFlow2/src/ofxTensorFlow2Utils.h_.
-```C++
-std::vector<int> outputVector;
-ofxTF2::tensorToVector<int>(output, outputVector);
-auto backToTensor = ofxTF2::vectorToTensor<float>(outputVector); // trimmed floats
+cppflow::tensor outputPrio = vectorOfOutputTensors[0];
+cppflow::tensor outputDept = vectorOfOutputTensors[1];
 ```
+
+***Note***: the same pattern applies to classes that are derived from `Model` 
+such as `ThreadedModel`. 
+
+***Note***: executing `runModel` will call `runMultiModel` with single in and 
+output tensors. By default, the model uses the input name "serving_default_1" 
+and the output name "StatefulPartitionedCall".

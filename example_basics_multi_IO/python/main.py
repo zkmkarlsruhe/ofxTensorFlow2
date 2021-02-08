@@ -21,13 +21,12 @@ num_tags = 12  # Number of unique issue tags
 num_words = 10000  # Size of vocabulary obtained when preprocessing text data
 num_departments = 4  # Number of departments for predictions
 
-title_input = keras.Input(
-    shape=(None,), name="title"
-)  # Variable-length sequence of ints
-body_input = keras.Input(shape=(None,), name="body")  # Variable-length sequence of ints
-tags_input = keras.Input(
-    shape=(num_tags,), name="tags"
-)  # Binary vectors of size `num_tags`
+# Variable-length sequence of ints
+title_input = keras.Input(shape=(None,), name="title")
+# Variable-length sequence of ints
+body_input = keras.Input(shape=(None,), name="body")
+# Binary vectors of size `num_tags`
+tags_input = keras.Input(shape=(num_tags,), name="tags")
 
 # Embed each word in the title into a 64-dimensional vector
 title_features = layers.Embedding(num_words, 64)(title_input)
@@ -53,15 +52,5 @@ model = keras.Model(
     outputs=[priority_pred, department_pred],
 )
 
-# # train the model
-# test_input = np.random.random((128, 32, 32, 3))
-# test_target = np.random.random((128, 32, 32, 1))
-# model.fit(test_input, test_target)
-
 # export to a SavedModel
 model.save('../bin/data/model')
-
-# test: load and predict
-# reconstructed = tf.keras.models.load_model('../bin/data/model')
-# out = reconstructed.predict(test_input)
-# print(out)

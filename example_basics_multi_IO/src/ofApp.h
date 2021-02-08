@@ -36,4 +36,16 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+
+	private:
+		ofxTF2::Model model;
+		ofTrueTypeFont font;
+		
+		// model inputs
+		std::vector<float> titleVector;
+		std::vector<float> bodyVector;
+		std::vector<float> tagsVector;
+		// model outputs
+		std::vector<float> prioVector;	
+		std::vector<float> deptVector;
 };
