@@ -19,7 +19,7 @@
 #include "cppflow/cppflow.h"
 
 /// \class Model
-/// \brief a wrapper for cppflow::model which processes input to output
+/// \brief a wrapper for cppflow::model which processes inputs to outputs
 ///
 /// basic usage example:
 ///
@@ -75,14 +75,17 @@ public:
 	/// returns true on success
 	virtual bool load(const std::string & modelPath);
 
-	// set in and output names
+	// set in and output names or reset to default names (call without args)
+	// use the CLI tool "saved_model_cli" to inspect the SavedModel e.g.
+	// saved_model_cli show --dir path/to/model/ --tag_set serve 
+	// 						--signature_def serving_default
 	virtual void setup(
 		const std::vector<std::string> & inputNames = {{"serving_default_input_1"}},
 		const std::vector<std::string> & outputNames = {{"StatefulPartitionedCall"}});
 
 	/// clear model
 	virtual void clear();
-
+	
 	/// run model on input, blocks until returning output
 	/// implement in a subclass to add custom pre / post processing
 	virtual cppflow::tensor runModel(const cppflow::tensor & input) const;

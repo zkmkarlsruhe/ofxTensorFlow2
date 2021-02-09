@@ -88,14 +88,14 @@ class ofApp : public ofBaseApp {
 		ofDirectory models_dir; // folder which contains drawing tool settings
 
 		// color management for drawing
-		vector<ofColor> colors; // contains color palette to be used for drawing
+		vector<ofColor> colors;
 		int paletteDrawSize;
 		int drawColorIndex;
 		ofColor drawColor;
 
 		// other vars
-		bool autoRun;   // auto run every frame
-		int drawMode;     	// draw vs boxes
+		bool autoRun;	// auto run every frame
+		int drawMode;	// draw vs boxes
 		int drawRadius;
 		ofVec2f mousePressPos;
 

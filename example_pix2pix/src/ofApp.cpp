@@ -22,13 +22,13 @@ void ofApp::setup() {
 	ofSetColor(255);
 	ofBackground(54, 54, 54);
 	ofSetVerticalSync(true);
-	ofSetLogLevel(OF_LOG_VERBOSE);
+	ofSetLogLevel(OF_LOG_ERROR);
 	ofSetFrameRate(60);
 
 	ofSetWindowTitle("example_pix2pix");
 
 	// neural network setup
-	// the default model is edges2shoes and excepts [None, None, None, 3]
+	// the default model is edges2shoes and accepts [None, None, None, 3]
 	model.load("model");
 	nnWidth = 512;
 	nnHeight = 512;
@@ -45,8 +45,8 @@ void ofApp::setup() {
 	drawColorIndex = 0;
 
 	// other vars
-	autoRun = true;    // auto run every frame
-	drawMode = 0;     // draw vs boxes
+	autoRun = true;	// auto run every frame
+	drawMode = 0;	// draw vs boxes
 	drawRadius = 10;
 
 	// search for the drawing tool config files in bin/data/draw
@@ -245,10 +245,6 @@ void ofApp::setupDrawingTool(string model_dir) {
 		if(str_infos[0]=="draw") drawMode = 0;
 		else if(str_infos[0]=="box") drawMode = 1;
 		else ofLogError() << "Unknown draw mode: " << str_infos[0];
-
-		drawRadius = ofToInt(str_infos[1]);
-		ofLogError() << "draw" << drawRadius;
-
 	} else {
 		ofLogError() << "Default brush info not found";
 	}
