@@ -19,9 +19,10 @@
 #include "ofxTensorFlow2.h"
 #include "labels.h"
 
+// AudioBufferFifo & AudioClassifier model defined in utils.h
 #include "utils.h"
 
-class ofApp : public ofBaseApp{
+class ofApp : public ofBaseApp {
 
 	public:
 
@@ -33,7 +34,7 @@ class ofApp : public ofBaseApp{
 
 		void keyPressed(int key);
 		void keyReleased(int key);
-		void mouseMoved(int x, int y );
+		void mouseMoved(int x, int y);
 		void mouseDragged(int x, int y, int button);
 		void mousePressed(int x, int y, int button);
 		void mouseReleased(int x, int y, int button);
@@ -46,7 +47,8 @@ class ofApp : public ofBaseApp{
 		// audio 
 		ofSoundStream soundStream;
 
-		// for ease of use: we want to keep the buffersize a multiple of the downsampling factor
+		// for ease of use:
+		// we want to keep the buffersize a multiple of the downsampling factor
 		// downsamplingFactor = micSamplingRate / neuralNetworkInputSamplingRate 
 		std::size_t downsamplingFactor;
 		std::size_t bufferSize;
@@ -60,14 +62,15 @@ class ofApp : public ofBaseApp{
 		std::size_t numBuffers;
 		
 		// volume
-		float curVol;
-		float smoothedVol;
-		float scaledVol;
-		float volThreshold;
+		float curVol = 0.0;
+		float smoothedVol = 0.0;
+		float scaledVol = 0.0;
+		float volThreshold = 25;
 
 		// display
 		std::vector<float> volHistory;
-		std::string displayLabel;
+		std::string displayLabel = " ";
+		float minConfidence = 0.75;
 
 		// neural network	
 		AudioClassifier model;
@@ -77,9 +80,8 @@ class ofApp : public ofBaseApp{
 		std::size_t inputSize;
 
 		// neural network control logic
-		std::size_t recordingCounter;
-		bool trigger;
-		bool enable;
-		bool recording;
-		float minConfidence;
+		std::size_t recordingCounter = 0;
+		bool trigger = false;
+		bool enable = true;
+		bool recording = true;
 };

@@ -15,56 +15,53 @@
 
 #pragma once
 
-#include "ofLog.h"
 #include "cppflow/cppflow.h"
+
+namespace ofxTF2 {
 
 /// \class Model
 /// \brief a wrapper for cppflow::model which processes input to output
 ///
 /// basic usage example:
 ///
-///     class ofApp : public ofBaseApp {
-///     public:
+/// class ofApp : public ofBaseApp {
+/// public:
+/// ...
+///     ofxTF2::Model model;
+/// };
+///
+/// void ofApp::setup() {
 ///     ...
-///         MyModel model;
-///     };
+///     model.load("path/to/modeldir");
+/// }
 ///
-///     void ofApp::setup() {
-///         ...
-///         model.load("path/to/modeldir");
-///     }
+/// void ofApp.cpp::update() {
+///     cppflow::tensor input = ...
+///     ... prepare input
+///     cppflow::tensor output = model.runModel(input);
+///     ... process output
+/// }
 ///
-///     void ofApp.cpp::update() {
-///         cppflow::tensor input = ...
-///         ... prepare input
-///         cppflow::tensor output = model.runModel(input);
-///         ... process output
-///     }
-///
-/// to add custom built-in pre or post processing, subclass and override
+/// to add custom built-in pre- and/or postprocessing, subclass and override
 /// the runModel() virtual function:
 ///
-///     class MyModel : public ofxTF2::Model {
-///     public:
-///         cppflow::tensor runModel(const cppflow::tensor & input) const;
-///     };
+/// class MyModel : public ofxTF2::Model {
+/// public:
+///     cppflow::tensor runModel(const cppflow::tensor & input) const;
+/// };
 ///
-///     cppflow::tensor MyModel::runModel(const cppflow::tensor & input) const {
-///         input = input * cppflow::tensor({-1}); // invert, etc
-///         ... preprocess input
-///         cppflow::tensor output = Model::runModel(input); // call super
-///         ... postprocess output
-///         output = output * cppflow::tensor({-1}); // invert back, etc
-///         return output; // done
-///     }
+/// cppflow::tensor MyModel::runModel(const cppflow::tensor & input) const {
+///     input = input * cppflow::tensor({-1}); // invert, etc
+///     ... preprocess input
+///     cppflow::tensor output = Model::runModel(input); // call super
+///     ... postprocess output
+///     output = output * cppflow::tensor({-1}); // invert back, etc
+///     return output; // done
+/// }
 ///
-
-namespace ofxTF2 {
-
-
 class Model {
 
-public:	
+public:
 
 	Model() = default;
 	Model(const std::string & modelPath);

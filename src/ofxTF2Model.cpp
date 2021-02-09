@@ -17,7 +17,7 @@
 
 #include "ofFileUtils.h"
 #include "ofUtils.h"
-
+#include "ofLog.h"
 
 namespace ofxTF2 {
 
@@ -38,24 +38,26 @@ void Model::setup(const std::vector<std::string> & inputNames,
 bool Model::load(const std::string & modelPath) {
 	Model::clear();
 	std::string path = ofToDataPath(modelPath);
-	if (!ofDirectory::doesDirectoryExist(path)){
-		ofLogError() << "Model: model path not found: " << modelPath; 
+	if(!ofDirectory::doesDirectoryExist(path)) {
+		ofLogError("ofxTensorFlow2") << "Model: model path not found: "
+			<< modelPath;
 		return false;
 	}
 	auto model = new cppflow::model(path);
-	if (!model){
-		ofLogError() << "Model: model could not be initialized!";
+	if(!model) {
+		modelPath_ = "";
+		ofLogError("ofxTensorFlow2") << "Model: model could not be initialized!";
 		return false;
 	}	
 	model_ = model;
 	modelPath_ = modelPath;
-	ofLogVerbose() << "Model: loaded model: " << modelPath_;
+	ofLogVerbose("ofxTensorFlow2") << "Model: loaded model: " << modelPath_;
 	return true;
 }
 
 void Model::clear() {
-	if (model_){
-		ofLogVerbose() << "Model: clear model" << modelPath_;
+	if(model_) {
+		ofLogVerbose("ofxTensorFlow2") << "Model: clear model: " << modelPath_;
 		delete model_;
 		model_ = nullptr;
 		modelPath_ = "";
@@ -76,24 +78,25 @@ std::vector<cppflow::tensor> Model::runMultiModel(
 	std::vector<inputTuple_t> inputArguments;
 
 	// add the names from the settings and the tensors to the vector of arguments
-	for (unsigned int i = 0; i < inputNames_.size(); i++){
+	for(unsigned int i = 0; i < inputNames_.size(); i++){
 		inputArguments.push_back( 
-				inputTuple_t(inputNames_[i], inputs[i]) );
+				inputTuple_t(inputNames_[i], inputs[i]));
 	}
 	// if model exists run it with multiple in and outputs
-	if (model_){
+	if(model_) {
 		return (*model_)(inputArguments, outputNames_);
 	}
-	else{
-		ofLogError() << "Model: no model loaded! Returning a vector with a single tensor containing -1.";
-		return std::vector<cppflow::tensor> ({-1});
+	else {
+        ofLogError("ofxTensorFlow2") << "Model: no model loaded! "
+			<< "Returning tensor containing -1.";
+		return std::vector<cppflow::tensor>(-1);
 	}
 }
 
-void Model::printOps(){
+void Model::printOps() {
 	ofLog() << "============ Model Operations ==============";
 	auto ops = model_->get_operations();
-	for (auto & el : ops){
+	for(auto & el : ops) {
 		ofLog() << el;
 	}
 	ofLog() << "============ End ==============";
