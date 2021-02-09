@@ -26,14 +26,14 @@ class ImageToImageModel : public ofxTF2ThreadedModel {
     // this way the thread will take this augmented function 
     // otherwise it would call runModel with no way of pre/post-processing
     cppflow::tensor runModel(const cppflow::tensor & input) const override {
-	    // cast data type and expand to batch size of 1
-		auto inputCast = cppflow::cast(input, TF_UINT8, TF_FLOAT);
-		inputCast = cppflow::expand_dims(inputCast, 0);
-		// call to super 
-		auto output = ofxTF2Model::runModel(inputCast);
-		// postprocess: last layer = (tf.nn.tanh(x) * 150 + 255. / 2)
-		return ofxTF2::mapTensorValues(output, -22.5f, 277.5f, 0.0f, 255.0f);
-	}
+        // cast data type and expand to batch size of 1
+        auto inputCast = cppflow::cast(input, TF_UINT8, TF_FLOAT);
+        inputCast = cppflow::expand_dims(inputCast, 0);
+        // call to super 
+        auto output = ofxTF2Model::runModel(inputCast);
+        // postprocess: last layer = (tf.nn.tanh(x) * 150 + 255. / 2)
+        return ofxTF2::mapTensorValues(output, -22.5f, 277.5f, 0.0f, 255.0f);
+    }
 };
 ```
 ***Note***: The default layout for images in TensorFlow is NHWC (batch size, height, width, channel), which is different to openFrameworks' layout (width, height, channel). So an image which is 640 pixels wide and 480 pixels high is given as an tensor of `[1, 480, 640, 3]`.
