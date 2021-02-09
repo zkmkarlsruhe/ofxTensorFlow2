@@ -33,24 +33,25 @@ bool Model::load(const std::string & modelPath) {
 	Model::clear();
 	std::string path = ofToDataPath(modelPath);
 	if(!ofDirectory::doesDirectoryExist(path)) {
-		ofLogError() << "Model: model path not found: " << modelPath;
+		ofLogError("ofxTensorFlow2") << "Model: model path not found: "
+			<< modelPath;
 		return false;
 	}
 	auto model = new cppflow::model(path);
 	if(!model) {
 		modelPath_ = "";
-		ofLogError() << "Model: model could not be initialized!";
+		ofLogError("ofxTensorFlow2") << "Model: model could not be initialized!";
 		return false;
 	}	
 	model_ = model;
 	modelPath_ = modelPath;
-	ofLogVerbose() << "Model: loaded model: " << modelPath_;
+	ofLogVerbose("ofxTensorFlow2") << "Model: loaded model: " << modelPath_;
 	return true;
 }
 
 void Model::clear() {
 	if(model_) {
-		ofLogVerbose() << "Model: clear model: " << modelPath_;
+		ofLogVerbose("ofxTensorFlow2") << "Model: clear model: " << modelPath_;
 		delete model_;
 		model_ = nullptr;
 		modelPath_ = "";
@@ -62,7 +63,8 @@ cppflow::tensor Model::runModel(const cppflow::tensor & input) const {
 		return (*model_)(input);
 	}
 	else {
-		ofLog() << "Model: no model loaded! Returning tensor containing -1.";
+		ofLogError("ofxTensorFlow2") << "Model: no model loaded! "
+			<< "Returning tensor containing -1.";
 		return cppflow::tensor(-1);
 	}
 }

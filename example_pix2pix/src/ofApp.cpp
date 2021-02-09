@@ -21,7 +21,7 @@ void ofApp::setup() {
 	ofSetVerticalSync(true);
 	ofBackground(54, 54, 54);
 	ofSetWindowTitle("example_pix2pix");
-	ofSetLogLevel(OF_LOG_VERBOSE);
+	ofSetLogLevel("ofxTensorFlow2", OF_LOG_VERBOSE);
 
 	// neural network setup, bail out on error
 	// the default model is edges2shoes and excepts [None, None, None, 3]

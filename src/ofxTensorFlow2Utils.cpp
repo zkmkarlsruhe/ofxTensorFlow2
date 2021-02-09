@@ -41,16 +41,16 @@ shapeVector getTensorShape(const cppflow::tensor & tensor) {
 
 bool isSameShape (const shapeVector & lhs, const shapeVector & rhs) {
 	if(lhs.size() != rhs.size()) {
-			ofLogWarning() << "ofxTensorFlow2: incompatible amount of dimensions "
-			               << " for lhs " << std::to_string(lhs.size())
-			               << " and rhs " << std::to_string(rhs.size());
+			ofLogWarning("ofxTensorFlow2") << "incompatible amount of dimensions "
+				<< " for lhs " << std::to_string(lhs.size())
+				<< " and rhs " << std::to_string(rhs.size());
 			return false;
 	}
 	for(std::size_t i = 0; i < lhs.size(); i++) {
 		if(lhs[i] != rhs[i]) {
-			ofLogWarning() << "ofxTensorFlow2: shape mismatch at dimension " << i
-			               << " for lhs " << vectorToString(lhs)
-			               << " and rhs " << vectorToString(rhs);
+			ofLogWarning("ofxTensorFlow2") << "shape mismatch at dimension " << i
+				<< " for lhs " << vectorToString(lhs)
+				<< " and rhs " << vectorToString(rhs);
 			return false;
 		}
 	}
@@ -60,8 +60,8 @@ bool isSameShape (const shapeVector & lhs, const shapeVector & rhs) {
 cppflow::tensor mapTensorValues(const cppflow::tensor & inputTensor,
 	float inputMin, float inputMax, float outputMin, float outputMax) {
 	if(fabs(inputMin - inputMax) < FLT_EPSILON){
-		ofLogWarning() << "ofxTensorFlow2: avoiding possible divide by zero, \
-			check inputMin and inputMax: " << inputMin << " " << inputMax;
+		ofLogWarning("ofxTensorFlow2") << "avoiding possible divide by zero, "
+			<< "check inputMin and inputMax: " << inputMin << " " << inputMax;
 		return cppflow::tensor(-1);
 	}
 	else {
@@ -100,8 +100,8 @@ void setLogLevel(ofLogLevel level) {
 	const std::string n = "TF_CPP_MIN_LOG_LEVEL";
 	std::string v = ofToString(tfLogLevel);
 	if(setenv(n.c_str(), v.c_str(), 1) == -1) {
-		ofLogError() << "ofxTensorFlow2: unable to set TF_CPP_MIN_LOG_LEVEL: "
-		             << errno << " " << strerror(errno);
+		ofLogError("ofxTensorFlow2") << "unable to set TF_CPP_MIN_LOG_LEVEL: "
+			<< errno << " " << strerror(errno);
 	}
 }
 

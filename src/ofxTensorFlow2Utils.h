@@ -139,8 +139,8 @@ namespace ofxTF2 {
 				break;
 			case OF_IMAGE_UNDEFINED:
 			default:
-				ofLogError() << "ofxTensorFlow2: pixelsToTensor unknown image type: "
-							 << std::to_string(pixels.getImageType());
+				ofLogError("ofxTensorFlow2") << "pixelsToTensor unknown image type: "
+					<< std::to_string(pixels.getImageType());
 				return cppflow::tensor(-1);
 		}
 		return cppflow::tensor(std::vector<T>(pixels.begin(), pixels.end()), {h, w, c});
@@ -156,17 +156,17 @@ namespace ofxTF2 {
 			if (inputType != outputType) {
 				cppflow::tensor tempCast = cppflow::cast(srcTensor, inputType, outputType);
 				dstVector = tempCast.get_data<T>();
-				ofLogVerbose() << "ofxTensorFlow2: tensorToVector"
-						<< " cast tensor type " << cppflow::to_string(inputType)
-						<< " to vector type "  << cppflow::to_string(outputType);
+				ofLogVerbose("ofxTensorFlow2") << "tensorToVector"
+					<< " cast tensor type " << cppflow::to_string(inputType)
+					<< " to vector type "  << cppflow::to_string(outputType);
 			}
 			else {
 				dstVector = srcTensor.get_data<T>();
 			}
 		}
 		catch(const std::exception& e) {
-			ofLogError() << e.what();
-			ofLogError() << "ofxTensorFlow2: tensorToVector copy without cast";
+			ofLogError("ofxTensorFlow2") << "tensorToVector copy without cast: "
+				<< e.what();
 			dstVector = srcTensor.get_data<T>();
 			return false;
 		}
@@ -194,7 +194,7 @@ namespace ofxTF2 {
 		// tensor is a batch
 		else if(shape.size() == 4) {
 			if(shape[0] != 1) {
-				ofLogError() << "ofxTensorFlow2: tensorToPixels supports only batch sizes of 1";
+				ofLogError("ofxTensorFlow2") << "tensorToPixels supports only batch sizes of 1";
 				return false;
 			}
 			tensor_w = shape[2];
@@ -203,9 +203,9 @@ namespace ofxTF2 {
 		}
 		// tensor cannot be converted to pixels
 		else {
-			ofLogError() << "ofxTensorFlow2: tensorToPixels wrong number of channels. "
-			             << std::to_string(shape.size()) << " dimensions given, "
-			             << "but expected 3 or 4 (if batch size is 1)";
+			ofLogError("ofxTensorFlow2") << "tensorToPixels wrong number of channels. "
+				<< std::to_string(shape.size()) << " dimensions given, "
+				<< "but expected 3 or 4 (if batch size is 1)";
 			return false;
 		}
 		// get ofPixels shape
@@ -224,7 +224,7 @@ namespace ofxTF2 {
 				break;
 			case OF_IMAGE_UNDEFINED:
 			default:
-				ofLogError() << "ofxTensorFlow2: tensorToPixels unknown pixels image type";
+				ofLogError("ofxTensorFlow2") << "tensorToPixels unknown pixels image type";
 				return false;
 		}
 		// check if shapes matches
