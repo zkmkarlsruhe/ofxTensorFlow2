@@ -28,9 +28,14 @@ rm -rf download
 cd "$SRC"
 
 # example_basics
-unzip model_basic.zip
+unzip model_basics.zip
 rm -rf "$DEST"/example_basics/bin/data/model
 mv model "$DEST"/example_basics/bin/data
+
+# example_basics_multi_IO
+unzip model_basics_multi_IO.zip
+rm -rf "$DEST"/example_basics_multi_IO/bin/data/model
+mv model "$DEST"/example_basics_multi_IO/bin/data
 
 # example_effnet
 unzip model_effnet.zip

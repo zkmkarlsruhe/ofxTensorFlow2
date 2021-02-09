@@ -18,6 +18,8 @@
 #include "ofxTF2Model.h"
 #include "ofThread.h"
 
+namespace ofxTF2 {
+
 /// \class ThreadedModel
 /// \brief Model which processes input to output on a background thread
 ///
@@ -56,32 +58,26 @@
 /// 	}
 /// 	//...
 /// }
-/// 
 ///
 /// note: the thread is stopped & joined automatically in the destructor, if
 ///       you need to control this manually in ofApp::exit() or otherwise use:
 ///
-///     model.waitForThread(bool callStopThread, long milliseconds);
+/// model.waitForThread(bool callStopThread, long milliseconds);
 ///
-///
-/// \brief specify pre and postprocessing in a derived class by overriding the
-///			runModel function. The way you handle the class stays the same as
-///			described above.
+/// specify pre- and postprocessing in a derived class by overriding the
+///	runModel function and handle the class in the same manner as described above
 ///
 /// class MyThreadedModel : public ofxTF2::ThreadedModel {
-/// 	public:
+/// public:
 ///     cppflow::tensor runModel(const cppflow::tensor & input) const override {
-///			// preprocess: add one
-///			auto modifiedInput = cppflow::add(input, {1});
-/// 		// call to super runModel! Keep the call but change the input.
-/// 		auto output = Model::runModel(modifiedInput);
-/// 		// postprocess: multiply by minus one
-/// 		return cppflow::mul(output, {-1});
-/// 	}
+///		    // preprocess: add one
+///		    auto modifiedInput = cppflow::add(input, {1});
+/// 	    // call to super runModel! Keep the call but change the input.
+/// 	    auto output = Model::runModel(modifiedInput);
+/// 	    // postprocess: multiply by minus one
+/// 	    return cppflow::mul(output, {-1});
+///     }
 /// };
-
-namespace ofxTF2 {
-
 class ThreadedModel : public Model, public ofThread {
 
 public:
@@ -91,22 +87,30 @@ public:
 
 	/// thread-safe call to Model::load()
 	bool load(const std::string & modelPath) override;
-	
-	/// thread-safe call to Model::setup()
-	void setup(
-		const std::vector<std::string> & inputNames = {{"serving_default_input_1"}},
-		const std::vector<std::string> & outputNames = {{"StatefulPartitionedCall"}})
-		override;
+
+	/// thread-safe call to Model::setup() for multi processing, optional
+	void setup(const std::vector<std::string> & inputNames,
+	           const std::vector<std::string> & outputNames) override;
 
 	/// thread-safe call to Model::clear()
 	void clear() override;
 
+	/// override the runModel function so derived classes can redefine it
+	virtual cppflow::tensor runModel(const cppflow::tensor & input) const override;
+
+    /// override the runMultiModel function so derived classes can redefine it
+    virtual std::vector<cppflow::tensor>
+	runMultiModel(const std::vector<cppflow::tensor> & inputs) const override;
+    
 	/// returns true if the model is idle and ready for new input
 	bool readyForInput();
 
 	/// updates the model's current input
 	/// returns true if the input was set or false if the model was busy
 	bool update(const cppflow::tensor & input);
+
+	/// updates the model's current multiple input vector
+	/// returns true if the input was set or false if the model was busy
 	bool update(const std::vector<cppflow::tensor> & inputs);
 
 	/// returns true if output is ready
@@ -118,6 +122,10 @@ public:
 	/// note: subsequent calls may return different output if the model has
 	///       processed new input
 	cppflow::tensor getOutput();
+
+	/// get the current processed multiple output vector
+	/// note: subsequent calls may return different output if the model has
+	///       processed new input
 	std::vector<cppflow::tensor> getOutputs();
 
 	/// set thread idle sleep time in ms, default 100
@@ -125,23 +133,17 @@ public:
 	/// note: do not call this while the thread is running
 	void setIdleTime(unsigned int ms);
 
-	// override the runModel function so derived classes can redefine it
-	virtual cppflow::tensor runModel(const cppflow::tensor & input) const override;
-
-	virtual std::vector<cppflow::tensor> runMultiModel(
-					const std::vector<cppflow::tensor> & inputs) const override;
-
 protected:
 
 	/// thread run function, do not call this directly
-	void threadedFunction();
+	void threadedFunction() override;
 
 	/// idle sleep time in ms
 	/// note: not mutex protected, only set when the thread is not running
 	unsigned int idleMS_ = 16;
 
-	std::vector<cppflow::tensor> inputs_;  //< input to be processed, mutex protected
-	std::vector<cppflow::tensor> outputs_; //< processed output, mutex protected
+	std::vector<cppflow::tensor> inputs_;  //< inputs to be processed, mutex protected
+	std::vector<cppflow::tensor> outputs_; //< processed outputs, mutex protected
 	bool newInput_ = false;  //< is the input new? mutex protected
 	bool newOutput_ = false; //< is the output new? mutex protected
 };

@@ -16,15 +16,18 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup() {
 	ofSetFrameRate(60);
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("example_basics_multi_IO");
 
-	// load the model
-	model.load("model");
+	// load model, bail out on error
+	if(!model.load("model")) {
+		std::exit(EXIT_FAILURE);
+	}
+	model.printOperations();
 
-	// setup: define the in and output names
+	// setup: define the input and output names
 	std::vector<std::string> inputNames = {
 		"serving_default_body",
 		"serving_default_tags",
@@ -65,13 +68,12 @@ void ofApp::setup(){
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update() {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
-
+void ofApp::draw() {
 	font.drawString("Flattened Input titles: ", 20, 20);
 	font.drawString(ofxTF2::vectorToString(titleVector), 40, 40);
 	font.drawString("Flattened Input body: ", 20, 60);
@@ -85,55 +87,55 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
+void ofApp::keyPressed(int key) {
 
 }
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::keyReleased(int key) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
+void ofApp::mouseMoved(int x, int y) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
+void ofApp::mouseDragged(int x, int y, int button) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
+void ofApp::mousePressed(int x, int y, int button) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
+void ofApp::mouseReleased(int x, int y, int button) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
+void ofApp::mouseEntered(int x, int y) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
+void ofApp::mouseExited(int x, int y) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
+void ofApp::windowResized(int w, int h) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
+void ofApp::gotMessage(ofMessage msg) {
+
+}
+
+//--------------------------------------------------------------
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 
 }

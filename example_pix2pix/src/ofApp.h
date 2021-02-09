@@ -13,93 +13,87 @@
  * Museum“ generously funded by the German Federal Cultural Foundation.
  */
 
-
 #include "ofMain.h"
 #include "ofxTensorFlow2.h"
 
-
+// custom ofxTF2::ThreadedModel with built-in pre- & post-processing
 class ImageToImageModel : public ofxTF2::ThreadedModel {
 
 	public:
-	// override the runModel function of ThreadedModel
-	// this way the thread will take this augmented function 
-    cppflow::tensor runModel(const cppflow::tensor & input) const override {
-		
-		// cast data type and expand to batch size of 1
-		auto tempInput = cppflow::cast(input, TF_UINT8, TF_FLOAT);
-		tempInput = cppflow::expand_dims(tempInput, 0);
 
-		// apply preprocessing as in python to change range to -1 to 1
-		tempInput = cppflow::div(tempInput, cppflow::tensor({127.5f}));
-		tempInput = cppflow::sub(tempInput, cppflow::tensor({1.0f}));
+		// override the runModel function of ThreadedModel
+		// this way the thread will take this augmented function
+		cppflow::tensor runModel(const cppflow::tensor & input) const override {
 
-		// call to super 
-		auto output = Model::runModel(tempInput);
+			// cast data type and expand to batch size of 1
+			auto tempInput = cppflow::cast(input, TF_UINT8, TF_FLOAT);
+			tempInput = cppflow::expand_dims(tempInput, 0);
 
-		// postprocess to change range to -1 to 1
-		output = cppflow::add(output, cppflow::tensor({1.0f}));
-		output = cppflow::mul(output, cppflow::tensor({127.5f}));
-		return output;
-	}
+			// apply preprocessing as in python to change range to -1 to 1
+			tempInput = cppflow::div(tempInput, cppflow::tensor({127.5f}));
+			tempInput = cppflow::sub(tempInput, cppflow::tensor({1.0f}));
+
+			// call to super
+			auto output = Model::runModel(tempInput);
+
+			// postprocess to change range to -1 to 1
+			output = cppflow::add(output, cppflow::tensor({1.0f}));
+			output = cppflow::mul(output, cppflow::tensor({127.5f}));
+			return output;
+		}
 };
 
 //--------------------------------------------------------------
 class ofApp : public ofBaseApp {
+
 	public:
 
-		// implemented standard functions
 		void setup();
 		void update();
 		void draw();
+
+		void keyReleased(int key);
 		void keyPressed(int key);
+		void mouseMoved(int x, int y);
 		void mouseDragged( int x, int y, int button);
 		void mousePressed( int x, int y, int button);
 		void mouseReleased(int x, int y, int button);
-		void dragEvent(ofDragInfo dragInfo);
-
-		// not implemented
-		void keyReleased(int key);
-		void mouseMoved(int x, int y);
 		void mouseEntered(int x, int y);
 		void mouseExited(int x, int y);
 		void windowResized(int w, int h);
+		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
 	private:
 
-		void setupDrawingTool(string modelDir);
+		void setupDrawingTool(std::string modelDir);
 
 		template <typename T>
-		bool drawImage(const T& img, string label);
+		bool drawImage(const T& img, std::string label);
 
-		// Model
+		// model
 		ImageToImageModel model;
 		cppflow::tensor input;
 		cppflow::tensor output;
-		int nnWidth;
-		int nnHeight;
+		int nnWidth = 512;  // smaller = faster processing but lower resolution
+		int nnHeight = 512; // smaller = faster processing but lower resolution
 
-		// Draw
+		// draw
 		ofFbo fbo;
 		ofImage imgIn;
 		ofImage imgOut;
+		bool autoRun = true;   // auto run every frame?
 
-		// model file management
-		ofDirectory models_dir; // folder which contains drawing tool settings
-
-		// color management for drawing
-		vector<ofColor> colors;
-		int paletteDrawSize;
-		int drawColorIndex;
+		// drawing tool
+		std::vector<ofColor> colors; // contains color palette
+		int paletteDrawSize = 50;
+		int drawColorIndex = 0;
 		ofColor drawColor;
-
-		// other vars
-		bool autoRun;	// auto run every frame
-		int drawMode;	// draw vs boxes
-		int drawRadius;
-		ofVec2f mousePressPos;
+		int drawMode = 0;   // 0: draw vs 1: draw boxes
+		int drawRadius = 10;
+		glm::vec2 mousePressPos;
 
 		// time metrics
 		std::chrono::time_point<std::chrono::system_clock> start;
 		std::chrono::time_point<std::chrono::system_clock> end;
-	};
+};

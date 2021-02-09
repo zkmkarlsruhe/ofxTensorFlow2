@@ -19,11 +19,14 @@
 void ofApp::setup() {
 	ofSetFrameRate(60);
 	ofSetVerticalSync(true);
-	ofSetWindowTitle("example_keywordspotting");
+	ofSetWindowTitle("example_keyword_spotting");
 	ofSetCircleResolution(80);
 	ofBackground(54, 54, 54);
 
-	model.load("model");
+	// load the model, bail out on error
+	if(!model.load("model")) {
+		std::exit(EXIT_FAILURE);
+	}
 
 	// audio stream settings
 	bufferSize = 1023;
@@ -44,25 +47,12 @@ void ofApp::setup() {
 
 	// display 
 	volHistory.assign(400, 0.0);
-	displayLabel = " ";
-	minConfidence = 0.75;
-
-	// control logic
-	recordingCounter = 0;
-	enable = true;
-	trigger = false;
-	recording = false;
-	// volume
-	curVol		 = 0.0;
-	smoothedVol  = 0.0;
-	scaledVol    = 0.0;
-	volThreshold = 25;
 
 	// apply settings to soundStream 
 	soundStream.printDeviceList();
 	ofSoundStreamSettings settings;
 	auto devices = soundStream.getMatchingDevices("default");
-	if(!devices.empty()){
+	if(!devices.empty()) {
 		settings.setInDevice(devices[0]);
 	}
 	settings.setInListener(this);
@@ -72,26 +62,35 @@ void ofApp::setup() {
 	settings.bufferSize = bufferSize;
 	soundStream.setup(settings);
 
+	// print words we know
+	ofLog() << "From src/labels.h:";
+	ofLog() << "----> words to spot";
+	for(const auto & label : labelsMap) {
+		ofLog() << label.second;
+	}
+	ofLog() << "<---- words to spot";
+
 	// warm up: inital inference involves initalization (takes longer)
 	auto test = cppflow::fill({1, 16000}, 1.0f);
 	output = model.runModel(test);
-	ofLog() << "setup done";
+	ofLog() << "Setup done";
+	ofLog() << "============================";
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update() {
 
 	// lets scale the vol up to a 0-1 range 
 	scaledVol = ofMap(smoothedVol, 0.0, 0.17, 0.0, 1.0, true);
 	// lets record the volume into an array
 	volHistory.push_back(scaledVol);
 	// if we are bigger than the size we want to record - lets drop the oldest value
-	if(volHistory.size() >= 400){
+	if(volHistory.size() >= 400) {
 		volHistory.erase(volHistory.begin(), volHistory.begin()+1);
 	}
 
 	if(trigger) {
-		// inference
+		// inference, sets argMax and prob after running model
 		int argMax;
 		float prob;
 		model.classify(sampleBuffers, downsamplingFactor, argMax, prob);
@@ -99,6 +98,9 @@ void ofApp::update(){
 		// only display label when probabilty is high enough
 		if(prob >= minConfidence) {
 			displayLabel = labelsMap[argMax];
+		}
+		else {
+			displayLabel = " ";
 		}
 
 		// look up label
@@ -113,11 +115,12 @@ void ofApp::update(){
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw() {
 
 	std::size_t historyWidth = 400;
 	std::size_t historyHeight = 150;
 
+	// draw current label
 	ofSetColor(64, 245, 221);
 	ofNoFill();
 	ofDrawBitmapString(displayLabel, 50, 50);
@@ -129,16 +132,20 @@ void ofApp::draw(){
 
 		// draw the threshold line
 		ofDrawLine(0, historyHeight - volThreshold, 
-				historyWidth, historyHeight - volThreshold);
+		              historyWidth, historyHeight - volThreshold);
 
 		ofSetColor(255);
 		
 		// lets draw the volume history as a graph
 		ofBeginShape();
-		for (unsigned int i = 0; i < volHistory.size(); i++){
-			if( i == 0 ) ofVertex(i, historyHeight);
+		for(unsigned int i = 0; i < volHistory.size(); i++) {
+			if(i == 0) {
+				ofVertex(i, historyHeight);
+			}
 			ofVertex(i, historyHeight - volHistory[i] * 100);
-			if( i == volHistory.size() -1 ) ofVertex(i, historyHeight);
+			if(i == volHistory.size() - 1) {
+				ofVertex(i, historyHeight);
+			}
 		}
 		ofEndShape(false);
 			
@@ -147,11 +154,11 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::audioIn(ofSoundBuffer & input){
+void ofApp::audioIn(ofSoundBuffer & input) {
 
 	// calculate the root mean square which is a rough way to calculate volume
 	float sumVol = 0.0;
-	for(size_t i = 0; i < input.getNumFrames(); i++){
+	for(size_t i = 0; i < input.getNumFrames(); i++) {
 		float vol = input[i];
 		sumVol += vol * vol;
 	}
@@ -162,7 +169,7 @@ void ofApp::audioIn(ofSoundBuffer & input){
 	smoothedVol += 0.5 * curVol;
 
 	// trigger recording if the smoothed volume is high enough
-	if (ofMap(smoothedVol, 0.0, 0.17, 0.0, 1.0, true) * 100 >= volThreshold && enable){
+	if(ofMap(smoothedVol, 0.0, 0.17, 0.0, 1.0, true) * 100 >= volThreshold && enable) {
 		enable = false;
 		ofLog() << "Start recording...";
 		// copy previous buffers to the recording
@@ -176,13 +183,13 @@ void ofApp::audioIn(ofSoundBuffer & input){
 	else { 
 		// if recording: save the incoming buffer to the recording
 		// then trigger the neural network
-		if(recording == true){
+		if(recording) {
 			sampleBuffers.push(input.getBuffer());
 			recordingCounter++;
-			if(recordingCounter >= numBuffers){
+			if(recordingCounter >= numBuffers) {
 				recording = false;
 				trigger = true;
-				ofLog() << "done!";
+				ofLog() << "Done!";
 			}
 		}
 		// if not recording: save the incoming buffer to the previous buffer fifo
@@ -196,56 +203,56 @@ void ofApp::audioIn(ofSoundBuffer & input){
 
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
+void ofApp::keyPressed(int key) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
+void ofApp::keyReleased(int key) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
+void ofApp::mouseDragged(int x, int y, int button) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
+void ofApp::mousePressed(int x, int y, int button) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
+void ofApp::mouseReleased(int x, int y, int button) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
+void ofApp::mouseEntered(int x, int y) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
+void ofApp::mouseExited(int x, int y) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
+void ofApp::windowResized(int w, int h) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
+void ofApp::gotMessage(ofMessage msg) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 
 }

@@ -14,181 +14,189 @@
  */
 
 #include "ofApp.h"
-#include "ofLog.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){
-	ofSetFrameRate(30);
+void ofApp::setup() {
+	ofSetFrameRate(60);
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("example_style_transfer");
 
+	// go through the models directory and print out all the paths
 	ofDirectory modelsDir(ofToDataPath("models"));
 	modelsDir.listDir();
-	
-	// go through the directory and print out all the paths
-	for(int i = 0; i < modelsDir.size(); i++){
+	for(int i = 0; i < modelsDir.size(); i++) {
 		ofDirectory sub(modelsDir.getPath(i));
-		if (sub.isDirectory()){
+		if(sub.isDirectory()) {
 			auto absSubPath = sub.getAbsolutePath();
    			ofLogNotice() << "Found model: " << absSubPath;
 			modelPaths.push_back(absSubPath);
 		}
 	}
 
-	model.load(modelPaths[0]);
-	modelCounter = 5;
-	frameCounter = 0;
-	waitNumFrames = 150; 
-
-	nnWidth = 640;
-	nnHeight = 480;
-	imgIn.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
-	imgOut.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
+	// load first model, bail out on error
+	if(!model.load(modelPaths[modelIndex])) {
+		std::exit(EXIT_FAILURE);
+	}
+	modelName = ofFilePath::getBaseName(modelPaths[modelIndex]);
 
 #ifdef USE_LIVE_VIDEO
-	// try to grab at this size
-	camWidth = 640;
-	camHeight = 480;
+	// setup video grabber
 	vidIn.setDesiredFrameRate(30);
 	vidIn.setup(camWidth, camHeight);
+#else
+	// load input image
+	ofImage imgIn;
+	//imgIn.load("zkm512x512.jpg"); // alt square image
+	imgIn.load("zkm640x480.jpg");
+	input = ofxTF2::imageToTensor<float>(imgIn);
+
+	// alternatively, load input image via cppflow
+	//std::string imgPath(ofToDataPath("cat512x512.jpg")); // smaller
+	//std::string imgPath(ofToDataPath("cat640x480.jpg")); // bigger
+	//input = cppflow::decode_jpeg(cppflow::read_file(imgPath));
+	//input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
+
+	newInput = true;
 #endif
 
+	// allocate output image
+	imgOut.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
+
 	// start the model!
-	model.setIdleTime(1);
+	model.setIdleTime(1); // very short idle time for fast systems
+	//model.setIdleTime(33); // longer ~1 fps idle time for slower systems
 	model.startThread();
+	loadTimestamp = ofGetElapsedTimef();
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update() {
 
-	// load a new model from the directory every other waitNumFrames frames
-	if (frameCounter >= waitNumFrames){
-		frameCounter = 0;
-		loadNewModel = true;
-	}
-	if (loadNewModel){
-		loadNewModel = false;
-		if (modelCounter >= modelPaths.size())
-			modelCounter = 0;
-		ofLogNotice() << "Load model: " << modelPaths[modelCounter];
-		model.load(modelPaths[modelCounter]);
-		modelCounter++;
+	// load a new model after a timeout
+	if(autoLoad && ofGetElapsedTimef() - loadTimestamp >= loadTimeSeconds) {
+		modelIndex++;
+		if(modelIndex >= modelPaths.size()) {
+			modelIndex = 0;
+		}
+		ofLogNotice() << "Load model: " << modelPaths[modelIndex];
+		if(!model.load(modelPaths[modelIndex])) {
+			// exit gracefully if we can't load model
+			ofExit(EXIT_FAILURE);
+		}
+		modelName = ofFilePath::getBaseName(modelPaths[modelIndex]);
+		loadTimestamp = ofGetElapsedTimef();
+		newInput = true; // try to update
 	}
 
 #ifdef USE_LIVE_VIDEO
-	// create tensor from video
+	// create tensor from video frame
 	vidIn.update();
-	if(vidIn.isFrameNew()){	
-
-		// get the frame, resize and copy to tensor
+	if(vidIn.isFrameNew()) {
+		// get the frame, resize, and copy to tensor
 		ofPixels & pixels = vidIn.getPixels();
 		ofPixels resizedPixels(pixels);
 		resizedPixels.resize(nnWidth, nnHeight);
 		input = ofxTF2::pixelsToTensor<float>(resizedPixels);
-
+		newInput = true;
+	}
 #else
-		// std::string imgPath(ofToDataPath("cat512x512.jpg"));
-		std::string imgPath(ofToDataPath("cat640x480.jpg"));
-		// create tensor from image file
-		input = cppflow::decode_jpeg(cppflow::read_file(imgPath));
-		input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
+	// input tensor already created from image file
 #endif
 
-		// copy input to image
-		auto & inputPixels = imgIn.getPixels();
-		ofxTF2::tensorToPixels<float>(input, inputPixels);
-		imgIn.update();
-
-		// thread-safe conditional input update
-		if (model.readyForInput()){
-			model.update(input);
-		}
-
-		// thread-safe conditional output update
-		if (model.isOutputNew()){
-			auto output = model.getOutput();
-			ofxTF2::tensorToImage<float>(output, imgOut);
-			imgOut.update();
-		}
-
-#ifdef USE_LIVE_VIDEO
-	} // close frame loop
-	else{
-		// try again later
+	// thread-safe conditional input update
+	if(newInput && model.readyForInput()) {
+		model.update(input);
 	}
-#endif
-	frameCounter++;
+
+	// thread-safe conditional output update
+	if(model.isOutputNew()) {
+		auto output = model.getOutput();
+		ofxTF2::tensorToImage<float>(output, imgOut);
+		imgOut.update();
+	}
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
-
-	int pad = 12;
-
+void ofApp::draw() {
 	ofSetColor(255);
-	imgOut.draw(pad, pad, nnWidth*2, nnHeight*2);
 
-	std::string text("Loading new model in ");
-	text += std::to_string(waitNumFrames - frameCounter);
-	text += " frames";
-	ofDrawBitmapString(text, pad, pad);
-}
+	// draw image
+	// TODO: doesn't handle aspect ratio differences...
+	imgOut.draw(0, 0, ofGetWidth(), ofGetHeight());
 
-//--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-#ifdef USE_LIVE_VIDEO
-	if(key == 's' || key == 'S'){
-		vidIn.videoSettings();
+	// draw change info
+	float diff = (ofGetElapsedTimef() - loadTimestamp);
+	std::string text = "Model: " + modelName;
+	if(autoLoad) {
+		text += "\nLoading new model in ";
+		text += std::to_string((int)(loadTimeSeconds - diff) + 1);
 	}
-#endif
+	ofDrawBitmapStringHighlight(text, 4, 12);
+
+	// draw fps
+	text = ofToString((int)ofGetFrameRate()) + " fps\n";
+	text += "a - toggle auto load";
+	ofDrawBitmapStringHighlight(text, ofGetWidth() - 184, 12);
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
+void ofApp::keyPressed(int key) {
+	switch(key) {
+		case 'a': case 'A':
+			autoLoad = !autoLoad;
+			if(autoLoad) {
+				loadTimestamp = ofGetElapsedTimef();
+			}
+			break;
+	}
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
+void ofApp::keyReleased(int key) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
+void ofApp::mouseMoved(int x, int y) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
+void ofApp::mouseDragged(int x, int y, int button) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
+void ofApp::mousePressed(int x, int y, int button) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::mouseReleased(int x, int y, int button) {
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y) {
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y) {
+
+}
+
+//--------------------------------------------------------------
+void ofApp::windowResized(int w, int h) {
+
+}
+
+//--------------------------------------------------------------
+void ofApp::dragEvent(ofDragInfo dragInfo) {
+
+}
+
+//--------------------------------------------------------------
+void ofApp::gotMessage(ofMessage msg) {
 
 }

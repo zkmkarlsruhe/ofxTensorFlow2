@@ -15,9 +15,7 @@
 
 #include "ofxTF2ThreadedModel.h"
 
-
 namespace ofxTF2 {
-
 
 ThreadedModel::~ThreadedModel() {
 	waitForThread();
@@ -31,14 +29,10 @@ bool ThreadedModel::load(const std::string & modelPath) {
 	return ret;
 }
 
-void ThreadedModel::setIdleTime(unsigned int ms) {
-	idleMS_ = ms;
-}
-
 void ThreadedModel::setup(const std::vector<std::string> & inputNames,
-			const std::vector<std::string> & outputNames){
+                          const std::vector<std::string> & outputNames) {
 	lock();
-	Model::setup(inputNames_, outputNames_);
+	Model::setup(inputNames, outputNames);
 	unlock();
 }
 
@@ -46,6 +40,15 @@ void ThreadedModel::clear() {
 	lock();
 	Model::clear();
 	unlock();
+}
+
+cppflow::tensor ThreadedModel::runModel(const cppflow::tensor & input) const{
+	return Model::runModel(input);
+}
+
+std::vector<cppflow::tensor>
+ThreadedModel::runMultiModel(const std::vector<cppflow::tensor> & inputs) const {
+	return Model::runMultiModel(inputs);
 }
 
 bool ThreadedModel::readyForInput() {
@@ -94,13 +97,8 @@ std::vector<cppflow::tensor> ThreadedModel::getOutputs() {
 	return ret;
 }
 
-cppflow::tensor ThreadedModel::runModel(const cppflow::tensor & input) const{
-	return Model::runModel(input);
-}
-
-std::vector<cppflow::tensor> ThreadedModel::runMultiModel(
-				const std::vector<cppflow::tensor> & inputs) const {
-	return Model::runMultiModel(inputs);
+void ThreadedModel::setIdleTime(unsigned int ms) {
+	idleMS_ = ms;
 }
 
 // ==== protected ====
@@ -111,11 +109,13 @@ void ThreadedModel::threadedFunction() {
 		if(newInput_) {
 			// if we have only one in and output use the simpler runModel function
 			// we dont call runMutliModel as we want users to augment runModel
-			if(inputNames_.size()<= 1 && outputNames_.size() <= 1)
+			if(inputNames_.size() <= 1 && outputNames_.size() <= 1) {
 				outputs_ = {runModel(inputs_[0])};
-			// otherwise use runMultiModel function
-			else 
+			}
+			else {
+				// otherwise use runMultiModel function
 				outputs_ = runMultiModel(inputs_);
+			}
 			newInput_ = false;
 			newOutput_ = true;
 			unlock();

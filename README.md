@@ -388,6 +388,10 @@ If you find any bugs or suggestions please log them to GitHub as well.
 Known Issues
 ------------
 
+### dyld: Library not loaded: @rpath/libtensorflow.2.dylib
+
+On macOS, the libtensorflow dynamic libraries (dylibs) need to be copied into the .app bundle. This error indicates the library loader cannot find the dylibs when the app starts and the build process is missing a step. Please check the "macOS" subsection under the "Installation & Build" section.
+
 ### EXC_BAD_INSTRUCTION Crash on macOS
 
 The pre-built libtensorflow downloaded to `libs/tensorflow` comes with AVX (Advanced Vector Extensions) enabled which is an extension to the Intel x86 instruction set for fast vector math. CPUs older than circa 2013 may not support this and the application will simply crash with error such as:
@@ -401,6 +405,7 @@ EXC_BAD_INSTRUCTION (code=EXC_I386_INVOP, subcode=0x0)
 This problem may also be seen when using libtensorflow installed via Homebrew.
 
 The only solution is to build libtensorflow from source with AVX disabled use a machine with a newer CPU. To check if your CPU supports AVX use:
+
 ```shell
 # print all CPU features
 sysctl -a | grep cpu.feat
@@ -415,11 +420,11 @@ Systems confirmed: Mac Pro (Mid 2012)
 
 The pre-built libtensorflow dynamic libraries downloaded from the TensorFlow website require a minimum of macOS 10.14. On macOS 10.13 or lower, the project may build but will fail on run with a runtime loader error:
 
-```
+~~~
 dyld: lazy symbol binding failed: Symbol not found: ____chkstk_darwin
   Referenced from: /Users/na/of_v0.11.0_osx_release/addons/ofxTensorFlow2/example_basics/bin/example_basics.app/Contents/MacOS/./../Frameworks/libtensorflow.2.dylib (which was built for Mac OS X 10.15)
   Expected in: /usr/lib/libSystem.B.dylib
-```
+~~~
 
 The only solutions are:
 
