@@ -18,26 +18,28 @@
 #include "ofMain.h"
 #include "ofxTensorFlow2.h"
 
-#define USE_LIVE_VIDEO // uncomment this to use a live camera
-					// otherwise, we'll use an image file
+// uncomment this to use a live camera otherwise, we'll use an image file
+//#define USE_LIVE_VIDEO
 
+// custom ofxTF2::ThreadedModel implementation with custom pre- & postprocessing
 class ImageToImageModel : public ofxTF2::ThreadedModel {
 
 	public:
-	// override the runModel function of ThreadedModel
-	// this way the thread will take this augmented function 
-	// otherwise it would call runModel with no way of pre/post-processing
-    cppflow::tensor runModel(const cppflow::tensor & input) const override {
-		// cast data type and expand to batch size of 1
-		auto inputExpanded = cppflow::expand_dims(input, 0);
-		// call to super 
-		auto output = Model::runModel(inputExpanded);
-		// postprocess: last layer = (tf.nn.tanh(x) * 150 + 255. / 2)
-		return ofxTF2::mapTensorValues(output, -22.5f, 277.5f, 0.0f, 255.0f);
-	}
+
+		// override the runModel function of ThreadedModel
+		// this way the thread will take this augmented function
+		// otherwise it would call runModel with no way of pre-/postprocessing
+		cppflow::tensor runModel(const cppflow::tensor & input) const override {
+			// cast data type and expand to batch size of 1
+			auto inputExpanded = cppflow::expand_dims(input, 0);
+			// call to super
+			auto output = Model::runModel(inputExpanded);
+			// postprocess: last layer = (tf.nn.tanh(x) * 150 + 255. / 2)
+			return ofxTF2::mapTensorValues(output, -22.5f, 277.5f, 0.0f, 255.0f);
+		}
 };
 
-class ofApp : public ofBaseApp{
+class ofApp : public ofBaseApp {
 
 	public:
 		void setup();
@@ -56,24 +58,26 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
-		bool loadNewModel;
-		std::size_t modelCounter;
-		std::size_t frameCounter;
-		std::size_t waitNumFrames;
-
-		std::vector<std::string> modelPaths;
+		std::vector<std::string> modelPaths; // paths to available models
+		std::size_t modelIndex = 0; // current model path index
+		std::string modelName = ""; // current model path name
+		bool newInput = false;      // is there new input to process?
+		bool autoLoad = true;       // load models automatically?
+		float loadTimestamp = 0;    // last model load time stamp
+		float loadTimeSeconds = 10; // how long to wait before loading models
 		
 		ImageToImageModel model;
 		cppflow::tensor input;
 		cppflow::tensor output;
-		int nnWidth;
-		int nnHeight;
+		int nnWidth = 640;
+		int nnHeight = 480;
 
-		#ifdef USE_LIVE_VIDEO
-			ofVideoGrabber vidIn;
-			int camWidth;
-			int camHeight;
-		#endif
+	#ifdef USE_LIVE_VIDEO
+		ofVideoGrabber vidIn;
+		int camWidth = 640;
+		int camHeight = 480;
+	#else
 		ofImage imgIn;
+	#endif
 		ofImage imgOut;
 };

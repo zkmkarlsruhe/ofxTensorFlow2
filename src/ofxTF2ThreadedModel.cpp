@@ -15,9 +15,7 @@
 
 #include "ofxTF2ThreadedModel.h"
 
-
 namespace ofxTF2 {
-
 
 ThreadedModel::~ThreadedModel() {
 	waitForThread();

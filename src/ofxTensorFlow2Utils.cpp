@@ -35,38 +35,36 @@ static setenv(const char *name, const char *value, int overwrite) {
 
 namespace ofxTF2 {
 
-shapeVector getTensorShape(const cppflow::tensor & tensor){
+shapeVector getTensorShape(const cppflow::tensor & tensor) {
 	return cast(tensor.shape(), TF_INT32, TF_INT64).get_data<int64_t>();
 }
 
-bool isSameShape (const shapeVector & lhs,
-	const shapeVector & rhs) {
-
-	if (lhs.size() != rhs.size()){
+bool isSameShape (const shapeVector & lhs, const shapeVector & rhs) {
+	if(lhs.size() != rhs.size()) {
 			ofLogWarning() << "ofxTensorFlow2: incompatible amount of dimensions "
-							<< " for lhs " << std::to_string(lhs.size())
-							<< " and rhs " << std::to_string(rhs.size());
+			               << " for lhs " << std::to_string(lhs.size())
+			               << " and rhs " << std::to_string(rhs.size());
 			return false;
 	}
-	for (std::size_t i = 0; i < lhs.size(); i++) {
-		if (lhs[i] != rhs[i]){
+	for(std::size_t i = 0; i < lhs.size(); i++) {
+		if(lhs[i] != rhs[i]) {
 			ofLogWarning() << "ofxTensorFlow2: shape mismatch at dimension " << i
-							<< " for lhs " << vectorToString(lhs)
-							<< " and rhs " << vectorToString(rhs);
+			               << " for lhs " << vectorToString(lhs)
+			               << " and rhs " << vectorToString(rhs);
 			return false;
 		}
 	}
 	return true;
 }
 
-cppflow::tensor mapTensorValues(const cppflow::tensor & inputTensor, float inputMin,
-	float inputMax, float outputMin, float outputMax) {
-
-	if (fabs(inputMin - inputMax) < FLT_EPSILON){
+cppflow::tensor mapTensorValues(const cppflow::tensor & inputTensor,
+	float inputMin, float inputMax, float outputMin, float outputMax) {
+	if(fabs(inputMin - inputMax) < FLT_EPSILON){
 		ofLogWarning() << "ofxTensorFlow2: avoiding possible divide by zero, \
 			check inputMin and inputMax: " << inputMin << " " << inputMax;
 		return cppflow::tensor(-1);
-	} else {
+	}
+	else {
 		// outVal = ((value - inputMin) / (inputMax - inputMin)
 		// outVal = outVal * (outputMax - outputMin) + outputMin;
 		float divider = inputMax - inputMin;
