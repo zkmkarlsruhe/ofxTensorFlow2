@@ -5,6 +5,8 @@ We modified the script train.py to export a SavedModel with specific input dimen
 
 Futhermore, the script "checkpoint2SavedModel.py" can convert checkpoints to _SavedModels_ with its input dimensions defined.
 
+***Note***: you can download checkpoints from the orignial repo, using the bash script _ofxTensorFlow2/scripts/download_training_examples.sh_ or [manually](https://cloud.zkm.de/index.php/s/4STL4aG9NNLC9sD)
+
 Please find the original README below...
 # Fast Style Transfer in TensorFlow 2 
 

@@ -4,7 +4,7 @@ The code has been taken from [this repo](https://github.com/douglas125/SpeechCmd
 
 We extended it with a small script main.py, which only converts the .h5 model to a SavedModel.
 
-***Note***: to run main.py please download the .h5 file from github.
+***Note***: to run main.py please download the .h5 file from github, using the bash script _ofxTensorFlow2/scripts/download_training_examples.sh_ or [manually](https://cloud.zkm.de/index.php/s/4STL4aG9NNLC9sD)
 ***Note***: the original jupyter notebook has been converted and renamed to train.py.
 
 Please find the original README below...
