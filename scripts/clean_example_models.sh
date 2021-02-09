@@ -18,6 +18,9 @@ cd $(dirname "$0")
 # example_basics
 rm -rfv "$DEST"/example_basics/bin/data/model
 
+# example_basics_multi_IO
+rm -rfv "$DEST"/example_basics_multi_IO/bin/data/model
+
 # example_effnet
 rm -rfv "$DEST"/example_basics_efficientnet/bin/data/model
 

@@ -18,7 +18,7 @@
 #include "ofMain.h"
 #include "ofxTensorFlow2.h"
 
-class ofApp : public ofBaseApp{
+class ofApp : public ofBaseApp {
 
 	public:
 		void setup();
@@ -27,7 +27,7 @@ class ofApp : public ofBaseApp{
 
 		void keyPressed(int key);
 		void keyReleased(int key);
-		void mouseMoved(int x, int y );
+		void mouseMoved(int x, int y);
 		void mouseDragged(int x, int y, int button);
 		void mousePressed(int x, int y, int button);
 		void mouseReleased(int x, int y, int button);
@@ -37,7 +37,6 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
-	private:
 		ofxTF2::Model model;
 		ofTrueTypeFont font;
 		
@@ -45,6 +44,7 @@ class ofApp : public ofBaseApp{
 		std::vector<float> titleVector;
 		std::vector<float> bodyVector;
 		std::vector<float> tagsVector;
+
 		// model outputs
 		std::vector<float> prioVector;	
 		std::vector<float> deptVector;

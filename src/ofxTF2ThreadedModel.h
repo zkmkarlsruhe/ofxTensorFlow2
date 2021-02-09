@@ -87,12 +87,10 @@ public:
 
 	/// thread-safe call to Model::load()
 	bool load(const std::string & modelPath) override;
-	
-	/// thread-safe call to Model::setup()
-	void setup(
-		const std::vector<std::string> & inputNames = {{"serving_default_input_1"}},
-		const std::vector<std::string> & outputNames = {{"StatefulPartitionedCall"}})
-		override;
+
+	/// thread-safe call to Model::setup() for multi processing, optional
+	void setup(const std::vector<std::string> & inputNames,
+	           const std::vector<std::string> & outputNames) override;
 
 	/// thread-safe call to Model::clear()
 	void clear() override;
@@ -100,9 +98,9 @@ public:
 	/// override the runModel function so derived classes can redefine it
 	virtual cppflow::tensor runModel(const cppflow::tensor & input) const override;
 
-    /// override the runModel function so derived classes can redefine it
-    virtual std::vector<cppflow::tensor> runMultiModel(
-        const std::vector<cppflow::tensor> & inputs) const override;
+    /// override the runMultiModel function so derived classes can redefine it
+    virtual std::vector<cppflow::tensor>
+	runMultiModel(const std::vector<cppflow::tensor> & inputs) const override;
     
 	/// returns true if the model is idle and ready for new input
 	bool readyForInput();
@@ -110,6 +108,9 @@ public:
 	/// updates the model's current input
 	/// returns true if the input was set or false if the model was busy
 	bool update(const cppflow::tensor & input);
+
+	/// updates the model's current multiple input vector
+	/// returns true if the input was set or false if the model was busy
 	bool update(const std::vector<cppflow::tensor> & inputs);
 
 	/// returns true if output is ready
@@ -121,6 +122,10 @@ public:
 	/// note: subsequent calls may return different output if the model has
 	///       processed new input
 	cppflow::tensor getOutput();
+
+	/// get the current processed multiple output vector
+	/// note: subsequent calls may return different output if the model has
+	///       processed new input
 	std::vector<cppflow::tensor> getOutputs();
 
 	/// set thread idle sleep time in ms, default 100

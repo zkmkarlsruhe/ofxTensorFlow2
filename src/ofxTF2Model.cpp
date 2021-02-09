@@ -29,12 +29,6 @@ Model::~Model(){
 	Model::clear();
 }
 
-void Model::setup(const std::vector<std::string> & inputNames,
-			const std::vector<std::string> & outputNames){
-	inputNames_ = inputNames;
-	outputNames_ = outputNames;
-}
-
 bool Model::load(const std::string & modelPath) {
 	Model::clear();
 	std::string path = ofToDataPath(modelPath);
@@ -55,6 +49,12 @@ bool Model::load(const std::string & modelPath) {
 	return true;
 }
 
+void Model::setup(const std::vector<std::string> & inputNames,
+                  const std::vector<std::string> & outputNames) {
+	inputNames_ = inputNames;
+	outputNames_ = outputNames;
+}
+
 void Model::clear() {
 	if(model_) {
 		ofLogVerbose("ofxTensorFlow2") << "Model: clear model: " << modelPath_;
@@ -64,25 +64,23 @@ void Model::clear() {
 	}
 }
 
-
 cppflow::tensor Model::runModel(const cppflow::tensor & input) const {
 	return Model::runMultiModel(std::vector<cppflow::tensor>{input})[0];
 }
 
-
-std::vector<cppflow::tensor> Model::runMultiModel(
-				const std::vector<cppflow::tensor> & inputs) const {
+std::vector<cppflow::tensor>
+Model::runMultiModel(const std::vector<cppflow::tensor> & inputs) const {
 	
 	// define the type of an input argument and a vector of it
 	using inputTuple_t = std::tuple<std::string, cppflow::tensor>;
 	std::vector<inputTuple_t> inputArguments;
 
-	// add the names from the settings and the tensors to the vector of arguments
-	for(unsigned int i = 0; i < inputNames_.size(); i++){
-		inputArguments.push_back( 
-				inputTuple_t(inputNames_[i], inputs[i]));
+	// add the names from settings and tensors to the vector of arguments
+	for(unsigned int i = 0; i < inputNames_.size(); i++) {
+		inputArguments.push_back(inputTuple_t(inputNames_[i], inputs[i]));
 	}
-	// if model exists run it with multiple in and outputs
+
+	// if model exists run it with multiple inputs and outputs
 	if(model_) {
 		return (*model_)(inputArguments, outputNames_);
 	}
@@ -93,17 +91,17 @@ std::vector<cppflow::tensor> Model::runMultiModel(
 	}
 }
 
-void Model::printOps() {
-	ofLog() << "============ Model Operations ==============";
-	auto ops = model_->get_operations();
-	for(auto & el : ops) {
-		ofLog() << el;
-	}
-	ofLog() << "============ End ==============";
-}
-
 bool Model::isLoaded() {
 	return model_ != nullptr;
+}
+
+void Model::printOperations() {
+	ofLogNotice("ofxTensorFlow2") << "====== Model Operations ======";
+	auto ops = model_->get_operations();
+	for(auto & el : ops) {
+		ofLogNotice("ofxTensorFlow2") << el;
+	}
+	ofLogNotice("ofxTensorFlow2") << "============ End ==============";
 }
 
 }; // end namespace ofxTF2

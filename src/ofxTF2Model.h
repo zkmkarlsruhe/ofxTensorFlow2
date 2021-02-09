@@ -72,10 +72,9 @@ public:
 	/// returns true on success
 	virtual bool load(const std::string & modelPath);
 
-	// set in and output names
-	virtual void setup(
-		const std::vector<std::string> & inputNames = {{"serving_default_input_1"}},
-		const std::vector<std::string> & outputNames = {{"StatefulPartitionedCall"}});
+	/// setup model with input and output names for multi processing, optional
+	virtual void setup(const std::vector<std::string> & inputNames,
+	                   const std::vector<std::string> & outputNames);
 
 	/// clear model
 	virtual void clear();
@@ -84,18 +83,18 @@ public:
 	/// implement in a subclass to add custom pre / post processing
 	virtual cppflow::tensor runModel(const cppflow::tensor & input) const;
 
-	/// run model on mutiple in and outputs, blocks until returning output
-	/// the inputs need to be given in the same order as defined in the settings
-	/// outputs are returned in the same manner as defined in the settings
+	/// run model on mutiple inputs and outputs, blocks until returning output
+	/// * inputs need to be given in the same order as defined in model settings
+	/// * outputs are returned in the same manner as defined in model settings
 	/// implement in a subclass to add custom pre / post processing
-	virtual std::vector<cppflow::tensor> runMultiModel(
-					const std::vector<cppflow::tensor> & inputs) const;
-
-	/// print the signature
-	void printOps();
+	virtual std::vector<cppflow::tensor>
+	runMultiModel(const std::vector<cppflow::tensor> & inputs) const;
 
 	/// returns true if model is loaded
 	bool isLoaded();
+
+	/// print model operations ie. the signature
+	void printOperations();
 
 protected:
 
