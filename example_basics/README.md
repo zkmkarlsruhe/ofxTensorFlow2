@@ -34,15 +34,15 @@ This addon builds upon cppflow. Cppflow wraps the TensorFlow C library and adds 
 #### cppflow:: ops, tensor & model
 
 Call to TensorFlow's fill function which returns a tensor of arbitrary shape.
-```C++
+```c++
 cppflow::tensor input = cppflow::fill({10, 9, 17, 3}, 1.0f);
 ```
 Load the model created in Python
-```C++
+```c++
 cppflow::model model("model");
 ```
 Infer the model and retrieve the output
-```C++
+```c++
 cppflow::tensor output = model(input);
 ```
 
@@ -52,7 +52,7 @@ The `ofxTF2` namespace defines some models and utility functions that simplfy th
 
 ##### Model
 We define a base model class `ofxTF2::Model` that wraps around `cppflow::model` class and mainly allows to load and infer a model relative to _bin/data_. It expects and returns `cppflow::tensor`.
-```C++
+```c++
 ofxTF2::Model ofModel("model");
 output = ofModel.runModel(input);
 ```
@@ -63,7 +63,7 @@ Models can also run on multiple input and output tensors. Check _example_basics_
 The utility functions defined in _ofxTensorFlow2/src/ofxTensorFlow2Utils.h_ may
 come in handy for average usage. A common need is to convert a 
 `cppflow::tensor` to `std::vector`, `ofPixels` or `ofImage` or the other way around.
-```C++
+```c++
 // cast the TF_FLOAT output tensor to TF_INT, then copy to int vector
 std::vector<int> outputVector;
 ofxTF2::tensorToVector<int>(output, outputVector);

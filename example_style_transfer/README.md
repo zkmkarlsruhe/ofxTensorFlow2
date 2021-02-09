@@ -19,7 +19,7 @@ def model_predict(input_1):
 In this example we will use the `ThreadedModel` class and augment the runModel function. This way we can modify the in and outputs inside the thread. 
 
 Here, the model expects a 3D tensor (which has no dimension for batches yet) and outputs the values to be displayable without clamping (the neural network applies a weird shift).
-```C++
+```c++
 class ImageToImageModel : public ofxTF2ThreadedModel {
     public:
     // override the runModel function of ofxTF2ThreadedModel
@@ -27,9 +27,10 @@ class ImageToImageModel : public ofxTF2ThreadedModel {
     // otherwise it would call runModel with no way of pre/post-processing
     cppflow::tensor runModel(const cppflow::tensor & input) const override {
 	    // cast data type and expand to batch size of 1
-	    auto inputExpanded = cppflow::expand_dims(input, 0);
+		auto inputCast = cppflow::cast(input, TF_UINT8, TF_FLOAT);
+	    inputCast = cppflow::expand_dims(inputCast, 0);
 	    // call to super 
-	    auto output = ofxTF2Model::runModel(inputExpanded);
+	    auto output = ofxTF2Model::runModel(inputCast);
 	    // postprocess: last layer = (tf.nn.tanh(x) * 150 + 255. / 2)
 	    return ofxTF2::mapTensorValues(output, -22.5f, 277.5f, 0.0f, 255.0f);
 	}

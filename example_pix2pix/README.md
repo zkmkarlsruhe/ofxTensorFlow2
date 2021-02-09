@@ -14,7 +14,7 @@ Check this [post](https://www.tensorflow.org/tutorials/generative/pix2pix?hl=en)
 In this example we are using the a specification of the `ofxTF2::Model`. It allows to run the inference of the model asynchronous to the rest of the program. This is especially helpful as it's not delaying other tasks such as drawing. The `ofxTF2::ThreadedModel` uses the following pattern.
 
 Declare the model as a member of the ofApp in ofApp.h:
-```C++
+```c++
 class ofApp : public ofBaseApp {
 	public:
 		//...
@@ -26,7 +26,7 @@ class ofApp : public ofBaseApp {
 };
 ```
 Utilize the model in ofApp.cpp
-```C++
+```c++
 void ofApp::setup() {
 	// load the model and start the thread
 	model.load("path/to/modeldir");

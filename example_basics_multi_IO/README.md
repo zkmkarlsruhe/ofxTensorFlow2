@@ -37,7 +37,7 @@ model.save('../bin/data/model')
 
 ### openFrameworks
 In openFrameworks we start by instanciating an `ofxTF2::Model`.
-```C++
+```c++
 ofxTF2::Model model;
 model.load("model");
 ```
@@ -45,7 +45,7 @@ Afterwars we define the in and output names of our model as a vector of strings.
 These are then passed to the `setup()` function.
 ***Note***: you can always check the signature using the CLI tool 
 `saved_model_cli`, e.g. `saved_model_cli show --dir path/to/model/ --tag_set serve --signature_def serving_default`.
-```C++
+```c++
 std::vector<std::string> inputNames = {
 	"serving_default_body",
 	"serving_default_tags",
@@ -59,7 +59,7 @@ model.setup(inputNames, outputNames);
 ```
 Next we define our inputs and wrap them __in the same order__ into a vector of 
 tensors.
-```C++
+```c++
 cppflow::tensor inputBody = cppflow::fill({1, 2}, 2.0f);
 cppflow::tensor inputTags = cppflow::fill({1, 12}, 1.0f);
 cppflow::tensor inputTitle = cppflow::fill({1, 3}, 4.0f);
@@ -70,7 +70,7 @@ std::vector<cppflow::tensor> vectorOfInputTensors = {
 ```
 Now you can infer the model using `runMultiModel()` and retrieve the individual 
 output tensors using the [ ] operator.
-```C++
+```c++
 std::vector<cppflow::tensor> vectorOfOutputTensors = 
 	model.runMultiModel(vectorOfInputTensors);
 

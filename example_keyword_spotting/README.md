@@ -51,7 +51,7 @@ In this example you will find a specification of ofxTF2Model that adds a
 classification and downsampling method.
 This `AudioClassifier` expects a FiFo of audio buffers, applies downsampling, 
 infers the neural network and returns the element with the highest probability.
-```C++
+```c++
 class AudioClassifier : public ofxTF2::Model {
 	public:
 	void classify(AudioBufferFifo & bufferFifo, 
