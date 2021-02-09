@@ -28,11 +28,11 @@ class ImageToImageModel : public ofxTF2ThreadedModel {
     cppflow::tensor runModel(const cppflow::tensor & input) const override {
 	    // cast data type and expand to batch size of 1
 		auto inputCast = cppflow::cast(input, TF_UINT8, TF_FLOAT);
-	    inputCast = cppflow::expand_dims(inputCast, 0);
-	    // call to super 
-	    auto output = ofxTF2Model::runModel(inputCast);
-	    // postprocess: last layer = (tf.nn.tanh(x) * 150 + 255. / 2)
-	    return ofxTF2::mapTensorValues(output, -22.5f, 277.5f, 0.0f, 255.0f);
+		inputCast = cppflow::expand_dims(inputCast, 0);
+		// call to super 
+		auto output = ofxTF2Model::runModel(inputCast);
+		// postprocess: last layer = (tf.nn.tanh(x) * 150 + 255. / 2)
+		return ofxTF2::mapTensorValues(output, -22.5f, 277.5f, 0.0f, 255.0f);
 	}
 };
 ```
