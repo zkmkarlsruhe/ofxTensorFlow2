@@ -1,5 +1,5 @@
 # Keywordspotting
-This example uses code from an 
+This example builds upon code from 
 [this repo](https://github.com/douglas125/SpeechCmdRecognition) 
 to spot keywords in audio signals. 
 
@@ -16,8 +16,8 @@ trained neural network. In Python we reconstruct the model, load the weights and
  export the model as _SavedModel_.
 After loading the .h5 file we wrap the call to the model. This allows us to 
 change the signature of the _SavedModel_ and to specify `training=False`. The
-later is very important as some layers (such as Dropout) act different during
-training and will not get correctly initialized in C++. 
+later may be necessary as some layers (such as Dropout) act different during
+training. 
 
 ```python
 @tf.function(input_signature=[tf.TensorSpec([None, None], dtype=tf.float32)])
@@ -28,11 +28,10 @@ model.save('../bin/data/model', signatures={'serving_default': model_predict})
 ```
 
 ***Note***: besides downsampling all preprocessing is done inside the 
-computational graph. Wow! Thanks to the pyhton package _kapre_.
+computational graph. Wow! Thanks to the python package _kapre_.
 
 ***Note***: check out train.py if you want to learn more about the training 
 process.
-
 
 ### openFrameworks
 Since the neural network was trained on 1 seconds long audio files sampled at 

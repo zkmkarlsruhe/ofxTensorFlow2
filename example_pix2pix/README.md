@@ -4,9 +4,7 @@ This example explores image generation using neural networks and is built around
 A basic GAN consists of two parts a generator that takes in an input and generates a desired output (here: in both cases images) and a classifier that tries to predict if its input was generated or not. While the classifier is trained in a classic manner on real and fake samples the generator is trained _through_ the classifier. That is, its update depends on the output of the classifier when given a newly generated sample. A training step includes training both parts side by side.
 
 ### TensorFlow2
-As with all examples you can download the pretrained model from the assests, copy it to the bin/data folder and name it model.
-
-If you want to train it by yourself you can edit the config.py file in the python folder and run main.py. It is highly recommended to use a GPU for this purpose.
+If you want to train the neural network by yourself you can edit the config.py file in the python folder and run main.py. It is highly recommended to use a GPU for this purpose.
 
 Check this [post](https://www.tensorflow.org/tutorials/generative/pix2pix?hl=en) for more information on the training procedure.
 
@@ -57,7 +55,7 @@ In this example we use this pattern but also define a subclass with a specialize
 However, it is very important to reconstruct the way data is treated during the training, which does not include ways that enhance generalization such as noise and image augmentation.
 
 Once more we want to stress that you can call many TensorFlow operations through cppflow. 
-```C++
+```c++
 input = cppflow::div(input, cppflow::tensor({127.5f}));
 input = cppflow::add(input, cppflow::tensor({-1.0f}));
 ```

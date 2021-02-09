@@ -4,16 +4,18 @@ This is an example for realtime (~30fps @ RTX 2070 Super) neural style transfer 
 The Python code has been taken from [this repo](https://github.com/cryu854/FastStyle). Neural style transfer can also be done using GANs. However, this method is much faster. Check this [post](https://www.tensorflow.org/tutorials/generative/style_transfer?hl=en) for more information on this topic.
 Nevertheless, we highly recommend using a GPU.
 
-Make sure to download and extract the folder containing multiple _SavedModels_ from the assets. The easiest way is to use the script provided in _../scripts/download_example_model.sh_. The application will by default look for a folder "models/" in "bin/data/".
+Make sure to download and extract the folder containing multiple _SavedModels_ from the assets. The easiest way is to use the script provided in _../scripts/download_example_model.sh_. The application will by default look for a folder _models_ in _bin/data/_.
 
 ### TensorFlow2 
-***Note***: the computational graph uses a function which relies on the size of the tensor. This leads to a problem when saving the model. We have to specify the input dimensions using the following wrapper:
+You can download the checkpoints for each model using the bash script _../scripts/download_training_examples.sh_.
+
+This example inherits a small problem. The computational graph uses a function which relies on the size of the tensor. This leads to an error when saving the model. We have to specify the input dimensions using the following wrapper:
 ```python
 @tf.function(input_signature=[tf.TensorSpec([None, 480, 640, 3], dtype=tf.float32)])
 def model_predict(input_1):
     return {'outputs': network(input_1, training=False)}
 ```
-***Note***: you can download the checkpoints for each model from our assets and use the script _python/checkpoint2SavedModel.py_ to change the input signature!
+***Note***: Run the python script _python/checkpoint2SavedModel.py_ on the downloadable checkpoints to change the input signatures!
 
 ### openFrameworks
 In this example we will use the `ThreadedModel` class and augment the runModel function. This way we can modify the in and outputs inside the thread. 
