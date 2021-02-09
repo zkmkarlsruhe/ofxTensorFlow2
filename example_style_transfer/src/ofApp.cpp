@@ -56,6 +56,7 @@ void ofApp::setup() {
 	//input = cppflow::decode_jpeg(cppflow::read_file(imgPath));
 	//input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
 
+	// process image on first update()
 	newInput = true;
 #endif
 
@@ -106,6 +107,7 @@ void ofApp::update() {
 	// thread-safe conditional input update
 	if(newInput && model.readyForInput()) {
 		model.update(input);
+		newInput = false;
 	}
 
 	// thread-safe conditional output update
@@ -136,7 +138,7 @@ void ofApp::draw() {
 	// draw fps
 	text = ofToString((int)ofGetFrameRate()) + " fps\n";
 	text += "a - toggle auto load";
-	ofDrawBitmapStringHighlight(text, ofGetWidth() - 184, 12);
+	ofDrawBitmapStringHighlight(text, ofGetWidth() - 164, 12);
 }
 
 //--------------------------------------------------------------
