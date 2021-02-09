@@ -36,7 +36,7 @@ static setenv(const char *name, const char *value, int overwrite) {
 namespace ofxTF2 {
 
 shapeVector getTensorShape(const cppflow::tensor & tensor) {
-	return cast(tensor.shape(), TF_INT32, TF_INT64).get_data<int64_t>();
+	return cppflow::cast(tensor.shape(), TF_INT32, TF_INT64).get_data<int64_t>();
 }
 
 bool isSameShape (const shapeVector & lhs, const shapeVector & rhs) {
