@@ -120,7 +120,7 @@ def train(
 
     @tf.function(input_signature=[tf.TensorSpec([None, None, None, 3], dtype=tf.float32)])
     def model_predict(input_1):
-        return {'outputs': generator(input_1, training=True)}
+        return {'outputs': generator(input_1, training=False)}
 
     def fit(train_ds, test_ds, epochs):
         for epoch in range(epochs):

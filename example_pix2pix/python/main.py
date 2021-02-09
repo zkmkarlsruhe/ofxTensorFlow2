@@ -28,7 +28,7 @@ from tensorflow.keras.utils import plot_model
 
 # In[4]:
 
-path = download_existing_dataset(EXISTING_DATASETS['edges2shoes'], 'edges2shoes')
+path = download_existing_dataset(EXISTING_DATASETS[DATASET], DATASET)
 print('Dataset Path ->', path)
 
 
