@@ -44,7 +44,7 @@ void ofApp::setup() {
 	ofLog() << "Maximum likelihood: " << maxLabel;
 
 	// access each element using ofxTF2 conversion functions
-	ofxTF2::tensorToVector<float>(output, outputVector);
+	ofxTF2::tensorToVector(output, outputVector);
 	
 	// get and print tensor shape,
 	// "NHWC" -> Num_samples x Height x Width x Channels
@@ -55,7 +55,7 @@ void ofApp::setup() {
 
 	// allocate the image and write to it
 	imgIn.allocate(shape[2], shape[1], OF_IMAGE_COLOR);
-	ofxTF2::tensorToImage<float>(input, imgIn);
+	ofxTF2::tensorToImage(input, imgIn);
 
 	// load a font for displaying strings
 	font.load(OF_TTF_SANS, 14);

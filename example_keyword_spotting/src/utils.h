@@ -27,7 +27,6 @@ template <typename T, typename Container=std::deque<T>>
 class FixedFifo : public std::queue<T, Container> {
 
 	public:
-
 		FixedFifo(const std::size_t maxLength=10) : maxLen(maxLength) {}
 
 		void push(const T& value) {
@@ -63,14 +62,14 @@ class AudioClassifier : public ofxTF2::Model {
 
 			// convert recorded sample to a batch of size one
 			ofxTF2::shapeVector tensorShape {1, static_cast<ofxTF2::shape_t>(sample.size())};
-			auto input = ofxTF2::vectorToTensor<float>(sample, tensorShape);
+			auto input = ofxTF2::vectorToTensor(sample, tensorShape);
 
 			// inference
 			auto output = runModel(input);
 
 			// convert the output to std::vector
 			std::vector<float> outputVector;
-			ofxTF2::tensorToVector<float>(output, outputVector);
+			ofxTF2::tensorToVector(output, outputVector);
 
 			// get element with highest probabilty
 			auto maxIt = std::max_element(outputVector.begin(), outputVector.end());

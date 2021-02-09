@@ -11,6 +11,8 @@
  *
  * This code has been developed at ZKM | Hertz-Lab as part of „The Intelligent 
  * Museum“ generously funded by the German Federal Cultural Foundation.
+ * 
+ * This code is based on Memo Akten's ofxMSATensorFlow example.
  */
 
 #include "ofApp.h"
@@ -64,7 +66,7 @@ void ofApp::update() {
 	if(model.readyForInput()) {
 
 		// read tensor from ofImage
-		input = ofxTF2::imageToTensor<float>(imgIn);
+		input = ofxTF2::imageToTensor(imgIn);
 
 		// feed input into model
 		model.update(input);
@@ -83,7 +85,7 @@ void ofApp::update() {
 		output = model.getOutput();
 
 		// write tensor to ofImage
-		ofxTF2::tensorToImage<float>(output, imgOut);
+		ofxTF2::tensorToImage(output, imgOut);
 		imgOut.update();
 
 		// start new measurement

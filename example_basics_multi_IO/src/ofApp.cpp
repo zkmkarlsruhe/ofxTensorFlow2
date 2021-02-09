@@ -45,9 +45,9 @@ void ofApp::setup() {
 	auto inputTitle = cppflow::fill({1, 3}, 4.0f);
 
 	// convert input tensors to vectors for displaying
-	ofxTF2::tensorToVector<float>(inputTitle, titleVector);
-	ofxTF2::tensorToVector<float>(inputBody, bodyVector);
-	ofxTF2::tensorToVector<float>(inputTags, tagsVector);
+	ofxTF2::tensorToVector(inputTitle, titleVector);
+	ofxTF2::tensorToVector(inputBody, bodyVector);
+	ofxTF2::tensorToVector(inputTags, tagsVector);
 
 	// wrap input tensors in a vector for processing
 	std::vector<cppflow::tensor> vectorOfInputTensors = {
@@ -60,8 +60,8 @@ void ofApp::setup() {
 	// extract output
 	auto outputPrio = vectorOfOutputTensors[0];
 	auto outputDept = vectorOfOutputTensors[1];
-	ofxTF2::tensorToVector<float>(outputPrio, prioVector);
-	ofxTF2::tensorToVector<float>(outputDept, deptVector);
+	ofxTF2::tensorToVector(outputPrio, prioVector);
+	ofxTF2::tensorToVector(outputDept, deptVector);
 
 	// load a font for displaying strings
 	font.load(OF_TTF_SANS, 14);

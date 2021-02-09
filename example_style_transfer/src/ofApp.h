@@ -31,9 +31,10 @@ class ImageToImageModel : public ofxTF2::ThreadedModel {
 		// otherwise it would call runModel with no way of pre-/postprocessing
 		cppflow::tensor runModel(const cppflow::tensor & input) const override {
 			// cast data type and expand to batch size of 1
-			auto inputExpanded = cppflow::expand_dims(input, 0);
+			auto inputCast = cppflow::cast(input, TF_UINT8, TF_FLOAT);
+			inputCast = cppflow::expand_dims(inputCast, 0);
 			// call to super
-			auto output = Model::runModel(inputExpanded);
+			auto output = Model::runModel(inputCast);
 			// postprocess: last layer = (tf.nn.tanh(x) * 150 + 255. / 2)
 			return ofxTF2::mapTensorValues(output, -22.5f, 277.5f, 0.0f, 255.0f);
 		}

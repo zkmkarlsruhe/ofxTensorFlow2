@@ -33,11 +33,11 @@ void ofApp::setup() {
 	auto output = model.runModel(input);
 
 	// use the ofxTF2 namespace for some useful functions like conversion
-	ofxTF2::tensorToVector<float>(output, outputVector);
-	ofxTF2::tensorToVector<float>(input, inputVector);
+	ofxTF2::tensorToVector(output, outputVector);
+	ofxTF2::tensorToVector(input, inputVector);
 
 	// print summary to console
-	ofLog() << "Flatted Input:";
+	ofLog() << "Flattened Input:";
 	ofLog() << ofxTF2::vectorToString(inputVector);
 	ofLog() << "Flattened Output:";
 	ofLog() << ofxTF2::vectorToString(outputVector);

@@ -48,7 +48,7 @@ void ofApp::setup() {
 	ofImage imgIn;
 	//imgIn.load("zkm512x512.jpg"); // alt square image
 	imgIn.load("zkm640x480.jpg");
-	input = ofxTF2::imageToTensor<float>(imgIn);
+	input = ofxTF2::imageToTensor(imgIn);
 
 	// alternatively, load input image via cppflow
 	//std::string imgPath(ofToDataPath("cat512x512.jpg")); // smaller
@@ -96,7 +96,7 @@ void ofApp::update() {
 		ofPixels & pixels = vidIn.getPixels();
 		ofPixels resizedPixels(pixels);
 		resizedPixels.resize(nnWidth, nnHeight);
-		input = ofxTF2::pixelsToTensor<float>(resizedPixels);
+		input = ofxTF2::pixelsToTensor(resizedPixels);
 		newInput = true;
 	}
 #else
@@ -111,7 +111,7 @@ void ofApp::update() {
 	// thread-safe conditional output update
 	if(model.isOutputNew()) {
 		auto output = model.getOutput();
-		ofxTF2::tensorToImage<float>(output, imgOut);
+		ofxTF2::tensorToImage(output, imgOut);
 		imgOut.update();
 	}
 }
