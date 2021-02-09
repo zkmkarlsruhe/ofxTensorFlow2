@@ -11,7 +11,7 @@ If you want to train it by yourself you can edit the config.py file in the pytho
 Check this [post](https://www.tensorflow.org/tutorials/generative/pix2pix?hl=en) for more information on the training procedure.
 
 ### openFrameworks
-In this example we are using the `ThreadedModel` class. It allows to run the inference of the model asynchronous to the rest of the program. This is especially helpful as it's not delaying other tasks such as drawing. The `ThreadedModel` uses the following pattern.
+In this example we are using the a specification of the `ofxTF2::Model`. It allows to run the inference of the model asynchronous to the rest of the program. This is especially helpful as it's not delaying other tasks such as drawing. The `ofxTF2::ThreadedModel` uses the following pattern.
 
 Declare the model as a member of the ofApp in ofApp.h:
 ```C++
@@ -52,7 +52,7 @@ void ofApp::update() {
 }
 // ...
 ```
-In this example we use this pattern but also define subclass with a specialized runModel function to augment the asynchronous model execution with pre- and postprocessing. This approach is further explained in the style transfer example.
+In this example we use this pattern but also define a subclass with a specialized runModel function to augment the asynchronous model execution with pre- and postprocessing. This approach is further explained in the style transfer example.
 
 However, it is very important to reconstruct the way data is treated during the training, which does not include ways that enhance generalization such as noise and image augmentation.
 

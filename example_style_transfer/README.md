@@ -7,13 +7,13 @@ Nevertheless, we highly recommend using a GPU.
 Make sure to download and extract the folder containing multiple _SavedModels_ from the assets. The easiest way is to use the script provided in _../scripts/download_example_model.sh_. The application will by default look for a folder "models/" in "bin/data/".
 
 ### TensorFlow2 
-***Note***: the computational graph uses a function which relies on the size of the tensor. This leads to a problem when saving the model. We have to specify the input dimensions using the already presented wrapper, e.g:
+***Note***: the computational graph uses a function which relies on the size of the tensor. This leads to a problem when saving the model. We have to specify the input dimensions using the following wrapper:
 ```python
 @tf.function(input_signature=[tf.TensorSpec([None, 480, 640, 3], dtype=tf.float32)])
 def model_predict(input_1):
     return {'outputs': network(input_1, training=False)}
 ```
-***Note***: you can download the checkpoints for each model from our assets and use the script _pyhton/checkpoint2SavedModel.py_ to change the input signature!
+***Note***: you can download the checkpoints for each model from our assets and use the script _python/checkpoint2SavedModel.py_ to change the input signature!
 
 ### openFrameworks
 In this example we will use the `ThreadedModel` class and augment the runModel function. This way we can modify the in and outputs inside the thread. 
@@ -35,6 +35,6 @@ class ImageToImageModel : public ofxTF2ThreadedModel {
 	}
 };
 ```
-***Note***: The default layout for images in TensorFlow is NHWC (batch, height, width, channel), which is different to openframeWorks' layout (width, height, channel). So an image which is 640 pixels wide and 480 pixels high is given as an tensor of `[1, 480, 640, 3]`.
+***Note***: The default layout for images in TensorFlow is NHWC (batch size, height, width, channel), which is different to openFrameworks' layout (width, height, channel). So an image which is 640 pixels wide and 480 pixels high is given as an tensor of `[1, 480, 640, 3]`.
 Check this [link](https://oneapi-src.github.io/oneDNN/understanding_memory_formats.html) for more details.
 

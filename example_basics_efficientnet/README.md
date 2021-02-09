@@ -1,11 +1,11 @@
 # EfficientNet example
 
-This is an example for openFrameworks which demonstrates how to load and evaluate a _pretrained_ graph using TensorFlow2.
+This example demonstrates how to load and evaluate a _pretrained_ graph.
 
 ### TensorFlow2
 Load an EfficientNet model which is pretrained on the ImageNet dataset consisting of 1000 classes to solve the image classification task.
 
-***Note***: EfficientNet is an upscalable architecture. TensorFlow has 8 different version. Try different models by changing the last number (i.e. EfficientNetB7) and observe the increase in numbers of parameters, computation time and accuracy.
+***Note***: EfficientNet is an upscalable architecture. TensorFlow has 8 different version. Try different models by changing the last number (i.e. EfficientNetB7) and observe the increase in parameters, computation time and accuracy.
 
 ```python
 model = tf.keras.applications.EfficientNetB0()
@@ -23,9 +23,9 @@ We can use TensorFlow's arg_max op to receive the highest value in the vector.
 auto maxLabel = cppflow::arg_max(output, 1);
 std::cout << "Maximum likelihood: " << maxLabel << std::endl;
 ```
-To convert the ouput tensor to a vector call the template function `ofxTF2::tensorToVector<T>()`.
+To convert the ouput tensor to a vector call the function `ofxTF2::tensorToVector<T>()`.
 ```c++
 std::vector<float> outputVector;
-ofxTF2::tensorToVector<float>(output, outputVector);
+ofxTF2::tensorToVector(output, outputVector);
 std::cout << "[282] tiger cat: " << outputVector[282]  << std::endl;
 ```

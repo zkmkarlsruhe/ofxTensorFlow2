@@ -56,13 +56,18 @@ We define a base model class `ofxTF2::Model` that wraps around `cppflow::model` 
 ofxTF2::Model ofModel("model");
 output = ofModel.runModel(input);
 ```
-Later we will take a look at the advanced `ofxTF2::ThreadedModel`.
+Models can also run on multiple input and output tensors. Check _example_basics_multi_io_ for more details. In _example_pix2pix_  and _example_style_transfer_ we will explore the usage of the derived class `ofxTF2::ThreadedModel` for asynchronous processing.
 
 
-##### Conversions
-Furthermore, you can convert a `cppflow::tensor` to `std::vector`, `ofPixels` or `ofImage` and backwards using the conversion function defined in _ofxTensorFlow2/src/ofxTensorFlow2Utils.h_.
+##### Utility
+The utility functions defined in _ofxTensorFlow2/src/ofxTensorFlow2Utils.h_ may
+come in handy for average usage. A common need is to convert a 
+`cppflow::tensor` to `std::vector`, `ofPixels` or `ofImage` or the other way around.
 ```C++
+// cast the TF_FLOAT output tensor to TF_INT, then copy to int vector
 std::vector<int> outputVector;
 ofxTF2::tensorToVector<int>(output, outputVector);
-auto backToTensor = ofxTF2::vectorToTensor<float>(outputVector); // trimmed floats
-```
+//  and back to TF_INT tensor
+auto backToTensor = ofxTF2::vectorToTensor<int>(outputVector); 
+``` 
+***Note***: it is not necessary to name the template type. The output type will always depend on the std::vector, ofImage, or ofPixel given. For example, calling` ofxTF2::imageToTensor<T>()` on an ofFloatImage will return a tensor of TF_FLOAT (the TF version of float).
