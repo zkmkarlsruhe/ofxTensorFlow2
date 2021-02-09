@@ -42,49 +42,54 @@ namespace ofxTF2 {
 		const shapeVector & rhs);
 
 	/// converts a std::vector to a tensor
-	/// expects shape in HWC format (height, width, channel)
+	/// type of resulting tensor is the TF equivalent to type of srcVector 
 	/// creates a flat tensor if no shape provided
+	/// only supports HWC output format (height, width, channel)
 	/// does not convert tensor to a batch
 	template <typename T>
 	cppflow::tensor vectorToTensor(const std::vector<T> & srcVector, 
 		const shapeVector & shape = shapeVector{0});
 
 	/// converts ofPixels to a tensor
+	/// type of resulting tensor is the TF equivalent to type of pixels
+	/// e.g. TF_FLOAT for ofFloatPixels and TF_UINT8 for ofPixels 
 	/// only supports HWC output format (height, width, channel)
 	/// does not convert tensor to a batch
 	/// returns tensor(-1) if not successful
 	template <typename T>
-	cppflow::tensor pixelsToTensor(const ofPixels & pixels);
+	cppflow::tensor pixelsToTensor(const ofPixels_<T> & pixels);
 
 	/// converts ofImage to a tensor
+	/// type of resulting tensor is the TF equivalent to type of image
+	/// e.g. TF_FLOAT for ofFloatImage and TF_UINT8 for ofImage 
 	/// only supports HWC output format (height, width, channel)
 	/// does not convert tensor to a batch
 	/// returns tensor(-1) if not successful
 	template <typename T>
-	cppflow::tensor imageToTensor(const ofImage & image);
+	cppflow::tensor imageToTensor(const ofImage_<T> & image);
 
-	/// converts a std::vector to a tensor
-	/// casts data types if feasible and types dont match
+	/// converts a tensor to std::vector
+	/// casts data type of tensor to data type of vector if they mismatch
 	/// only supports HWC output format (height, width, channel)
 	/// return true if successful
 	template <typename T>
 	bool tensorToVector(const cppflow::tensor & srcTensor, std::vector<T> & dstVector);
 
-	/// converts a tensor to ofPixels
-	/// casts data types if feasible and types dont match
+	/// converts a tensor to any ofPixels_<T>
+	/// casts data type of tensor to data type of pixels if they mismatch
 	/// only supports HWC input format (height, width, channel)
 	/// input may have batch size of one (1, H,W,C) or no batch (H,W,C)
 	/// return true if successful
 	template <typename T>
-	bool tensorToPixels(const cppflow::tensor & srcTensor, ofPixels & pixels);
+	bool tensorToPixels(const cppflow::tensor & srcTensor, ofPixels_<T> & pixels);
 	
-	/// converts a tensor to ofImage
-	/// casts data types if feasible and types dont match
+	/// converts a tensor to any ofImage_<T>
+	/// casts data type of tensor to data type of image if they mismatch
 	/// only supports HWC input format (height, width, channel)
 	/// input may have batch size of one (1, H,W,C) or no batch (H,W,C)
 	/// return true if successful
 	template <typename T>
-	bool tensorToImage(const cppflow::tensor & srcTensor, ofImage & image);
+	bool tensorToImage(const cppflow::tensor & srcTensor, ofImage_<T> & image);
 
 }; // end namespace ofxTF2
 
@@ -108,22 +113,21 @@ namespace ofxTF2 {
 	template <typename T>
 	cppflow::tensor vectorToTensor(const std::vector<T> & srcVector,
 	                               const shapeVector & shape) {
+		auto shape_ = shape; 
 		// by default and if shape is (0) create a flat vector
 		if(shape == shapeVector{0}) {
-			return cppflow::tensor(srcVector);
+			shape_ = {(size_t) srcVector.size()};
 		}
-		else {
-			return cppflow::tensor(srcVector, shape);
-		}
+		return cppflow::tensor(srcVector, shape_);
 	}
 
 	template <typename T>
-	cppflow::tensor imageToTensor(const ofImage & image) {
-		return pixelsToTensor<T>(image.getPixels());
+	cppflow::tensor imageToTensor(const ofImage_<T> & image) {
+		return pixelsToTensor(image.getPixels());
 	}
 
 	template <typename T>
-	cppflow::tensor pixelsToTensor(const ofPixels & pixels) {
+	cppflow::tensor pixelsToTensor(const ofPixels_<T> & pixels) {
 		const shape_t w = pixels.getWidth();
 		const shape_t h = pixels.getHeight();
 		shape_t c;
@@ -174,12 +178,12 @@ namespace ofxTF2 {
 	}
 
 	template <typename T>
-	bool tensorToImage(const cppflow::tensor & srcTensor, ofImage & image) {
-		return tensorToPixels<T>(srcTensor, image.getPixels());
+	bool tensorToImage(const cppflow::tensor & srcTensor, ofImage_<T> & image) {
+		return tensorToPixels(srcTensor, image.getPixels());
 	}
 
 	template <typename T>
-	bool tensorToPixels(const cppflow::tensor & srcTensor, ofPixels & pixels) {
+	bool tensorToPixels(const cppflow::tensor & srcTensor, ofPixels_<T> & pixels) {
 		// get tensor shape and check if convertible
 		auto shape = getTensorShape(srcTensor);
 		shape_t tensor_w;
@@ -235,7 +239,7 @@ namespace ofxTF2 {
 		}
 		// copy to pixels
 		std::vector<T> data;
-		tensorToVector<T>(srcTensor, data);
+		tensorToVector(srcTensor, data);
 		std::copy(data.begin(), data.end(), pixels.begin());
 		
 		return true;
