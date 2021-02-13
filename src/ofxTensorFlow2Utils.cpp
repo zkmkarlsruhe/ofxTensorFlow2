@@ -15,14 +15,13 @@
 
 #include "ofxTensorFlow2Utils.h"
 #include <cstdlib>
-#include <sys/errno.h>
 #include <float.h>
 #include "ofConstants.h"
 
 #ifdef TARGET_WIN32
 /// Windows doesn't provide setenv(), use this _putenv_s() wrapper from:
 /// https://stackoverflow.com/a/23616164/2146055
-static setenv(const char *name, const char *value, int overwrite) {
+static int setenv(const char *name, const char *value, int overwrite) {
 	int errcode = 0;
 	if(!overwrite) {
 		size_t envsize = 0;
@@ -31,6 +30,8 @@ static setenv(const char *name, const char *value, int overwrite) {
 	}
 	return _putenv_s(name, value);
 }
+#else
+#include <sys/errno.h>
 #endif
 
 namespace ofxTF2 {
