@@ -20,6 +20,9 @@ fi
 # tf download host url
 HOST=https://storage.googleapis.com/tensorflow/libtensorflow
 
+# tf download file extension
+EXT=tar.gz
+
 # locations
 SRC=libtensorflow
 DEST=../libs/tensorflow
@@ -52,10 +55,12 @@ case "$OS" in
 	windowsnt)
 		OS=windows
 		OF_OS=vs
+		EXT=zip
 		;;
 	mingw* | msys*)
 		OS=windows
 		OF_OS=msys2
+		EXT=zip
 		;;
 	*)
 		echo "unknown or unsupported operating system: $OS"
@@ -63,13 +68,13 @@ case "$OS" in
 		;;
 esac
 
-# tgz naming is based on system type
-TGZ=libtensorflow-${TYPE}-${OS}-${ARCH}-${VER}.tar.gz
+# tgz/zip naming is based on system type
+DOWNLOAD=libtensorflow-${TYPE}-${OS}-${ARCH}-${VER}
 
 # summary
 echo "detected: $OS $ARCH -> $OF_OS"
 echo "build type: $TYPE"
-echo "downloading: $TGZ"
+echo "downloading: $DOWNLOAD.$EXT"
 
 ##### prepare
 
@@ -82,9 +87,13 @@ rm -rf $DEST/*
 ##### download & install
 
 # get latest source
-curl -O ${HOST}/${TGZ}
+curl -O ${HOST}/${DOWNLOAD}.${EXT}
 mkdir -p $SRC
-tar -xvf $TGZ -C $SRC
+if [ "$EXT" == "zip" ] ; then
+	unzip -d $SRC ${DOWNLOAD}.${EXT}
+else
+	tar -xvf ${DOWNLOAD}.${EXT} -C $SRC
+fi
 
 # create dirs
 mkdir -p $DEST/lib
@@ -102,4 +111,4 @@ cp -Rv $SRC/lib/* $DEST/lib/${OF_OS}/
 
 ##### cleanup
 
-rm -rf $SRC $TGZ
+rm -rf $SRC ${DOWNLOAD}.${EXT}
