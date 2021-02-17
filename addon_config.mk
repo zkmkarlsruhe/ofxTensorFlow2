@@ -17,9 +17,9 @@
 meta:
 	ADDON_NAME = ofxTensorFlow2
 	ADDON_DESCRIPTION = An addon for TensorFlow2
-	ADDON_AUTHOR = Paul Bethge
-	ADDON_TAGS = "addon" "tensorflow" "tensorflow2" "deep learning" "artificial intelligence"
-	ADDON_URL = https://hertz-gitlab.zkm.de/Hertz-Lab/Research/intelligent-museum/ofxTensorFlow2
+	ADDON_AUTHOR = Paul Bethge, Dan Wilcox
+	ADDON_TAGS = "algorithms" "bridges" "computer vision" "machine learning" "tensorflow" "deep learning" "artificial intelligence"
+	ADDON_URL = https://github.com/zkmkarlsruhe/ofxTensorFlow2
 
 common:
 	# dependencies with other addons, a list of them separated by spaces
