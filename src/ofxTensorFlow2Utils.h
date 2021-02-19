@@ -116,7 +116,7 @@ namespace ofxTF2 {
 		auto shape_ = shape; 
 		// by default and if shape is (0) create a flat vector
 		if(shape == shapeVector{0}) {
-			shape_ = {(size_t) srcVector.size()};
+			shape_ = {(shape_t)srcVector.size()};
 		}
 		return cppflow::tensor(srcVector, shape_);
 	}
