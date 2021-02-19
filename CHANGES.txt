@@ -1,0 +1,13 @@
+1.0.1: 2021 Feb 19
+
+* fixed bad cast in ofxTF2::vectorToTensor()
+* fixed issue with setenv() declaration and sys/error.h include on Windows
+* fixed libtensorflow download script not handling Windows build zip files
+
+* added changelog
+
+* updated addon_config.mk tags and url
+
+1.0.0: 2021 Feb 09
+
+initial version
