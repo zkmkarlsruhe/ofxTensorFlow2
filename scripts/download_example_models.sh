@@ -10,10 +10,22 @@
 set -e
 
 # ZKM NextCloud shared folder direct link
-URL=https://cloud.zkm.de/index.php/s/gfWEjyEr9X4gyY6/download
+URL=https://cloud.zkm.de/index.php/s/gfWEjyEr9X4gyY6
 
 SRC=example_models
 DEST=../..
+
+##### functions
+
+# download from a public NextCloud shared link
+# $1: root folder share link URL
+# $2: filename
+function download() {
+	local path="download?path=%2F&files=$2"
+	curl -LO $URL/$path
+	mkdir -p $SRC
+	mv $path $SRC/$2
+}
 
 ##### go
 
@@ -21,9 +33,12 @@ DEST=../..
 cd $(dirname "$0")
 
 # download models
-curl -LO $URL
-unzip download
-rm -rf download
+download $URL model_basics.zip
+download $URL model_basics_multi_IO.zip
+download $URL model_effnet.zip
+download $URL model_keywordspotting.zip
+download $URL model_pix2pix_edges2shoes_20epochs.zip
+download $URL models_style_transfer_640x480.zip
 
 cd "$SRC"
 
