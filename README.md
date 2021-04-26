@@ -275,25 +275,38 @@ Create a New ofxTensorFlow2 Project
 
 Simply select ofxTensorFlow2 from the available addons in the OF ProjectGenerator before generating a new project. Make sure that all dependencies are installed and downloaded beforehand, otherwise the PG may miss some paths.
 
-Training Models
----------------
-
-_Note: GPU support recommended_
-
 #### Model Format
 
 ofxTensorFlow2 works with the TensorFlow 2 [SavedModel format](https://www.tensorflow.org/guide/saved_model).
 
-When referring to the "SavedModel" we mean the parent folder of the exported neural network containing two subfolder assets and variables and a `saved_model.pb` file. Do not change anything inside this folder, however renaming the folder is permitted as long as you you change the file path used within the application to match.
+When referring to the "SavedModel" we mean the parent folder of the exported neural network containing two subfolder assets and variables and a `saved_model.pb` file. Do not change anything inside this folder, however renaming the folder is permitted. Keep in mind to use the correct file path within the application.
 
-#### Requirements
+#### Pretrained Models
+
+Often you don't need/want to train your models from scratch. Therefor, you should take a look at the [TF Hub](tfhub.dev). As TF2 is still rather new, there s not always a SavedModel for your purpose. Besides tfhub.dev you can search GitHub for a TF2 implementation of your model. A great place to start may be [here](https://github.com/Amin-Tgz/awesome-tensorflow-2). If you dont find a pretrained model, it is still easier to run/extend the code of an existing project instead of starting from scratch.
+
+If you happen to find a SavedModel that suits you, but actually don't know the in and output specifications, use the `saved_model_cli` that comes with TensorFlow. For example:
+```bash
+saved_model_cli show --dir path/to/model/ --tag_set serve --signature_def serving_default
+```
+should give you the name and expected shape of the in and output tensors. If the names differ from the standard ones or you have more than one in or output tensor you can use `ofxTF2Model::setup()` to specify them. This is also explained in the MultiIO example.
+
+Training Models
+---------------
+
+##### Requirements
 
 * Python 3
-* [anaconda](https://docs.anaconda.com/anaconda/install/) / [miniconda](https://docs.conda.io/en/latest/miniconda.html) (suggested)
+* Python Package Manger
+* Virtual Environments (optional)
 
-For building a dataset and training a model for use with the ofxTensorFlow2 addon, use Python 3. For ease of use with dependency handling, using virtual environments is recommended. One such tool for this is anaconda or the smaller miniconda.
+##### Recommendations
+- [Anaconda](https://docs.anaconda.com/anaconda/install/) / [Miniconda](https://docs.conda.io/en/latest/miniconda.html) (includes all requirements)
+- recent [GPU](https://www.tensorflow.org/install/gpu) (10+ series) + software support
 
-Install anaconda or miniconda, then install the pip3 package manager using `conda`:
+We recommend using Python3 as Python2 is not being developed any longer. A python installation is usually extended using a package manager, e.g. pip or conda. To handle the dependencies of Python projects, virtual environments (venvs) are considered best practice. Most beginners to Python use Anaconda or the smaller Miniconda which have all of it to start with.
+
+While you should not mix vens, you can do so for package managers e.g.:
 
 ```shell
 conda install pip3
@@ -304,13 +317,12 @@ conda install pip3
 For each example project, create a new virtual environment. We will use `conda` to do so:
 
 ```shell
-
 cd example_XXXX/python
 conda create -n myEnv python=3.7
 conda activate myEnv
 ```
 
-With our virtual environment set up and activated we need to install the required python packages. A common package manager is pip. For each example we've listed the required packages using `pip3 freeze > requirements.txt`. You can easily install them by running:
+With our virtual environment set up and activated we need to install the required python packages. For each example we've listed the required packages using `pip3 freeze > requirements.txt`. You can easily install them by running:
 
 ```shell
 pip3 install -r requirements.txt
@@ -322,7 +334,7 @@ As the training procedure and the way of configuring it varies a lot between the
 python3 main.py
 ```
 
-Others may require to feed additional information to the `main.py` script. 
+Some scipts may require to feed additional information to the `main.py` script. 
 
 #### Creating Your Own Project Models
 
@@ -330,7 +342,7 @@ If you want to create your own Deep Learning project, here are some tips to guid
 
 ##### IDE
 
-Get an __IDE__ (Integrated Development Environment) aka fancy text editor for development. As you will be using Python, choose a specialized IDE, e.g. Spyder (included in Anaconda) or PyCharm. Make sure to set the virtual environment as the interpreter for this project. If you choose to create the virtual environment using conda you will find a subfolder `envs` in the installation folder of anaconda. This includes a folder for every virtual environment. Choose the right one and go to `bin` and select the binary _python_ as interpreter. This way the IDE can run and debug your projects.
+Get an __IDE__ (Integrated Development Environment) aka fancy text editor for development. As you will be using Python, choose a specialized IDE, e.g. Spyder (included in Anaconda) or PyCharm. Make sure to set the interpreter of the virtual environment for this project. If you chose to create the virtual environment using conda you will find a subfolder `envs` in the installation folder of anaconda. This includes a folder for every virtual environment. Choose the right one and go to `bin` and select the binary _python_ as interpreter. This way the IDE can run and debug your projects.
 
 ##### Python
 
@@ -342,7 +354,7 @@ Get familiar with __Python__. The official [Python tutorial](https://docs.python
 
 ##### Keras
 
-Get familiar with __Keras__. Since TensorFlow 2, [Keras](https://keras.io) is the high level front-end of TensorFlow. It greatly reduces the effort of accessing common data structures (like labeled pictures), defining a Neural Network architecture and observing the training process using callbacks. Besides that, you can always call TensorFlow's core functions such as data pipelines.
+Get familiar with __Keras__. Since TensorFlow 2, [Keras](https://keras.io) is the high level front-end of TensorFlow. It greatly reduces the effort of accessing common data structures (like labeled pictures), defining a neural network architecture and observing the training process using callbacks. Besides that, you can always call TensorFlow's core functions such as data pipelines.
 
 ##### Project Structure
 
@@ -366,11 +378,11 @@ Get familiar with __Machine Learning concepts__. There is plenty of free informa
 
 ##### TensorFlow
 
-Get familiar with __TensorFlow's__ [Tutorials](https://www.tensorflow.org/tutorials). Besides learning how to write TensorFlow code, the tutorials will teach you ML concepts like overfitting and underfitting.
+Get familiar with __TensorFlow's__ [Tutorials](https://www.tensorflow.org/tutorials). Besides learning how to write TensorFlow code, the tutorials will teach you ML concepts like over- and underfitting. Another great place to start is [this repository](https://github.com/Amin-Tgz/awesome-tensorflow-2). It is a vast conglomeration of material related to TensorFlow 2.X.
 
 ##### Datasets
 
-Get to know common __datasets__. A great place to start is [Kaggle](kaggle.com). Here you can find thousands of datasets and accompanying code (in form of Python notebooks that run in your browser).
+Get to know common __datasets__. A great place to start is [Kaggle](kaggle.com). Here you can find thousands of datasets and accompanying code (in form of Python notebooks that run in your browser). [TF datasets](https://www.tensorflow.org/datasets/catalog/overview) is also very popular as most datasets do not require manual download.
 
 ##### Inspiration
 
