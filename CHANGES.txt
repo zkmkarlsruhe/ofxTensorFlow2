@@ -1,3 +1,14 @@
+1.0.2: 2021 Apr 27
+
+* added example_liveGAN
+
+* fixed ofxTF2::getTensorShape()
+* updated cppflow as cppflow2 is now the main branch
+
+* updated README.md better information on training with python and TF2
+
+* updated download script
+
 1.0.1: 2021 Feb 19
 
 * fixed bad cast in ofxTF2::vectorToTensor()
