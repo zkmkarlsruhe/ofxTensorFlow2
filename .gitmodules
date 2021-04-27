@@ -1,0 +1,3 @@
+[submodule "libs/cppflow"]
+	path = libs/cppflow
+	url = git@github.com:serizba/cppflow.git
