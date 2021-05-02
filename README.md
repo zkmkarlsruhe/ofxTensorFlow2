@@ -25,7 +25,7 @@ The addon utilizes the TensorFlow 2 C library wrapped by the open source cppflow
 
 >Run TensorFlow models in c++ without Bazel, without TensorFlow installation and without compiling TensorFlow. Perform tensor manipulation, use eager execution and run saved models directly from C++.
 
-<https://github.com/serizba/cppflow/tree/cppflow2>
+<https://github.com/serizba/cppflow>
 
 Additional classes wrap the process of loading & running a model and utility functions are provided for conversion between common openFrameworks types (images, pixels, audio samples, etc) and TensorFlow2 tensors.
 
@@ -81,7 +81,7 @@ git clone git@hertz-gitlab.zkm.de:Hertz-Lab/Research/intelligent-museum/ofxTenso
 * TensorFlow 2
 * cppflow 2
 
-Since TensorFlow does not ship a C++ Library we make use of [cppflow2](https://github.com/serizba/cppflow/tree/cppflow2), which is a C++ wrapper around the TensorFlow 2 C API.
+Since TensorFlow does not ship a C++ Library we make use of [cppflow2](https://github.com/serizba/cppflow), which is a C++ wrapper around the TensorFlow 2 C API.
 
 Pull cppflow to `libs/cppflow` and checkout cppflow2:
 
@@ -279,11 +279,11 @@ Simply select ofxTensorFlow2 from the available addons in the OF ProjectGenerato
 
 ofxTensorFlow2 works with the TensorFlow 2 [SavedModel format](https://www.tensorflow.org/guide/saved_model).
 
-When referring to the "SavedModel" we mean the parent folder of the exported neural network containing two subfolder assets and variables and a `saved_model.pb` file. Do not change anything inside this folder, however renaming the folder is permitted. Keep in mind to use the correct file path within the application.
+When referring to the "SavedModel" we mean the parent folder of the exported neural network containing two subfolder `assets` and `variables` and a `saved_model.pb` file. Do not change anything inside this folder, however renaming the folder is permitted. Keep in mind to use the correct file path within the application.
 
 #### Pretrained Models
 
-Often you don't need/want to train your models from scratch. Therefor, you should take a look at the [TF Hub](tfhub.dev). As TF2 is still rather new, there s not always a SavedModel for your purpose. Besides tfhub.dev you can search GitHub for a TF2 implementation of your model. A great place to start may be [here](https://github.com/Amin-Tgz/awesome-tensorflow-2). If you dont find a pretrained model, it is still easier to run/extend the code of an existing project instead of starting from scratch.
+Often you don't need or want to train your models from scratch. Therefor, you should take a look at the [TF Hub](tfhub.dev). As TF2 is still rather new, there is not always a SavedModel for your purpose. Besides tfhub.dev you can search GitHub for a TF2 implementation of your model. A great place to start may be [here](https://github.com/Amin-Tgz/awesome-tensorflow-2). If you dont find a pretrained model, it is still easier to run/extend the code of an existing project instead of starting from scratch.
 
 If you happen to find a SavedModel that suits you, but actually don't know the in and output specifications, use the `saved_model_cli` that comes with TensorFlow. For example:
 ```bash
@@ -303,6 +303,7 @@ Training Models
 ##### Recommendations
 - [Anaconda](https://docs.anaconda.com/anaconda/install/) / [Miniconda](https://docs.conda.io/en/latest/miniconda.html) (includes all requirements)
 - recent [GPU](https://www.tensorflow.org/install/gpu) (10+ series) + software support
+- if no GPU is available try free services like [Google"s Colab](https://colab.research.google.com)
 
 We recommend using Python3 as Python2 is not being developed any longer. A python installation is usually extended using a package manager, e.g. pip or conda. To handle the dependencies of Python projects, virtual environments (venvs) are considered best practice. Most beginners to Python use Anaconda or the smaller Miniconda which have all of it to start with.
 

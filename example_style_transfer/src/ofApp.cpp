@@ -20,6 +20,9 @@ void ofApp::setup() {
 	ofSetFrameRate(60);
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("example_style_transfer");
+	
+	// only use a portion of the GPUs memory
+	ofxTF2::setTFgpuRAMreservation(ofxTF2::GPU_70_PERCENT, true);
 
 	// go through the models directory and print out all the paths
 	ofDirectory modelsDir(ofToDataPath("models"));
