@@ -16,14 +16,14 @@
 #include "ofApp.h"
 #include <stdlib.h>
 
-// computes the dft of real valued inputs
+// computes the DFT (Discrete Fourier transform) of real valued inputs
 // expects the output vector to be allocated before hand
-void dft(const std::vector<float> & audio, std::vector<float> & spec, size_t specSize){
+void dft(const std::vector<float> & audio, std::vector<float> & spec, size_t specSize) {
 	uint32_t audioSize = audio.size();
-	for (float k = 0; k < specSize; k++) {  // For each output element
+	for(float k = 0; k < specSize; k++) {  // for each output element
 		float sumreal = 0.0;
 		float sumimag = 0.0;
-		for (float t = 0; t < audioSize; t++) {  // For each input element
+		for(float t = 0; t < audioSize; t++) {  // for each input element
 			float angle = 2 * PI * t * k / audioSize;
 			sumreal +=  audio[t] * cos(angle);
 			sumimag += -audio[t] * sin(angle);
@@ -37,11 +37,11 @@ void dft(const std::vector<float> & audio, std::vector<float> & spec, size_t spe
 void removeMean(std::vector<float> & audio){
 	uint32_t audioSize = audio.size();
 	float total = 0.0;
-	for (int i = 0; i < audioSize; i++) {  
+	for(int i = 0; i < audioSize; i++) {
 		total += audio[i];
 	}
 	float mean = total / audioSize;
-	for (int i = 0; i < audioSize; i++) {  
+	for(int i = 0; i < audioSize; i++) {
 		audio[i] -= mean;
 	}
 }
@@ -85,14 +85,14 @@ void ofApp::setup() {
 void ofApp::update() {
 
 	// handle new audio frames
-	if (newAudio){
+	if(newAudio) {
 		// compute the dft and remove the mean
 		dft(audio, curSpec, latentSize);
 		removeMean(curSpec);
 		// smooth the spectrum
 		float alpha = 0.7;
 		float beta = 1 - alpha;
-		for (size_t i = 0; i < latentSize; i++) {
+		for(size_t i = 0; i < latentSize; i++) {
 			spec[i] = alpha * spec[i] + beta * curSpec[i];
 		}
 		// control signals
@@ -101,7 +101,7 @@ void ofApp::update() {
 	}
 
 	// feed the neural networks thread
-	if (newSpec && generator.readyForInput()) {
+	if(newSpec && generator.readyForInput()) {
 		// convert spectrum to tensor and add a dim for the batch
 		auto spectrumTensor = ofxTF2::vectorToTensor(spec, {1, latentSize});
 		generator.update(spectrumTensor);
@@ -109,7 +109,7 @@ void ofApp::update() {
 	}
 
 	// retrieve and handle output
-	if (generator.isOutputNew()){
+	if(generator.isOutputNew()) {
 		auto output = generator.getOutput();
 		ofxTF2::tensorToImage(output, imgOut);
 		imgOut.update();
