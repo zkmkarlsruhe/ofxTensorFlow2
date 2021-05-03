@@ -54,8 +54,8 @@ void ofApp::setup() {
 	input = ofxTF2::imageToTensor(imgIn);
 
 	// alternatively, load input image via cppflow
-	//std::string imgPath(ofToDataPath("cat512x512.jpg")); // smaller
-	//std::string imgPath(ofToDataPath("cat640x480.jpg")); // bigger
+	//std::string imgPath(ofToDataPath("zkm512x512.jpg")); // smaller
+	//std::string imgPath(ofToDataPath("zkm640x480.jpg")); // bigger
 	//input = cppflow::decode_jpeg(cppflow::read_file(imgPath));
 	//input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
 
@@ -67,8 +67,8 @@ void ofApp::setup() {
 	imgOut.allocate(nnWidth, nnHeight, OF_IMAGE_COLOR);
 
 	// start the model!
-	model.setIdleTime(1); // very short idle time for fast systems
-	//model.setIdleTime(33); // longer ~1 fps idle time for slower systems
+	//model.setIdleTime(1); // very short idle time for fast systems
+	//model.setIdleTime(33); // longer ~2 fps idle time for slower systems
 	model.startThread();
 	loadTimestamp = ofGetElapsedTimef();
 }
