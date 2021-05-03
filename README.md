@@ -21,11 +21,11 @@ ofxTensorFlow2 is an openFrameworks addon for loading and running ML models trai
 
 <https://www.tensorflow.org>
 
-The addon utilizes the TensorFlow 2 C library wrapped by the open source cppflow 2 C++ interface:
+The addon utilizes the TensorFlow 2 C library wrapped by the open source cppflow C++ interface:
 
 >Run TensorFlow models in c++ without Bazel, without TensorFlow installation and without compiling TensorFlow. Perform tensor manipulation, use eager execution and run saved models directly from C++.
 
-<https://github.com/serizba/cppflow>
+<https://github.com/serizba/cppflow/>
 
 Additional classes wrap the process of loading & running a model and utility functions are provided for conversion between common openFrameworks types (images, pixels, audio samples, etc) and TensorFlow2 tensors.
 
@@ -81,9 +81,9 @@ git clone git@hertz-gitlab.zkm.de:Hertz-Lab/Research/intelligent-museum/ofxTenso
 * TensorFlow 2
 * cppflow 2
 
-Since TensorFlow does not ship a C++ Library we make use of [cppflow2](https://github.com/serizba/cppflow), which is a C++ wrapper around the TensorFlow 2 C API.
+Since TensorFlow does not ship a C++ Library we make use of [cppflow](https://github.com/serizba/cppflow/), which is a C++ wrapper around the TensorFlow 2 C API.
 
-Pull cppflow to `libs/cppflow` and checkout cppflow2:
+Pull cppflow to `libs/cppflow` and checkout cppflow:
 
 ```shell
 cd ofxTensorFlow2
