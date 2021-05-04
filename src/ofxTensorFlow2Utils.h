@@ -23,7 +23,7 @@ namespace ofxTF2 {
 	typedef int64_t shape_t;
 	typedef std::vector<shape_t> shapeVector;
 
-	/// convert vector to string with a similar format to cppflow
+	/// convert vector to string with a format similar to cppflow
 	/// ex: {1, 2, 3} -> "[1, 2, 3, 4]"
 	template<typename T>
 	std::string vectorToString(const std::vector<T> & vec);
@@ -38,8 +38,7 @@ namespace ofxTF2 {
 	shapeVector getTensorShape(const cppflow::tensor & tensor);
 
 	/// returns true if number and size of dimensions are the same
-	bool isSameShape(const shapeVector & lhs, 
-		const shapeVector & rhs);
+	bool isSameShape(const shapeVector & lhs, const shapeVector & rhs);
 
 	/// converts a std::vector to a tensor
 	/// type of resulting tensor is the TF equivalent to type of srcVector 
@@ -91,9 +90,30 @@ namespace ofxTF2 {
 	template <typename T>
 	bool tensorToImage(const cppflow::tensor & srcTensor, ofImage_<T> & image);
 
+	/// predefined policies for maximum GPU memory reservation
+	enum GpuMemoryFraction {
+		GPU_10_PERCENT,
+		GPU_20_PERCENT,
+		GPU_30_PERCENT,
+		GPU_40_PERCENT,
+		GPU_50_PERCENT,
+		GPU_60_PERCENT,
+		GPU_70_PERCENT,
+		GPU_80_PERCENT,
+		GPU_90_PERCENT
+	};
+
+	/// set the policy for the GPU memory reservatation by TensorFlow
+	/// define the maximum amount of reservated GPU memory
+	/// and define whether to use memory growth
+	/// calling this function has no effect if you are using the CPU library
+	/// to use other a custom policy check the documentation of cppflow
+	void setTFgpuRAMreservation(GpuMemoryFraction fraction, bool growth);
+
 }; // end namespace ofxTF2
 
 namespace ofxTF2 {
+
 
 	// ==== template implementations ====
 

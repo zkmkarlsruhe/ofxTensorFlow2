@@ -11,20 +11,28 @@ You can download the checkpoints for each model using the bash script _../script
 
 This example inherits a small problem. The computational graph uses a function which relies on the size of the tensor. This leads to an error when saving the model. We have to specify the input dimensions using the following wrapper:
 ```python
-@tf.function(input_signature=[tf.TensorSpec([None, 480, 640, 3], dtype=tf.float32)])
+@tf.function(input_signature=[tf.TensorSpec([1, 480, 640, 3], dtype=tf.float32)])
 def model_predict(input_1):
     return {'outputs': network(input_1, training=False)}
 ```
 ***Note***: Run the python script _python/checkpoint2SavedModel.py_ on the downloadable checkpoints to change the input signatures!
 
 ### openFrameworks
+***For GPU users***: by default TensorFlow will try to reserve almost all GPU memory, independent of the model size. We define certain presets to change this behaviour. You can choose between 10 to 90 % reservation and with or without memory growth.
+```c++
+// restrict TensorFlow to reserve only a maximum of 70% of the GPUs memory
+// and set memory growth to true
+ofxTF2::setTFgpuRAMreservation(ofxTF2::GPU_70_PERCENT, true);
+```
+
+
 In this example we will use the `ThreadedModel` class and augment the runModel function. This way we can modify the in and outputs inside the thread. 
 
 Here, the model expects a 3D tensor (which has no dimension for batches yet) and outputs the values to be displayable without clamping (the neural network applies a weird shift).
 ```c++
-class ImageToImageModel : public ofxTF2ThreadedModel {
+class ImageToImageModel : public ofxTF2::ThreadedModel {
     public:
-    // override the runModel function of ofxTF2ThreadedModel
+    // override the runModel function of ofxTF2::ThreadedModel
     // this way the thread will take this augmented function 
     // otherwise it would call runModel with no way of pre/post-processing
     cppflow::tensor runModel(const cppflow::tensor & input) const override {
