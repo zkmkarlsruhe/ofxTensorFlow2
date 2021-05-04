@@ -22,9 +22,8 @@ def model_predict(input_1):
 ```c++
 // restrict TensorFlow to reserve only a maximum of 70% of the GPUs memory
 // and set memory growth to true
-ofxTF2::setTFgpuRAMreservation(ofxTF2::GPU_70_PERCENT, true);
+ofxTF2::setGPUMaxMemory(ofxTF2::GPU_PERCENT_70, true);
 ```
-
 
 In this example we will use the `ThreadedModel` class and augment the runModel function. This way we can modify the in and outputs inside the thread. 
 
@@ -48,4 +47,3 @@ class ImageToImageModel : public ofxTF2::ThreadedModel {
 ```
 ***Note***: The default layout for images in TensorFlow is NHWC (batch size, height, width, channel), which is different to openFrameworks' layout (width, height, channel). So an image which is 640 pixels wide and 480 pixels high is given as an tensor of `[1, 480, 640, 3]`.
 Check this [link](https://oneapi-src.github.io/oneDNN/understanding_memory_formats.html) for more details.
-

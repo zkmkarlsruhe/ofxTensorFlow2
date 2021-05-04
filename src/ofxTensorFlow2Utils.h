@@ -91,24 +91,26 @@ namespace ofxTF2 {
 	bool tensorToImage(const cppflow::tensor & srcTensor, ofImage_<T> & image);
 
 	/// predefined policies for maximum GPU memory reservation
-	enum GpuMemoryFraction {
-		GPU_10_PERCENT,
-		GPU_20_PERCENT,
-		GPU_30_PERCENT,
-		GPU_40_PERCENT,
-		GPU_50_PERCENT,
-		GPU_60_PERCENT,
-		GPU_70_PERCENT,
-		GPU_80_PERCENT,
-		GPU_90_PERCENT
+	enum GPUPercent {
+		GPU_PERCENT_10,
+		GPU_PERCENT_20,
+		GPU_PERCENT_30,
+		GPU_PERCENT_40,
+		GPU_PERCENT_50,
+		GPU_PERCENT_60,
+		GPU_PERCENT_70,
+		GPU_PERCENT_80,
+		GPU_PERCENT_90,
+		GPU_PERCENT_100
 	};
 
-	/// set the policy for the GPU memory reservatation by TensorFlow
-	/// define the maximum amount of reservated GPU memory
-	/// and define whether to use memory growth
-	/// calling this function has no effect if you are using the CPU library
-	/// to use other a custom policy check the documentation of cppflow
-	void setTFgpuRAMreservation(GpuMemoryFraction fraction, bool growth);
+	/// set the max amount of reserved GPU memory and optional memory growth
+	/// note: calling this function has no effect when using the CPU library
+	/// to use other a custom policy, check the documentation of cppflow
+	void setGPUMaxMemory(GPUPercent percent, bool growth=false);
+
+	/// set TensorFlow context options ConfigProto directly
+	void setContextOptionsConfig(const std::vector<uint8_t> & config);
 
 }; // end namespace ofxTF2
 
