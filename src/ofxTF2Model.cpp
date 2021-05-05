@@ -14,6 +14,7 @@
  */
 
 #include "ofxTF2Model.h"
+#include "ofxTensorFlow2Utils.h"
 
 #include "ofFileUtils.h"
 #include "ofUtils.h"
@@ -96,10 +97,13 @@ bool Model::isLoaded() {
 }
 
 void Model::printOperations() {
-	ofLogNotice("ofxTensorFlow2") << "====== Model Operations ======";
+	ofLogNotice("ofxTensorFlow2") << "====== Model Operations with Shapes ======";
 	auto ops = model_->get_operations();
-	for(auto & el : ops) {
-		ofLogNotice("ofxTensorFlow2") << el;
+	for(const auto & el : ops) {
+		if (el.compare("NoOp") != 0){
+			auto s = vectorToString(model_->get_operation_shape(el));
+			ofLogNotice("ofxTensorFlow2") << el << " with shape: " << s;
+		}
 	}
 	ofLogNotice("ofxTensorFlow2") << "============ End ==============";
 }
