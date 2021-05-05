@@ -78,34 +78,6 @@ cppflow::tensor mapTensorValues(const cppflow::tensor & inputTensor,
 	}
 }
 
-// the TensorFlow log level is set via the TF_CPP_MIN_LOG_LEVEL env variable,
-// TF log const ints are defined in tensorflow/core/platform/default/logging.h
-void setLogLevel(ofLogLevel level) {
-	int tfLogLevel;
-	switch(level) {
-		default:
-		case OF_LOG_VERBOSE:
-		case OF_LOG_NOTICE:
-			tfLogLevel = 0; // INFO
-			break;
-		case OF_LOG_WARNING:
-			tfLogLevel = 1; // WARNING
-			break;
-		case OF_LOG_ERROR:
-			tfLogLevel = 2; // ERROR
-		case OF_LOG_FATAL_ERROR:
-			tfLogLevel = 3; // FATAL
-		case OF_LOG_SILENT:
-			tfLogLevel = 4; // NUM_SEVERITIES?
-	}
-	const std::string n = "TF_CPP_MIN_LOG_LEVEL";
-	std::string v = ofToString(tfLogLevel);
-	if(setenv(n.c_str(), v.c_str(), 1) == -1) {
-		ofLogError("ofxTensorFlow2") << "unable to set TF_CPP_MIN_LOG_LEVEL: "
-			<< errno << " " << strerror(errno);
-	}
-}
-
 // gpu config options from: https://serizba.github.io/cppflow/quickstart.html#gpu-config-options
 
 // serialized config options using memory growth
@@ -159,6 +131,34 @@ bool setContextOptionsConfig(const std::vector<uint8_t> & config) {
 		return false;
 	}
 	return true;
+}
+
+// the TensorFlow log level is set via the TF_CPP_MIN_LOG_LEVEL env variable,
+// TF log const ints are defined in tensorflow/core/platform/default/logging.h
+void setLogLevel(ofLogLevel level) {
+	int tfLogLevel;
+	switch(level) {
+		default:
+		case OF_LOG_VERBOSE:
+		case OF_LOG_NOTICE:
+			tfLogLevel = 0; // INFO
+			break;
+		case OF_LOG_WARNING:
+			tfLogLevel = 1; // WARNING
+			break;
+		case OF_LOG_ERROR:
+			tfLogLevel = 2; // ERROR
+		case OF_LOG_FATAL_ERROR:
+			tfLogLevel = 3; // FATAL
+		case OF_LOG_SILENT:
+			tfLogLevel = 4; // NUM_SEVERITIES?
+	}
+	const std::string n = "TF_CPP_MIN_LOG_LEVEL";
+	std::string v = ofToString(tfLogLevel);
+	if(setenv(n.c_str(), v.c_str(), 1) == -1) {
+		ofLogError("ofxTensorFlow2") << "unable to set TF_CPP_MIN_LOG_LEVEL: "
+			<< errno << " " << strerror(errno);
+	}
 }
 
 }; // end namespace ofxTF2

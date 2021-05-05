@@ -112,6 +112,10 @@ namespace ofxTF2 {
 	/// set TensorFlow context options ConfigProto directly
 	bool setContextOptionsConfig(const std::vector<uint8_t> & config);
 
+	/// set TensorFlow log level using ofLogLevel enums
+	/// FIXME: doesn't seem to work yet...
+	void setLogLevel(ofLogLevel level);
+
 }; // end namespace ofxTF2
 
 namespace ofxTF2 {
@@ -266,9 +270,5 @@ namespace ofxTF2 {
 		
 		return true;
 	}
-
-	/// set TensorFlow log level using ofLogLevel enums
-	/// FIXME: doesn't seem to work yet...
-	void setLogLevel(ofLogLevel level);
 
 }; // end namespace ofxTF2
