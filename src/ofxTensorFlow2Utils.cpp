@@ -142,7 +142,7 @@ bool setGPUMaxMemory(GPUPercent percent, bool growth) {
 
 bool setContextOptionsConfig(const std::vector<uint8_t> & config) {
 	TFE_ContextOptions * options = TFE_NewContextOptions();
-	if (options == nullptr){
+	if (options == nullptr) {
 		return false;
 	}
 	try{
@@ -151,8 +151,9 @@ bool setContextOptionsConfig(const std::vector<uint8_t> & config) {
 		cppflow::status_check(status);
 		cppflow::get_global_context() = cppflow::context(options);
 	}
-	catch(std::runtime_error exception){
-		ofLog() << exception.what();
+	catch(std::runtime_error exception) {
+		ofLogError("ofxTensorFlow2") << "setContextOptionsConfig Exception: " 
+				<< exception.what();
 		return false;
 	}
 	return true;
