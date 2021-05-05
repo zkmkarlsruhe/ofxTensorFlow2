@@ -1,5 +1,6 @@
 1.0.2: 2021 TBD
 
+* added threaded model background loading via loadAsync() function
 * added ofxTF2::setMaxGPUMemory()
 * added ofxTF2::setContextOptionsConfig()
 

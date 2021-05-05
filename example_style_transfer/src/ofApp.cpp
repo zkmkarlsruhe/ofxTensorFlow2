@@ -85,10 +85,8 @@ void ofApp::update() {
 			modelIndex = 0;
 		}
 		ofLogNotice() << "Load model: " << modelPaths[modelIndex];
-		if(!model.load(modelPaths[modelIndex])) {
-			// exit gracefully if we can't load model
-			ofExit(EXIT_FAILURE);
-		}
+		//model.load(modelPaths[modelIndex]); // blocks when loading
+		model.loadAsync(modelPaths[modelIndex]); // non-blocking, loads in thread
 		modelName = ofFilePath::getBaseName(modelPaths[modelIndex]);
 		loadTimestamp = ofGetElapsedTimef();
 		newInput = true; // try to update
