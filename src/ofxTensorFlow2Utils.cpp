@@ -106,6 +106,8 @@ void setLogLevel(ofLogLevel level) {
 	}
 }
 
+// gpu config options from: https://serizba.github.io/cppflow/quickstart.html#gpu-config-options
+
 // serialized config options using memory growth
 static const std::vector<std::vector<uint8_t>> gpuMemoryGrowPresets {
 	{0x32,0xb,0x9,0x9a,0x99,0x99,0x99,0x99,0x99,0xb9,0x3f,0x20,0x1},
@@ -141,18 +143,18 @@ bool setGPUMaxMemory(GPUPercent percent, bool growth) {
 }
 
 bool setContextOptionsConfig(const std::vector<uint8_t> & config) {
-	TFE_ContextOptions * options = TFE_NewContextOptions();
-	if (options == nullptr) {
+	TFE_ContextOptions *options = TFE_NewContextOptions();
+	if(options == nullptr) {
 		return false;
 	}
-	try{
-		TF_Status * status = cppflow::context::get_status();
+	try {
+		TF_Status *status = cppflow::context::get_status();
 		TFE_ContextOptionsSetConfig(options, config.data(), config.size(), status);
 		cppflow::status_check(status);
 		cppflow::get_global_context() = cppflow::context(options);
 	}
 	catch(std::runtime_error exception) {
-		ofLogError("ofxTensorFlow2") << "setContextOptionsConfig Exception: " 
+		ofLogError("ofxTensorFlow2") << "could not set context options config: "
 				<< exception.what();
 		return false;
 	}
