@@ -107,10 +107,10 @@ namespace ofxTF2 {
 	/// set the max amount of reserved GPU memory and optional memory growth
 	/// note: calling this function has no effect when using the CPU library
 	/// to use other a custom policy, check the documentation of cppflow
-	void setGPUMaxMemory(GPUPercent percent, bool growth=false);
+	bool setGPUMaxMemory(GPUPercent percent, bool growth=true);
 
 	/// set TensorFlow context options ConfigProto directly
-	void setContextOptionsConfig(const std::vector<uint8_t> & config);
+	bool setContextOptionsConfig(const std::vector<uint8_t> & config);
 
 }; // end namespace ofxTF2
 

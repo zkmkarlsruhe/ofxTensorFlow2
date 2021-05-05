@@ -22,7 +22,9 @@ void ofApp::setup() {
 	ofSetWindowTitle("example_style_transfer");
 	
 	// use only a portion of the GPU memory & grow as needed
-	ofxTF2::setGPUMaxMemory(ofxTF2::GPU_PERCENT_70, true);
+	if (ofxTF2::setGPUMaxMemory(ofxTF2::GPU_PERCENT_70, true) != true){
+		ofLog() << "failed to set GPU Memory options!";
+	}
 
 	// go through the models directory and print out all the paths
 	ofDirectory modelsDir(ofToDataPath("models"));

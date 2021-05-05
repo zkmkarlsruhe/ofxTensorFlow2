@@ -134,19 +134,28 @@ static const std::vector<std::vector<uint8_t>> gpuMemoryNoGrowPresets {
 	{0x32,0x9,0x9,0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xf0,0x3f}
 };
 
-// TODO: check status and return bool?
-void setGPUMaxMemory(GPUPercent percent, bool growth) {
+bool setGPUMaxMemory(GPUPercent percent, bool growth) {
 	const std::vector<uint8_t> &config =
 		(growth ? gpuMemoryGrowPresets[percent] : gpuMemoryNoGrowPresets[percent]);
-	setContextOptionsConfig(config);
+	return setContextOptionsConfig(config);
 }
 
-// TODO: check status and return bool?
-void setContextOptionsConfig(const std::vector<uint8_t> & config) {
-	TFE_ContextOptions *options = TFE_NewContextOptions();
-	TFE_ContextOptionsSetConfig(options, config.data(), config.size(),
-								cppflow::context::get_status());
-	cppflow::get_global_context() = cppflow::context(options);
+bool setContextOptionsConfig(const std::vector<uint8_t> & config) {
+	TFE_ContextOptions * options = TFE_NewContextOptions();
+	TF_Status * status = cppflow::context::get_status();
+	if (options == nullptr || status == nullptr){
+		return false;
+	}
+	try{
+		TFE_ContextOptionsSetConfig(options, config.data(), config.size(), status);
+		cppflow::status_check(status);
+		cppflow::get_global_context() = cppflow::context(options);
+	}
+	catch(std::runtime_error exception){
+		ofLog() << exception.what();
+		return false;
+	}
+	return true;
 }
 
 }; // end namespace ofxTF2
