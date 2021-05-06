@@ -2,7 +2,7 @@
 
 * added threaded model background loading via loadAsync() function
 * added ofxTF2::setMaxGPUMemory()
-* added ofxTF2::setContextOptionsConfig()
+* added ofxTF2::setContext()
 
 * fixed ofxTF2::getTensorShape()
 * updated cppflow as cppflow2 is now the main branch, make sure to update the
