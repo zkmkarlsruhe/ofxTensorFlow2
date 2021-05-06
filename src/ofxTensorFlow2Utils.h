@@ -109,7 +109,7 @@ namespace ofxTF2 {
 	/// to use other a custom policy, check the documentation of cppflow
 	bool setGPUMaxMemory(GPUPercent percent, bool growth=true);
 
-	/// set TensorFlow context options ConfigProto directly
+	/// set TensorFlow context from ConfigProto directly
 	bool setContext(const std::vector<uint8_t> & config);
 
 	/// set TensorFlow log level using ofLogLevel enums
