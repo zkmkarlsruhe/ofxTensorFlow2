@@ -111,10 +111,10 @@ static const std::vector<std::vector<uint8_t>> gpuMemoryNoGrowPresets {
 bool setGPUMaxMemory(GPUPercent percent, bool growth) {
 	const std::vector<uint8_t> &config =
 		(growth ? gpuMemoryGrowPresets[percent] : gpuMemoryNoGrowPresets[percent]);
-	return setContextOptionsConfig(config);
+	return setContext(config);
 }
 
-bool setContextOptionsConfig(const std::vector<uint8_t> & config) {
+bool setContext(const std::vector<uint8_t> & config) {
 	TFE_ContextOptions *options = TFE_NewContextOptions();
 	if(options == nullptr) {
 		return false;

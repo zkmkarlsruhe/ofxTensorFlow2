@@ -95,10 +95,10 @@ public:
 	runMultiModel(const std::vector<cppflow::tensor> & inputs) const;
 
 	/// returns true if model is loaded
-	bool isLoaded();
+	virtual bool isLoaded();
 
 	/// print model operations ie. the signature
-	void printOperations();
+	virtual void printOperations();
 
 protected:
 

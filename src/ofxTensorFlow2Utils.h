@@ -110,7 +110,7 @@ namespace ofxTF2 {
 	bool setGPUMaxMemory(GPUPercent percent, bool growth=true);
 
 	/// set TensorFlow context options ConfigProto directly
-	bool setContextOptionsConfig(const std::vector<uint8_t> & config);
+	bool setContext(const std::vector<uint8_t> & config);
 
 	/// set TensorFlow log level using ofLogLevel enums
 	/// FIXME: doesn't seem to work yet...
