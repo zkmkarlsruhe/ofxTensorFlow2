@@ -4,7 +4,7 @@ This example builds upon code from
 to spot keywords in audio signals. 
 
 
-![GIF Style Transfer](../media/keyword_spotting2.gif)
+![GIF Style Transfer](../media/keyword_spotting.gif)
 
 We will use the microphone so be sure to have the right setting.
 
