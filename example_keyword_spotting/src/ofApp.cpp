@@ -23,6 +23,12 @@ void ofApp::setup() {
 	ofSetCircleResolution(80);
 	ofBackground(54, 54, 54);
 
+
+	// use only a portion of the GPU memory & grow as needed
+	if(!ofxTF2::setGPUMaxMemory(ofxTF2::GPU_PERCENT_70, true)) {
+		ofLogError() << "failed to set GPU Memory options!";
+	}
+
 	// load the model, bail out on error
 	if(!model.load("model")) {
 		std::exit(EXIT_FAILURE);

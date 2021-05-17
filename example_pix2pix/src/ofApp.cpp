@@ -25,6 +25,11 @@ void ofApp::setup() {
 	ofSetWindowTitle("example_pix2pix");
 	ofSetLogLevel("ofxTensorFlow2", OF_LOG_VERBOSE);
 
+	// use only a portion of the GPU memory & grow as needed
+	if(!ofxTF2::setGPUMaxMemory(ofxTF2::GPU_PERCENT_70, true)) {
+		ofLogError() << "failed to set GPU Memory options!";
+	}
+	
 	// neural network setup, bail out on error
 	// the default model is edges2shoes and excepts [None, None, None, 3]
 	if(!model.load("model")) {
