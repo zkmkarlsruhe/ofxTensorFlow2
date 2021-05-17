@@ -1,6 +1,8 @@
 # Pix2Pix
 This example explores image generation using neural networks and is built around Memo Akten's Pix2Pix example of [ofxMSATensorFlow](https://github.com/memo/ofxMSATensorFlow). The image to image translation is implemented using a Generative Adversarial Network (GAN).
 
+![GIF Style Transfer](../media/pix2pix.gif)
+
 A basic GAN consists of two parts a generator that takes in an input and generates a desired output (here: in both cases images) and a classifier that tries to predict if its input was generated or not. While the classifier is trained in a classic manner on real and fake samples the generator is trained _through_ the classifier. That is, its update depends on the output of the classifier when given a newly generated sample. A training step includes training both parts side by side.
 
 ### TensorFlow2
