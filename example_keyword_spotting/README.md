@@ -1,7 +1,10 @@
-# Keywordspotting
+# Keyword Spotting
 This example builds upon code from 
 [this repo](https://github.com/douglas125/SpeechCmdRecognition) 
 to spot keywords in audio signals. 
+
+
+![GIF Style Transfer](../media/keyword_spotting2.gif)
 
 We will use the microphone so be sure to have the right setting.
 
