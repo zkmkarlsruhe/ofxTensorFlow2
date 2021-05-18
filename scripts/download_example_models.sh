@@ -20,7 +20,7 @@ DEST=../..
 # download from a public NextCloud shared link
 # $1: root folder share link URL
 # $2: filename
-function download() {
+download() {
 	local path="download?path=%2F&files=$2"
 	curl -LO $URL/$path
 	mkdir -p $SRC

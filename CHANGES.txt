@@ -1,3 +1,7 @@
+1.1.1: 2021 May 18
+
+* fixed example model download script breaking on certain shells
+
 1.1.0: 2021 May 06
 
 * added threaded model background loading via loadAsync() function
