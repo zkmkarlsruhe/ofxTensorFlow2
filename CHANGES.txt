@@ -1,5 +1,7 @@
 1.1.1: 2021 May 18
 
+* added GIFs to each demo
+* restrict max GPU memory usage in demos
 * fixed example model download script breaking on certain shells
 
 1.1.0: 2021 May 06
