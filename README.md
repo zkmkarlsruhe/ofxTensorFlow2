@@ -12,6 +12,11 @@ BSD Simplified License.
 For information on usage and redistribution, and for a DISCLAIMER OF ALL
 WARRANTIES, see the file, "LICENSE.txt," in this distribution.
 
+Pix2Pix | Keyword Spotting  | Style Transfer |
+:--: | :--: | :--:
+![](media/pix2pix.gif) | ![](media/keyword_spotting.gif)|  ![](media/style_transfer.gif) 
+
+
 Description
 -----------
 
