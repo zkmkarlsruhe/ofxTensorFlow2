@@ -2,6 +2,10 @@
 
 * fixed example model download script breaking on certain shells
 
+* added GIFs for each demo to the readme
+
+* restrict max GPU memory usage in demos
+
 1.1.0: 2021 May 06
 
 * added threaded model background loading via loadAsync() function
@@ -9,11 +13,11 @@
 * added ofxTF2::setContext()
 
 * fixed ofxTF2::getTensorShape()
+
 * updated cppflow as cppflow2 is now the main branch, make sure to update the
   local submodule with:
       git submodule deinit libs/cppflow/
       git submodule update --init --recursive
-
 * updated README.md information on training with Python and TF2
 * updated download scripts
 
