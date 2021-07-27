@@ -1,3 +1,7 @@
+1.2.0: TBD
+
+* updated to libtensorflow 2.4.2
+
 1.1.1: 2021 May 18
 
 * fixed example model download script breaking on certain shells
