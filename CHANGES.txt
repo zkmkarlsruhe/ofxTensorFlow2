@@ -2,6 +2,8 @@
 
 * updated to libtensorflow 2.4.2
 
+* fix the shape of the SavedModel after training in example_style_transfer
+
 1.1.1: 2021 May 18
 
 * fixed example model download script breaking on certain shells
