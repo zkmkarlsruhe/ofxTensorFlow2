@@ -9,7 +9,7 @@
 set -e
 
 # tf version
-VER=2.4.2
+VER=2.6.0
 
 # tf type: cpu or gpu,
 # override when running via: TYPE=gpu ./download_tensorflow.sh
