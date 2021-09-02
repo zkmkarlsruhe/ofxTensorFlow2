@@ -143,7 +143,7 @@ def trainer(style_file, dataset_path, weights_path, content_weight, style_weight
     start = time.time()
 
 
-    @tf.function(input_signature=[tf.TensorSpec([None, 640, 480, 3], dtype=tf.float32)])
+    @tf.function(input_signature=[tf.TensorSpec([None, 480, 640, 3], dtype=tf.float32)])
     def model_predict(input_1):
         return {'outputs': network(input_1, training=False)}
 
@@ -166,7 +166,8 @@ def trainer(style_file, dataset_path, weights_path, content_weight, style_weight
 
             if iteration % 100 == 0:
                 # Save model
-                network.save('../bin/data/model'+str(iteration), signatures={'serving_default': model_predict})
+                filepath=os.path.join('..', 'bin', 'data', 'model'+str(iteration))
+                network.save(filepath, signatures={'serving_default': model_predict})
                 print('=====================================')
                 print('            Model saved!            ')
                 print('=====================================\n')
