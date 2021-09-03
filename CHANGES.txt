@@ -1,8 +1,8 @@
-1.2.0: 2021 Sep 1
+1.2.0: 2021 Sep 01
+
+* fixed shape and location SavedModel after training in example_style_transfer
 
 * updated to libtensorflow 2.6.0 (tested with CUDA 11.4)
-
-* fix the shape and location of the SavedModel after training in example_style_transfer
 
 1.1.1: 2021 May 18
 
