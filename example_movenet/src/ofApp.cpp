@@ -34,33 +34,63 @@ void ofApp::update() {
 		ofPixels pixels(video.getPixels());
 		#ifdef USE_LIVE_VIDEO
 			pixels.resize(nnWidth, nnHeight);
+			if(mirror) {
+				pixels.mirror(false, true);
+			}
 			imgOut.setFromPixels(pixels);
 			imgOut.update();
 		#endif
-		movenet.update(pixels);
+
+		// feed input frame as pixels
+		movenet.setInput(pixels);
 	}
+
+	// run model on current input frame
+	movenet.update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-
 	#ifdef USE_LIVE_VIDEO
-		imgOut.draw(0,0);
+		imgOut.draw(0, 0);
 	#else
-		video.draw(0,0);
+		video.draw(0, 0);
 	#endif
-
 	movenet.draw();
-
 	ofDrawBitmapStringHighlight(ofToString((int)ofGetFrameRate()) + " fps", 4, 12);
 }
 
 //--------------------------------------------------------------
+void ofApp::exit() {
+	movenet.stopThread();
+}
+
+//--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
-	#ifndef USE_LIVE_VIDEO
-		if(key == 'r') {
-			video.stop();
-			video.play();
-		}
-	#endif
+	switch(key) {
+		case 'm':
+			// toggle camera mirroring
+			#ifdef USE_LIVE_VIDEO
+				mirror = !mirror;
+			#endif
+			break;
+		case 'r':
+			// restart video
+			#ifndef USE_LIVE_VIDEO
+				video.stop();
+				video.play();
+			#endif
+			break;
+		case 't':
+			// toggle threading
+			if(movenet.isThreadRunning()) {
+				movenet.stopThread();
+				ofLogNotice() << "stopping thread";
+			}
+			else {
+				movenet.startThread();
+				ofLogNotice() << "starting thread";
+			}
+			break;
+	}
 }

@@ -18,20 +18,25 @@ class ofApp : public ofBaseApp {
 		void setup();
 		void update();
 		void draw();
+		void exit();
 
 		void keyPressed(int key);
 
+		// neural net input size
 		std::size_t nnWidth = 512;
 		std::size_t nnHeight = 288;
 
+		// input
 		#ifdef USE_LIVE_VIDEO
 			ofVideoGrabber video;
 			int camWidth = 640;
 			int camHeight = 480;
 			ofImage imgOut;
+			bool mirror = true;
 		#else
 			ofVideoPlayer video;
 		#endif
 
+		// model
 		ofxMovenet movenet;
 };
