@@ -37,6 +37,7 @@ download $URL model_basics.zip
 download $URL model_basics_multi_IO.zip
 download $URL model_effnet.zip
 download $URL model_keywordspotting.zip
+download $URL model_multi_pose.zip
 download $URL model_pix2pix_edges2shoes_20epochs.zip
 download $URL models_style_transfer_640x480.zip
 
@@ -61,6 +62,11 @@ mv model "$DEST"/example_basics_efficientnet/bin/data
 unzip model_keywordspotting.zip
 rm -rf "$DEST"/example_keyword_spotting/bin/data/model
 mv model "$DEST"/example_keyword_spotting/bin/data
+
+# example_movenet
+unzip model_multi_pose.zip
+rm -rf "$DEST"/example_movenet/bin/data/model
+mv model "$DEST"/example_movenet/bin/data
 
 # example_pix2pix
 unzip model_pix2pix_edges2shoes_20epochs.zip
