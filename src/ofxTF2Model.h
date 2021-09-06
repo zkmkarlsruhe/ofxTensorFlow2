@@ -72,10 +72,10 @@ public:
 	/// returns true on success
 	virtual bool load(const std::string & modelPath);
 
-	// set in and output names or reset to default names (call without args)
-	// use the CLI tool "saved_model_cli" to inspect the SavedModel e.g.
-	// saved_model_cli show --dir path/to/model/ --tag_set serve 
-	// 						--signature_def serving_default
+	/// set input and output names or reset to defaults (call without args)
+	/// use the CLI tool "saved_model_cli" to inspect the SavedModel e.g.
+	/// saved_model_cli show --dir path/to/model/ --tag_set serve
+	/// 					 --signature_def serving_default
 	virtual void setup(
 		const std::vector<std::string> & inputNames,
 		const std::vector<std::string> & outputNames);
