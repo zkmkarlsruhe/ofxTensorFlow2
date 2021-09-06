@@ -8,9 +8,13 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
-	ofSetLineWidth(2);
+	ofSetFrameRate(60);
+	ofSetVerticalSync(true);
+	ofSetWindowTitle("example_movenet");
 
-	movenet.setup("model");
+	if(!movenet.setup("model")) {
+		std::exit(EXIT_FAILURE);
+	}
 
 	#ifdef USE_LIVE_VIDEO
 		// setup video grabber
@@ -48,7 +52,7 @@ void ofApp::draw() {
 
 	movenet.draw();
 
-	ofDrawBitmapStringHighlight("fps: " + ofToString((int)ofGetFrameRate()), 4, 12);
+	ofDrawBitmapStringHighlight(ofToString((int)ofGetFrameRate()) + " fps", 4, 12);
 }
 
 //--------------------------------------------------------------

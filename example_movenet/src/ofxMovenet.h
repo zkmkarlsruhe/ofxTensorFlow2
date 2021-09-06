@@ -8,155 +8,155 @@
 
 #include "ofxTensorFlow2.h"
 
-#define NUM_SKELETONS 6
-#define DATA_PER_SKELETON 56
-#define BONES_PER_SKELETON 17
-
-#define NOSE 0
-#define LEFT_EYE 1
-#define RIGHT_EYE 2
-#define LEFT_EAR 3
-#define RIGHT_EAR 4
-#define LEFT_SHOULDER 5
-#define RIGHT_SHOULDER 6
-#define LEFT_ELBOW 7
-#define RIGHT_ELBOW 8
-#define LEFT_WRIST 9
-#define RIGHT_WRIST 10
-#define LEFT_HIP 11
-#define RIGHT_HIP 12
-#define LEFT_KNEE 13
-#define RIGHT_KNEE 14
-#define LEFT_ANKLE 15
-#define RIGHT_ANKLE 16
-
-struct bone {
-	glm::vec3 coords;
-	float confidence;
-};
-
-class skeleton {
-	public:
-		bone bones[17];
-		ofRectangle bbox;
-		float bbox_conf;
-};
-
 class ofxMovenet {
 	public:
 
+		static const int NUM_SKELETONS = 6; //< max number of skeletons tracked
+		static const int DATA_PER_SKELETON = 56; //< output data values per skeleton
+		static const int BONES_PER_SKELETON = 17; //< bone points per skeleton
+
+		/// single skeleton bone point
+		struct Bone {
+			glm::vec3 point;  //< 3d position
+			float confidence; //< confidence 0-1
+		};
+
+		/// single detected skeleton
+		struct Skeleton {
+			Bone bones[BONES_PER_SKELETON]; //< detected skeleton bone points
+			ofRectangle bbox; //< detected skeleton bounding box
+			float confidence; //< skeleton bounding box confidence 0-1
+		};
+
+		/// skeleton bone point index
+		enum BoneIndex {
+			NOSE           = 0,
+			LEFT_EYE       = 1,
+			RIGHT_EYE      = 2,
+			LEFT_EAR       = 3,
+			RIGHT_EAR      = 4,
+			LEFT_SHOULDER  = 5,
+			RIGHT_SHOULDER = 6,
+			LEFT_ELBOW     = 7,
+			RIGHT_ELBOW    = 8,
+			LEFT_WRIST     = 9,
+			RIGHT_WRIST    = 10,
+			LEFT_HIP       = 11,
+			RIGHT_HIP      = 12,
+			LEFT_KNEE      = 13,
+			RIGHT_KNEE     = 14,
+			LEFT_ANKLE     = 15,
+			RIGHT_ANKLE    = 16
+		};
+
 		//--------------------------------------------------------------
-		void setup(std::string model_dir) {
+		bool setup(const std::string & modelPath="model") {
 
 			// load the model
-			model.load("model");
+			if(!model.load(modelPath)) {
+				return false;
+			}
 
 			// inputs and outputs for the model
-			std::vector<string> inputs{"serving_default_input:0"};
-			std::vector<string> outputs{"StatefulPartitionedCall:0"};
-			model.setup(inputs,outputs);
+			std::vector<std::string> inputs{"serving_default_input:0"};
+			std::vector<std::string> outputs{"StatefulPartitionedCall:0"};
+			model.setup(inputs, outputs);
+
+			return true;
 		}
 
 		//--------------------------------------------------------------
-		void update(ofPixels & pxs) {
+		void update(ofPixels & pixels) {
 
 			// prepare input tensor
-			auto input = ofxTF2::pixelsToTensor(pxs);
+			auto input = ofxTF2::pixelsToTensor(pixels);
 			input = cppflow::cast(input, TF_UINT8, TF_INT32);
 			input = cppflow::expand_dims(input, 0);
-
-			// vector to flattern the tensor output
-			std::vector<float> model_results_vector;
 
 			// inference
 			auto output = model.runModel(input);
 
-			// flatter output tensor to vector
-			ofxTF2::tensorToVector(output, model_results_vector);
+			// flatten output tensor to vector
+			std::vector<float> vectorOut;
+			ofxTF2::tensorToVector(output, vectorOut);
 
-			// clear skeletons
+			// parse vector to skeletons
 			skeletons.clear();
-
-			// parse vector
 			for(int i = 0; i < NUM_SKELETONS; i++) {
-
-				int data_index = i * DATA_PER_SKELETON;
+				int d = i * DATA_PER_SKELETON;
+				Skeleton skeleton;
 
 				// bounding box and confidence
-				float ymin = model_results_vector[data_index+51] * pxs.getHeight();
-				float xmin = model_results_vector[data_index+52] * pxs.getWidth();
-				float ymax = model_results_vector[data_index+53] * pxs.getHeight();
-				float xmax = model_results_vector[data_index+54] * pxs.getWidth();
-				float bbconf = model_results_vector[data_index+55];
+				float ymin = vectorOut[d+51] * pixels.getHeight();
+				float xmin = vectorOut[d+52] * pixels.getWidth();
+				float ymax = vectorOut[d+53] * pixels.getHeight();
+				float xmax = vectorOut[d+54] * pixels.getWidth();
+				skeleton.bbox.x = xmin;
+				skeleton.bbox.y = ymin;
+				skeleton.bbox.width = xmax - xmin;
+				skeleton.bbox.height = ymax - ymin;
+				skeleton.confidence = vectorOut[d+55];
 
-				skeleton body;
-
-				body.bbox.x = xmin;
-				body.bbox.y = ymin;
-				body.bbox.width = xmax-xmin;
-				body.bbox.height = ymax-ymin;
-				body.bbox_conf = bbconf;
-
-				// bones
+				// skeleton
 				for(int j = 0; j < BONES_PER_SKELETON; j++) {
-					int bone_index = data_index + (j*3);
+					int b = d + (j*3);
 
-					float py = model_results_vector[bone_index] * pxs.getHeight();
-					float px = model_results_vector[bone_index + 1] * pxs.getWidth();
-					float conf = model_results_vector[bone_index + 2];
-
-					body.bones[j].coords.x = px;
-					body.bones[j].coords.y = py;
-					body.bones[j].confidence = conf;
+					// bone
+					float py = vectorOut[b] * pixels.getHeight();
+					float px = vectorOut[b + 1] * pixels.getWidth();
+					float conf = vectorOut[b + 2];
+					skeleton.bones[j].point.x = px;
+					skeleton.bones[j].point.y = py;
+					skeleton.bones[j].confidence = conf;
 				}
-				skeletons.push_back(body);
+				skeletons.push_back(skeleton);
 			}
 		}
 
 		//--------------------------------------------------------------
 		void draw() {
-			for(int i = 0; i < skeletons.size(); i++) {
-				if(skeletons[i].bbox_conf > 0.5) {
-
-					// pretty bones
-					drawPairBones(i, RIGHT_EAR, RIGHT_EYE);
-					drawPairBones(i, RIGHT_EYE, NOSE);
-					drawPairBones(i, LEFT_EAR, LEFT_EYE);
-					drawPairBones(i, LEFT_EYE, NOSE);
-					drawPairBones(i, NOSE, RIGHT_SHOULDER);
-					drawPairBones(i, NOSE, LEFT_SHOULDER);
-					drawPairBones(i, RIGHT_SHOULDER, LEFT_SHOULDER);
-					drawPairBones(i, RIGHT_SHOULDER, RIGHT_ELBOW);
-					drawPairBones(i, LEFT_SHOULDER, LEFT_ELBOW);
-					drawPairBones(i, RIGHT_ELBOW, RIGHT_WRIST);
-					drawPairBones(i, LEFT_ELBOW, LEFT_WRIST);
-					drawPairBones(i, RIGHT_SHOULDER, RIGHT_HIP);
-					drawPairBones(i, LEFT_SHOULDER, LEFT_HIP);
-					drawPairBones(i, RIGHT_HIP, LEFT_HIP);
-					drawPairBones(i, RIGHT_HIP, RIGHT_KNEE);
-					drawPairBones(i, LEFT_HIP, LEFT_KNEE);
-					drawPairBones(i, RIGHT_KNEE, RIGHT_ANKLE);
-					drawPairBones(i, LEFT_KNEE, LEFT_ANKLE);
+			ofSetLineWidth(2);
+			for(auto skeleton : skeletons) {
+				if(skeleton.confidence > 0.5) {
+					drawPairBones(skeleton, RIGHT_EAR,      RIGHT_EYE);
+					drawPairBones(skeleton, RIGHT_EYE,      NOSE);
+					drawPairBones(skeleton, LEFT_EAR,       LEFT_EYE);
+					drawPairBones(skeleton, LEFT_EYE,       NOSE);
+					drawPairBones(skeleton, NOSE,           RIGHT_SHOULDER);
+					drawPairBones(skeleton, NOSE,           LEFT_SHOULDER);
+					drawPairBones(skeleton, RIGHT_SHOULDER, LEFT_SHOULDER);
+					drawPairBones(skeleton, RIGHT_SHOULDER, RIGHT_ELBOW);
+					drawPairBones(skeleton, LEFT_SHOULDER,  LEFT_ELBOW);
+					drawPairBones(skeleton, RIGHT_ELBOW,    RIGHT_WRIST);
+					drawPairBones(skeleton, LEFT_ELBOW,     LEFT_WRIST);
+					drawPairBones(skeleton, RIGHT_SHOULDER, RIGHT_HIP);
+					drawPairBones(skeleton, LEFT_SHOULDER,  LEFT_HIP);
+					drawPairBones(skeleton, RIGHT_HIP,      LEFT_HIP);
+					drawPairBones(skeleton, RIGHT_HIP,      RIGHT_KNEE);
+					drawPairBones(skeleton, LEFT_HIP,       LEFT_KNEE);
+					drawPairBones(skeleton, RIGHT_KNEE,     RIGHT_ANKLE);
+					drawPairBones(skeleton, LEFT_KNEE,      LEFT_ANKLE);
 				}
 			}
+			ofSetLineWidth(1);
 		}
 
 		//--------------------------------------------------------------
-		std::vector<skeleton> & getSkeletons() {
+		std::vector<Skeleton> & getSkeletons() {
 			return skeletons;
 		}
 
 	private:
 		ofxTF2::Model model;
-		std::vector<skeleton> skeletons;
+		std::vector<Skeleton> skeletons;
 
 		//--------------------------------------------------------------
-		void drawPairBones(int skeleton_index,int firstBone, int secondBone) {
+		void drawPairBones(Skeleton & skeleton, BoneIndex b1, BoneIndex b2) {
 			ofMesh m;
 			m.setMode(OF_PRIMITIVE_LINES);
-			m.addVertex(skeletons[skeleton_index].bones[firstBone].coords);
+			m.addVertex(skeleton.bones[b1].point);
 			m.addColor(ofColor::hotPink);
-			m.addVertex(skeletons[skeleton_index].bones[secondBone].coords);
+			m.addVertex(skeleton.bones[b2].point);
 			m.addColor(ofColor::purple);
 			m.draw();
 		}
