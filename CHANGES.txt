@@ -1,3 +1,7 @@
+next version
+
+* added example_movenet (Natxopedreira)
+
 1.2.0: 2021 Sep 01
 
 * fixed shape and location SavedModel after training in example_style_transfer
