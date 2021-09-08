@@ -14,9 +14,13 @@ WARRANTIES, see the file, "LICENSE.txt," in this distribution.
 
 Selected examples:
 
-| Keyword Spotting | Pix2Pix | Style Transfer |
-| :--: | :--: | :--: |
-| ![](media/keyword_spotting.gif) | ![](media/pix2pix.gif) | ![](media/style_transfer.gif) |
+| Style Transfer | Keyword Spotting |
+| :--: | :--: 
+| ![](media/style_transfer.gif) | ![](media/keyword_spotting.gif) | 
+
+ Pose Estimation | Pix2Pix |
+ | :--: | :--: |
+![](media/movenet.gif) | ![](media/pix2pix.gif) | 
 
 Description
 -----------
