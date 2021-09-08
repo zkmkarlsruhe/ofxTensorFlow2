@@ -114,7 +114,7 @@ class ofxMovenet {
 			}
 		};
 
-		/// custom ofxTF2::ThreadedModel implementation with custom pre-tprocessing
+		/// custom ofxTF2::ThreadedModel implementation with custom pre-processing
 		class Model : public ofxTF2::ThreadedModel {
 			public:
 				cppflow::tensor runModel(const cppflow::tensor & input) const override {
