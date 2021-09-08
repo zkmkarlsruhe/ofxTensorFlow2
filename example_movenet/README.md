@@ -5,7 +5,7 @@ Video sample from Polina Tankilevitch
 https://www.pexels.com/video/video-of-women-dancing-3873059/
 
 
-![](assets/sample.gif)
+![](../media/movenet.gif)
 
 
 Example made with love by Natxopedreira 2021  
