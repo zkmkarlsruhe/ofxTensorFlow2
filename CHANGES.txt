@@ -1,4 +1,4 @@
-next version
+1.2.1: 2021 Sep 10
 
 * added example_movenet (Natxopedreira)
 
