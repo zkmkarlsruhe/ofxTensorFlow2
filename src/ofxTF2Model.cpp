@@ -22,7 +22,8 @@
 
 namespace ofxTF2 {
 
-Model::Model(const std::string & modelPath) {
+Model::Model(const std::string & modelPath, const cppflow::model::TYPE type) {
+	this->type = type;
 	Model::load(modelPath);
 }
 
@@ -30,15 +31,32 @@ Model::~Model(){
 	Model::clear();
 }
 
+void Model::setModelType(const cppflow::model::TYPE type) {
+	this->type = type;
+}
+
 bool Model::load(const std::string & modelPath) {
 	Model::clear();
 	std::string path = ofToDataPath(modelPath);
-	if(!ofDirectory::doesDirectoryExist(path)) {
-		ofLogError("ofxTensorFlow2") << "Model: model path not found: "
-			<< modelPath;
-		return false;
+	if (this->type == cppflow::model::SAVED_MODEL){
+		if(!ofDirectory::doesDirectoryExist(path)) {
+			ofLogError("ofxTensorFlow2") << "Model: model path not found: "
+				<< modelPath;
+			return false;
+		}
 	}
-	auto model = new cppflow::model(path);
+	else if (this->type == cppflow::model::FROZEN_GRAPH){
+		if(!ofFile::doesFileExist(path)) {
+			ofLogError("ofxTensorFlow2") << "Model: model path not found: "
+				<< modelPath;
+			return false;
+		}
+	}
+	else {
+		ofLogError("ofxTensorFlow2") << "Model: model type unknown";
+			return false;
+	}
+	auto model = new cppflow::model(path, this->type);
 	if(!model) {
 		modelPath_ = "";
 		ofLogError("ofxTensorFlow2") << "Model: model could not be initialized!";
