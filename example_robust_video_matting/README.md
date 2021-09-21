@@ -2,7 +2,7 @@
 Realtime fast chroma video, this implementation do not need to provide a frame with the background as a reference to the model.  
 https://github.com/PeterL1n/RobustVideoMatting
 
-Video sample original repository   
+Video sample   
 https://drive.google.com/drive/folders/1VFnWwuu-YXDKG-N6vcjK_nL7YZMFapMU
 
 Background image  
