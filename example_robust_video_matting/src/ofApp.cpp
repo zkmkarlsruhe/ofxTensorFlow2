@@ -4,7 +4,7 @@
 void ofApp::setup(){
 	bg.load("bg.jpg");
 
-	video.load("pexels-anthony-shkraba-production-8870227.mp4");
+	video.load("codylexi.mp4");
 	video.play();
 
 	model.load(ofToDataPath("model", true));
