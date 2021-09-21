@@ -3,22 +3,6 @@
 #include "ofMain.h"
 #include "ofxTensorFlow2.h"
 
-
-class depthModel : public ofxTF2::ThreadedModel {
-
-	public:
-
-		cppflow::tensor runModel(const cppflow::tensor & input) const override {
-			auto inputCast = cppflow::cast(input, TF_UINT8, TF_FLOAT);
-			inputCast = inputCast / 255.f;
-			inputCast = cppflow::expand_dims(inputCast, 0);
-
-			auto output = Model::runModel(inputCast);
-			
-			return output;
-			
-		}
-};
 class ofApp : public ofBaseApp{
 
 	public:
