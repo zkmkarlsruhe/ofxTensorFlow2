@@ -1,4 +1,12 @@
+/*
+ * Example made with love by Natxopedreira 2021
+ * https://github.com/natxopedreira
+ * Updated by members of the ZKM | Hertz-Lab 2021
+ */
+
 #pragma once
+
+#define USE_LIVE_VIDEO
 
 #include "ofMain.h"
 #include "ofxTensorFlow2.h"
@@ -23,7 +31,15 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 		
 
-		ofVideoPlayer video;
+		// input
+		#ifdef USE_LIVE_VIDEO
+			int camWidth = 640;
+			int camHeight = 480;
+			ofVideoGrabber video;
+		#else
+			ofVideoPlayer video;
+		#endif
+
 		ofxTF2::Model model;
 
 		ofImage bg;

@@ -1,3 +1,7 @@
+1.2.2: 2021 Sep 22
+
+* added example_video_matting (Natxopedreira)
+
 1.2.1: 2021 Sep 10
 
 * added example_movenet (Natxopedreira)

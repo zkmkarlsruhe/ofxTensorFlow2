@@ -13,7 +13,7 @@ Model can be downloaded from original repo
 https://github.com/PeterL1n/RobustVideoMatting/releases/download/v1.0.0/rvm_mobilenetv3_tf.zip
 
 
-![](./media/ezgif-2-2b7b3147e76e.gif)
+![](../media/video_matting.gif)
 
 
 Example made with love by Natxopedreira 2021  

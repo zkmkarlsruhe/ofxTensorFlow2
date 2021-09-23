@@ -1,13 +1,27 @@
+/*
+ * Example made with love by Natxopedreira 2021
+ * https://github.com/natxopedreira
+ * Updated by members of the ZKM | Hertz-Lab 2021
+ */
+
 #include "ofApp.h"
 
 //--------------------------------------------------------------
 void ofApp::setup(){
 	bg.load("bg.jpg");
 
-	video.load("codylexi.mp4");
-	video.play();
+	#ifdef USE_LIVE_VIDEO
+		// setup video grabber
+		video.setDesiredFrameRate(30);
+		video.setup(camWidth, camHeight);
+	#else
+		video.load("codylexi.mp4");
+		video.play();
+	#endif
 
-	model.load(ofToDataPath("model", true));
+	if(!model.load("model")) {
+		std::exit(EXIT_FAILURE);
+	}
 
 	std::vector<std::string> inputNames = {
 		"serving_default_downsample_ratio:0",
@@ -47,6 +61,8 @@ void ofApp::setup(){
 
 	outputMasked.allocate(video.getWidth(), video.getHeight(), OF_IMAGE_COLOR_ALPHA);
 	outputMasked.getTexture().setAlphaMask(mask.getTexture());
+
+
 }
 
 //--------------------------------------------------------------
@@ -57,7 +73,7 @@ void ofApp::update(){
 		ofPixels & pixels = video.getPixels();
 		auto inputpxs = ofxTF2::pixelsToTensor(pixels);
 		auto inputCast = cppflow::cast(inputpxs, TF_UINT8, TF_FLOAT);
-		inputCast = inputCast / 255.f;
+		inputCast = cppflow::mul(inputCast, cppflow::tensor({1/255.0f}));
 		inputCast = cppflow::expand_dims(inputCast, 0);
 
 		vectorOfInputTensors[5] = inputCast;
@@ -84,7 +100,8 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	video.draw(0,0, video.getWidth()/3, video.getHeight()/3);
+
+	video.draw(0, 0, video.getWidth()/3, video.getHeight()/3);
 	mask.draw( video.getWidth()/3,0, video.getWidth()/3, video.getHeight()/3);
 
 	bg.draw(0,video.getHeight()/3, video.getWidth()/3, video.getHeight()/3);

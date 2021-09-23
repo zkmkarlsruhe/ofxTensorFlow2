@@ -78,6 +78,15 @@ unzip models_style_transfer_640x480.zip
 rm -rf "$DEST"/example_style_transfer/bin/data/models
 mv models "$DEST"/example_style_transfer/bin/data
 
+# example_video_matting
+unzip model_video_matting.zip
+rm -rf "$DEST"/example_video_matting/bin/data/model
+rm -rf "$DEST"/example_video_matting/bin/data/codylexi.mp4
+rm -rf "$DEST"/example_video_matting/bin/data/bg.jpg
+mv model "$DEST"/example_video_matting/bin/data
+mv codylexi.mp4 "$DEST"/example_video_matting/bin/data
+mv bg.jpg "$DEST"/example_video_matting/bin/data
+
 # cleanup
 cd ../
 rm -rf "$SRC"
