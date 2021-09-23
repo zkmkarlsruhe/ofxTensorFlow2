@@ -18,9 +18,15 @@ Selected examples:
 | :--: | :--: 
 | ![](media/style_transfer.gif) | ![](media/keyword_spotting.gif) | 
 
- Pose Estimation | Pix2Pix |
- | :--: | :--: |
+| Pose Estimation | Pix2Pix |
+| :--: | :--: |
 ![](media/movenet.gif) | ![](media/pix2pix.gif) | 
+
+| Video Matting |
+| :--: |
+| ![](media/video_matting.gif) | 
+
+
 
 Description
 -----------
