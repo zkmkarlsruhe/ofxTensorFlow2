@@ -40,6 +40,7 @@ download $URL model_keywordspotting.zip
 download $URL model_multi_pose.zip
 download $URL model_pix2pix_edges2shoes_20epochs.zip
 download $URL models_style_transfer_640x480.zip
+download $URL model_video_matting.zip
 
 cd "$SRC"
 
