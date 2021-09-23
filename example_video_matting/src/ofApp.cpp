@@ -101,11 +101,11 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	video.draw(0, 0, video.getWidth()/3, video.getHeight()/3);
-	mask.draw( video.getWidth()/3,0, video.getWidth()/3, video.getHeight()/3);
+	video.draw(0, 0, video.getWidth()/2, video.getHeight()/2);
+	mask.draw( video.getWidth()/2,0, video.getWidth()/2, video.getHeight()/2);
 
-	bg.draw(0,video.getHeight()/3, video.getWidth()/3, video.getHeight()/3);
-	outputMasked.draw(0,video.getHeight()/3, video.getWidth()/3, video.getHeight()/3);
+	bg.draw(0,video.getHeight()/2, video.getWidth()/2, video.getHeight()/2);
+	outputMasked.draw(0,video.getHeight()/2, video.getWidth()/2, video.getHeight()/2);
 }
 
 //--------------------------------------------------------------

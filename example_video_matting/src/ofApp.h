@@ -6,7 +6,7 @@
 
 #pragma once
 
-#define USE_LIVE_VIDEO
+// #define USE_LIVE_VIDEO
 
 #include "ofMain.h"
 #include "ofxTensorFlow2.h"
@@ -33,8 +33,8 @@ class ofApp : public ofBaseApp{
 
 		// input
 		#ifdef USE_LIVE_VIDEO
-			int camWidth = 640;
-			int camHeight = 480;
+			int camWidth = 1920;
+			int camHeight = 1080;
 			ofVideoGrabber video;
 		#else
 			ofVideoPlayer video;
