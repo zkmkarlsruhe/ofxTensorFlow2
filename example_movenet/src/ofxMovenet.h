@@ -11,6 +11,11 @@
 /// \class ofxMovenet
 /// \brief wrapper for the movenet multi pose estimation model
 ///
+/// note: input width and height must be multiples of 32, it is recommended that
+///       the larger dimension is a multiple of 256
+///
+/// the model accepts a single input image only
+///
 /// basic usage example:
 ///
 /// class ofApp : public ofBaseApp {
