@@ -6,12 +6,13 @@
 
 #pragma once
 
-// #define USE_LIVE_VIDEO
-
 #include "ofMain.h"
 #include "ofxTensorFlow2.h"
 
-class ofApp : public ofBaseApp{
+// uncomment this to use a live camera otherwise, we'll use a video file
+//#define USE_LIVE_VIDEO
+
+class ofApp : public ofBaseApp {
 
 	public:
 		void setup();
@@ -20,7 +21,7 @@ class ofApp : public ofBaseApp{
 
 		void keyPressed(int key);
 		void keyReleased(int key);
-		void mouseMoved(int x, int y );
+		void mouseMoved(int x, int y);
 		void mouseDragged(int x, int y, int button);
 		void mousePressed(int x, int y, int button);
 		void mouseReleased(int x, int y, int button);
@@ -29,7 +30,10 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
+
+		// neural net input size
+		float nnWidth = 1920;
+		float nnHeight = 1080;
 
 		// input
 		#ifdef USE_LIVE_VIDEO
@@ -40,6 +44,7 @@ class ofApp : public ofBaseApp{
 			ofVideoPlayer video;
 		#endif
 
+		// model
 		ofxTF2::Model model;
 
 		ofImage bg;

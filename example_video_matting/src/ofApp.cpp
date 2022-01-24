@@ -7,8 +7,10 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){
-	bg.load("bg.jpg");
+void ofApp::setup() {
+	ofSetFrameRate(60);
+	ofSetVerticalSync(true);
+	ofSetWindowTitle("example_video_matting");
 
 	#ifdef USE_LIVE_VIDEO
 		// setup video grabber
@@ -31,7 +33,6 @@ void ofApp::setup(){
 		"serving_default_r4i:0",
 		"serving_default_src:0"
 	};
-	
 	std::vector<std::string> outputNames = {
 		"StatefulPartitionedCall:0",
 		"StatefulPartitionedCall:1",
@@ -40,14 +41,13 @@ void ofApp::setup(){
 		"StatefulPartitionedCall:4",
 		"StatefulPartitionedCall:5"
 	};
-
 	model.setup(inputNames, outputNames);
 
 	auto r1i = cppflow::tensor({0.0f});
 	auto r2i = cppflow::tensor({0.0f});
 	auto r3i = cppflow::tensor({0.0f});
 	auto r4i = cppflow::tensor({0.0f});
-	auto src = cppflow::tensor({1.0f, 1080.0f, 1920.0f, 3.0f});
+	auto src = cppflow::tensor({1.0f, nnHeight, nnWidth, 3.0f});
 	auto downsample_ratio = cppflow::tensor({0.25f});
 
 	vectorOfInputTensors.push_back(downsample_ratio);
@@ -61,15 +61,13 @@ void ofApp::setup(){
 
 	outputMasked.allocate(video.getWidth(), video.getHeight(), OF_IMAGE_COLOR_ALPHA);
 	outputMasked.getTexture().setAlphaMask(mask.getTexture());
-
-
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update() {
 	video.update();
 
-	if(video.isFrameNew()){
+	if(video.isFrameNew()) {
 		ofPixels & pixels = video.getPixels();
 		auto inputpxs = ofxTF2::pixelsToTensor(pixels);
 		auto inputCast = cppflow::cast(inputpxs, TF_UINT8, TF_FLOAT);
@@ -93,13 +91,11 @@ void ofApp::update(){
 		mask.update();
 
 		outputMasked.setFromPixels(video.getPixels());
-		
 	}
-
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw() {
 
 	video.draw(0, 0, video.getWidth()/2, video.getHeight()/2);
 	mask.draw( video.getWidth()/2,0, video.getWidth()/2, video.getHeight()/2);
@@ -109,56 +105,56 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
+void ofApp::keyPressed(int key) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
+void ofApp::keyReleased(int key) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
+void ofApp::mouseDragged(int x, int y, int button) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
+void ofApp::mousePressed(int x, int y, int button) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
+void ofApp::mouseReleased(int x, int y, int button) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
+void ofApp::mouseEntered(int x, int y) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
+void ofApp::mouseExited(int x, int y) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
+void ofApp::windowResized(int w, int h) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
+void ofApp::gotMessage(ofMessage msg) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 
 }

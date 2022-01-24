@@ -26,8 +26,6 @@ Selected examples:
 | :--: |
 | ![](media/video_matting.gif) | 
 
-
-
 Description
 -----------
 
