@@ -47,9 +47,9 @@ class ofApp : public ofBaseApp {
 		// model
 		ofxTF2::Model model;
 
-		ofImage bg;
-		ofImage mask;
-		ofImage outputMasked;
+		std::vector<cppflow::tensor> inputs;
 
-		std::vector<cppflow::tensor> vectorOfInputTensors;
+		ofImage imgMask;
+		ofImage imgBackground;
+		ofImage imgOut;
 };
