@@ -1,9 +1,12 @@
 #! /bin/sh
 #
 # script to download pre-built tensorflow C library from
-# https://www.tensorflow.org/install/lang_c
+# * official: https://www.tensorflow.org/install/lang_c
+# * non-official macOS arm64: https://github.com/vodianyk/libtensorflow-cpu-darwin-arm64
 #
-# Dan Wilcox ZKM | Hertz-Lab 2021
+# ref: https://stackoverflow.com/a/55434980
+#
+# Dan Wilcox ZKM | Hertz-Lab 2021-22
 
 # stop on error
 set -e
@@ -17,7 +20,7 @@ if [ "$TYPE" = "" ] ; then
 	TYPE=cpu
 fi
 
-# tf download host url
+# default tf download host url
 HOST=https://storage.googleapis.com/tensorflow/libtensorflow
 
 # tf download file extension
@@ -41,6 +44,11 @@ case "$OS" in
 		if [ "$TYPE" = "gpu" ] ; then
 			echo "macOS TYPE is cpu-only, switching to cpu"
 			TYPE=cpu
+		fi
+		if [ "$ARCH" = "arm64" ] ; then
+			HOST="https://github.com/vodianyk/libtensorflow-cpu-darwin-arm64/raw/main"
+			echo "macOS arm64 builds are non-official and not all version are available"
+			echo "downloading from https://github.com/vodianyk/libtensorflow-cpu-darwin-arm64"
 		fi
 		;;
 	linux)
@@ -87,9 +95,15 @@ rm -rf $DEST/*
 ##### download & install
 
 # get latest source
-curl -O ${HOST}/${DOWNLOAD}.${EXT}
+echo "curl -O ${HOST}/${DOWNLOAD}.${EXT}"
+RETCODE=$(curl -LO -w "%{http_code}" ${HOST}/${DOWNLOAD}.${EXT})
+if [ "$RETCODE" != "200" ] ; then
+	echo "download failed: HTTP $RETCODE"
+	rm -rf $SRC ${DOWNLOAD}.${EXT}
+	exit 1
+fi
 mkdir -p $SRC
-if [ "$EXT" == "zip" ] ; then
+if [ "$EXT" = "zip" ] ; then
 	unzip -d $SRC ${DOWNLOAD}.${EXT}
 else
 	tar -xvf ${DOWNLOAD}.${EXT} -C $SRC
