@@ -122,6 +122,12 @@ When opting for GPU support set the `TYPE` script variable:
 TYPE=gpu ./scripts/download_tensorflow.sh
 ```
 
+Additionally, to use a specific version supply it as the first argument:
+
+```shell
+./scripts/download_tensorflow.sh 2.7.0
+```
+
 See <https://www.tensorflow.org/install/gpu> for more information on GPU support for TensorFlow.
 
 ### Ubuntu / Linux

@@ -8,8 +8,11 @@
 # stop on error
 set -e
 
-# tf version
+# tf version: optional argument
 VER=2.7.0
+if [ "$1" != "" ] ; then
+	VER=$1
+fi
 
 # tf type: cpu or gpu,
 # override when running via: TYPE=gpu ./download_tensorflow.sh
