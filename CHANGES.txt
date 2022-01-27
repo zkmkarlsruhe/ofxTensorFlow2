@@ -1,7 +1,8 @@
 1.3.0: 2022?
 
+* added non-offical macOS arm64 libtensorflow build download
 * added version as download_tensorflow script first argument
-* add details about movenet model input batch size and recommended dimensions
+* added details about movenet model input batch size and recommended dimensions
 
 * updated to libtensorflow 2.7.0
 * cleaned up example_video_matting

@@ -68,9 +68,9 @@ Requirements
 
 * openFrameworks
 * Operating systems:
-  - Linux, 64-bit, x86
-  - macOS 10.14 (Mojave) or higher, 64-bit, x86
-  - Windows, 64-bit x86 (*should* work, not tested)
+  - Linux, 64-bit, x86_64
+  - macOS 10.14 (Mojave) or higher, 64-bit, x86_64 & arm64 (the latter via non-official builds)
+  - Windows, 64-bit, x86_64 (*should* work, not tested)
 
 To use ofxTensorFlow2, first you need to download and install openFrameworks. The examples are developed against the latest release version of openFrameworks on <http://openframeworks.cc/download>.
 
