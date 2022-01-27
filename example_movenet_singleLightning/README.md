@@ -2,7 +2,7 @@
 This is an example for realtime 2D singlepose skeleton tracking over an RGB camera or video using the MoveNet model.
 
 
-![](../screenshot.png)
+![](screenshot.png)
 
 
 Example made with love by Natxopedreira 2021  
