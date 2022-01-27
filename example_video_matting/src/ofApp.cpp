@@ -43,65 +43,69 @@ void ofApp::setup() {
 	};
 	model.setup(inputNames, outputNames);
 
-	auto r1i = cppflow::tensor({0.0f});
-	auto r2i = cppflow::tensor({0.0f});
-	auto r3i = cppflow::tensor({0.0f});
-	auto r4i = cppflow::tensor({0.0f});
-	auto src = cppflow::tensor({1.0f, nnHeight, nnWidth, 3.0f});
-	auto downsample_ratio = cppflow::tensor({0.25f});
+	// model-specific inputs
+	inputs = {
+		cppflow::tensor({0.25f}),                        // downsample ratio
+		cppflow::tensor({0.0f}),                         // r1i
+		cppflow::tensor({0.0f}),                         // r2i
+		cppflow::tensor({0.0f}),                         // r3i
+		cppflow::tensor({0.0f}),                         // r4i
+		cppflow::tensor({1.0f, nnHeight, nnWidth, 3.0f}) // src
+	};
 
-	vectorOfInputTensors.push_back(downsample_ratio);
-	vectorOfInputTensors.push_back(r1i);
-	vectorOfInputTensors.push_back(r2i);
-	vectorOfInputTensors.push_back(r3i);
-	vectorOfInputTensors.push_back(r4i);
-	vectorOfInputTensors.push_back(src);
+	imgMask.allocate(video.getWidth(), video.getHeight(), OF_IMAGE_GRAYSCALE);
 
-	mask.allocate(video.getWidth(), video.getHeight(), OF_IMAGE_GRAYSCALE);
+	imgOut.allocate(video.getWidth(), video.getHeight(), OF_IMAGE_COLOR_ALPHA);
+	imgOut.getTexture().setAlphaMask(imgMask.getTexture());
 
-	outputMasked.allocate(video.getWidth(), video.getHeight(), OF_IMAGE_COLOR_ALPHA);
-	outputMasked.getTexture().setAlphaMask(mask.getTexture());
+	imgBackground.load("bg.jpg");
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
-	video.update();
 
+	video.update();
 	if(video.isFrameNew()) {
 		ofPixels & pixels = video.getPixels();
-		auto inputpxs = ofxTF2::pixelsToTensor(pixels);
-		auto inputCast = cppflow::cast(inputpxs, TF_UINT8, TF_FLOAT);
+
+		// prepare inputs
+		auto input = ofxTF2::pixelsToTensor(pixels);
+		auto inputCast = cppflow::cast(input, TF_UINT8, TF_FLOAT);
 		inputCast = cppflow::mul(inputCast, cppflow::tensor({1/255.0f}));
 		inputCast = cppflow::expand_dims(inputCast, 0);
+		inputs[5] = inputCast;
 
-		vectorOfInputTensors[5] = inputCast;
-		
-		auto vectorOfOutputTensors = model.runMultiModel(vectorOfInputTensors);
+		// run model
+		auto outputs = model.runMultiModel(inputs);
 
-		vectorOfInputTensors[1] = vectorOfOutputTensors[2];
-		vectorOfInputTensors[2] = vectorOfOutputTensors[3];
-		vectorOfInputTensors[3] = vectorOfOutputTensors[4];
-		vectorOfInputTensors[4] = vectorOfOutputTensors[5];
-
-		auto foreground = vectorOfOutputTensors[1];
+		// process outputs
+		inputs[1] = outputs[2];
+		inputs[2] = outputs[3];
+		inputs[3] = outputs[4];
+		inputs[4] = outputs[5];
+		auto foreground = outputs[1];
 		foreground = cppflow::mul(foreground, cppflow::tensor({255.0f}));
-
 		auto foregroundMod = cppflow::cast(foreground, TF_FLOAT, TF_UINT8);
-		ofxTF2::tensorToImage(foreground, mask);
-		mask.update();
-
-		outputMasked.setFromPixels(video.getPixels());
+		ofxTF2::tensorToImage(foreground, imgMask);
+		imgMask.update();
+		imgOut.setFromPixels(video.getPixels());
 	}
 }
 
 //--------------------------------------------------------------
 void ofApp::draw() {
+	float w = ofGetWidth() / 2;
+	float h = ofGetHeight() / 2;
 
-	video.draw(0, 0, video.getWidth()/2, video.getHeight()/2);
-	mask.draw( video.getWidth()/2,0, video.getWidth()/2, video.getHeight()/2);
+	// row 1
+	video.draw(0, 0, w, h);
+	imgMask.draw(w, 0, w, h);
 
-	bg.draw(0,video.getHeight()/2, video.getWidth()/2, video.getHeight()/2);
-	outputMasked.draw(0,video.getHeight()/2, video.getWidth()/2, video.getHeight()/2);
+	// row 2
+	imgBackground.draw(w/2, h, w, h);
+	imgOut.draw(w/2, h, w, h);
+
+	ofDrawBitmapStringHighlight(ofToString((int)ofGetFrameRate()) + " fps", 4, 12);
 }
 
 //--------------------------------------------------------------
