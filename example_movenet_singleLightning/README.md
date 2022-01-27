@@ -1,4 +1,4 @@
-# Movenet example
+# Movenet example - singlepose lightning
 This is an example for realtime 2D singlepose skeleton tracking over an RGB camera or video using the MoveNet model.
 
 
@@ -7,7 +7,8 @@ This is an example for realtime 2D singlepose skeleton tracking over an RGB came
 
 Example made with love by Natxopedreira 2021  
 https://github.com/natxopedreira
-With additions for singlepose model use by Stephan Schulz 2022
+
+With additions for [singlepose model](https://tfhub.dev/google/movenet/singlepose/lightning/4) use by Stephan Schulz 2022
 
 
 ### TensorFlow2 
