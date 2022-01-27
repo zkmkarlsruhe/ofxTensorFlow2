@@ -1,15 +1,13 @@
 # Movenet example
-This is an example for realtime 2D multiuser skeleton tracking over an RGB camera or video using the MoveNet model.
-
-Video sample from Polina Tankilevitch  
-https://www.pexels.com/video/video-of-women-dancing-3873059/
+This is an example for realtime 2D singlepose skeleton tracking over an RGB camera or video using the MoveNet model.
 
 
-![](../media/movenet.gif)
+![](../screenshot.png)
 
 
 Example made with love by Natxopedreira 2021  
 https://github.com/natxopedreira
+With additions for singlepose model use by Stephan Schulz 2022
 
 
 ### TensorFlow2 
@@ -25,16 +23,13 @@ shape: (1, -1, -1, 3)
 ```
 __NOTE__: Remember the first dimension is always the batch size which is usually 1 in realtime applications.
 
-And outputs a vector of 6 skeletons.
+And outputs a vector of 1 skeleton.
 ```shell
 dtype: DT_FLOAT
-shape: (1, 6, 56)
+shape: (1, 1, 17, 3)
 ```
-Each skeleton contains 56 values with defined meaning. The first 51 values make up the parameters of the 17 joints or key points.
+The skeleton contains 51 (17x3) values with defined meaning. The values make up the parameters of the 17 joints or key points.
 Each key point consists of three values: x and y position and the confidence of the network it has for that key point.
-
-The other 5 values are the bounding box of that skeleton and again the networks confidence.
-
 
 ### Further Reading
 https://blog.tensorflow.org/2021/05/next-generation-pose-detection-with-movenet-and-tensorflowjs.html
