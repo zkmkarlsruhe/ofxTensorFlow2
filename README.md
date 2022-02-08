@@ -303,7 +303,7 @@ When referring to the "SavedModel" we mean the parent folder of the exported neu
 
 #### Pretrained Models
 
-Often you don't need or want to train your models from scratch. Therefor, you should take a look at the [TF Hub](tfhub.dev). As TF2 is still rather new, there is not always a SavedModel for your purpose. Besides tfhub.dev you can search GitHub for a TF2 implementation of your model. A great place to start may be [here](https://github.com/Amin-Tgz/awesome-tensorflow-2). If you dont find a pretrained model, it is still easier to run/extend the code of an existing project instead of starting from scratch.
+Often you don't need or want to train your models from scratch. Therefor, you should take a look at the [TF Hub](tfhub.dev). As TF2 is still rather new, there is not always a SavedModel for your purpose. Besides tfhub.dev you can search GitHub for a TF2 implementation of your model. A great place to start may be [here](https://github.com/Amin-Tgz/awesome-tensorflow-2). If you do not find a pre-trained model, it is still easier to run/extend the code of an existing project instead of starting from scratch.
 
 If you happen to find a SavedModel that suits you, but actually don't know the in and output specifications, use the `saved_model_cli` that comes with TensorFlow. For example:
 ```bash
@@ -382,7 +382,7 @@ Get familiar with __Keras__. Since TensorFlow 2, [Keras](https://keras.io) is th
 Get some __structure__ for your project. Your project could look a little bit like this:
 
 * `data`: stores scripts to download and maybe process some data
-* `src`: contains Python code for the model, preprocessing and train, test and eval procedures
+* `src`: contains Python code for the model, pre-processing and train, test and eval procedures
 * `main.py`: often serves as a front to call the train, eval or test scripts
 * `config.py`: stores high level parameters such as learning rate, batch size, etc. Edit this file for different experiments. Formats other than .py are fine too, but it's very easy to integrate. It's a good choice to save this file along with trained models.
 * `requirements.txt`: contains required packages

@@ -1,26 +1,13 @@
-1.3.0: 2022?
+1.3.0: 2022 Feb 08
+
+* fixed shape and location SavedModel after training in example_style_transfer
 
 * added non-offical macOS arm64 libtensorflow build download
+* added example_movenet and example_video_matting (Natxopedreira)
 * added version as download_tensorflow script first argument
 * added details about movenet model input batch size and recommended dimensions
 
 * updated to libtensorflow 2.7.0
-* cleaned up example_video_matting
-* example_movenet doesnt need ofxCv
-
-1.2.2: 2021 Sep 22
-
-* added example_video_matting (Natxopedreira)
-
-1.2.1: 2021 Sep 10
-
-* added example_movenet (Natxopedreira)
-
-1.2.0: 2021 Sep 01
-
-* fixed shape and location SavedModel after training in example_style_transfer
-
-* updated to libtensorflow 2.6.0 (tested with CUDA 11.4)
 
 1.1.1: 2021 May 18
 
