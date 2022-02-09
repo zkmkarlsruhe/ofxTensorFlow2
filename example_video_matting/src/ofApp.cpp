@@ -43,14 +43,21 @@ void ofApp::setup() {
 	};
 	model.setup(inputNames, outputNames);
 
+	// parameters for the neural network
+	float downsampleRatio = 0.25f;
+	float videoWidth = video.getWidth();
+	float videoHeight = video.getHeight();
+	float batchSize = 1.0f;
+	float numChannels = 3.0f;
+	
 	// model-specific inputs
 	inputs = {
-		cppflow::tensor({0.25f}),                        // downsample ratio
+		cppflow::tensor({downsampleRatio}),
 		cppflow::tensor({0.0f}),                         // r1i
 		cppflow::tensor({0.0f}),                         // r2i
 		cppflow::tensor({0.0f}),                         // r3i
 		cppflow::tensor({0.0f}),                         // r4i
-		cppflow::tensor({1.0f, nnHeight, nnWidth, 3.0f}) // src
+		cppflow::tensor({batchSize, videoHeight, videoWidth, numChannels})
 	};
 
 	imgMask.allocate(video.getWidth(), video.getHeight(), OF_IMAGE_GRAYSCALE);
