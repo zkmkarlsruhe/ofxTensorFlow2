@@ -23,7 +23,7 @@ Taking a look at the output of the `saved_model_cli` tool we find that this Move
 dtype: DT_INT32
 shape: (1, -1, -1, 3)
 ```
-__NOTE__: Remember the first dimension is always the batch size which is usually 1 in realtime applications.
+__NOTE__: Remember the first dimension is always the batch size which is usually 1 in realtime applications. The second and third dimensions need to be a multiple of 32 and the larger dimension is recommended to be 256.
 
 And outputs a vector of 6 skeletons.
 ```shell
