@@ -15,9 +15,9 @@ concrete_function = tf.function(lambda x: model(x)).get_concrete_function(x)
 frozen_model = convert_variables_to_constants_v2(concrete_function)
 
 # Check input/output node name
-print(f"{frozen_model.inputs=}")
-print(f"{frozen_model.outputs=}")
+print(f"{frozen_model.inputs}")
+print(f"{frozen_model.outputs}")
 
 # Save the graph as protobuf format
 directory = "."
-tf.io.write_graph(frozen_model.graph, directory, "model.pb", as_text=False)
+tf.io.write_graph(frozen_model.graph, directory, "../bin/data/model.pb", as_text=False)
