@@ -1,3 +1,6 @@
+1.3.1: 2022 Feb 11
+* add some more information on the usage of movenet and video matting
+
 1.3.0: 2022 Feb 08
 
 * fixed shape and location SavedModel after training in example_style_transfer
