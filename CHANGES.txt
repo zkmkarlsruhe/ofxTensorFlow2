@@ -1,6 +1,8 @@
-1.2.1: TBD
+1.2.1: 2022 Feb 16
 
-* add some more information on the usage of movenet and video matting
+* fixed incorrect changelog version
+
+* added details on the usage of movenet and video matting models
 
 1.2.0: 2022 Feb 08
 
