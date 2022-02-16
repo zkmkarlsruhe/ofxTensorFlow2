@@ -74,6 +74,13 @@ if [ -f model_basics.zip ] ; then
 	mv model "$DEST"/example_basics/bin/data
 fi
 
+# example_efficientnet
+if [ -f model_effnet.zip ] ; then
+	unzip model_effnet.zip
+	rm -rf "$DEST"/example_basics_efficientnet/bin/data/model
+	mv model "$DEST"/example_basics_efficientnet/bin/data
+fi
+
 # example_basics_frozen_graph
 if [ -f model_basics_frozen_graph.zip ] ; then
 	unzip model_basics_frozen_graph.zip
@@ -88,14 +95,7 @@ if [ -f model_basics_multi_IO.zip ] ; then
 	mv model "$DEST"/example_basics_multi_IO/bin/data
 fi
 
-# example_effnet
-if [ -f model_effnet.zip ] ; then
-	unzip model_effnet.zip
-	rm -rf "$DEST"/example_basics_efficientnet/bin/data/model
-	mv model "$DEST"/example_basics_efficientnet/bin/data
-fi
-
-# example_keywordspotting
+# example_keyword_spotting
 if [ -f model_keywordspotting.zip ] ; then
 	unzip model_keywordspotting.zip
 	rm -rf "$DEST"/example_keyword_spotting/bin/data/model
