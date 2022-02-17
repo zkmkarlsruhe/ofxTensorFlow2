@@ -1,6 +1,6 @@
 # Basic example
 This is a very basic example wich demonstrates how to load and infer a _Frozen Graph_ created using TensorFlow.
-_Frozen Graph_ is the standard of storing a graph for versions of TensorFlow < 1.15.
+Frozen GraphDef is the standard of storing a graph for versions of TensorFlow < 1.15.
 We wanted to support this feature for legacy reasons.
 
 ### TensorFlow2
@@ -11,7 +11,7 @@ python main.py
 ```
 
 ### openFrameworks
-By default `ofxTF2::Model` will use the `SavedModel` format. To use the `FrozenGraph` format you may either add the type to the constructor or call `setModelType()` afterwards.
+By default `ofxTF2::Model` will use the `SavedModel` format. To use the frozen GraphDef format you may either add the type to the constructor or call `setModelType()` afterwards.
 As the default names differ from the names in the `SavedModel` format make sure to overwrite names of the ins and outs by calling `setup()`.
 ```c++
 // set model type and i/o names
