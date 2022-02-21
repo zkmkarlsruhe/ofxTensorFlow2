@@ -24,6 +24,9 @@ rm -rfv "$DEST"/example_basics_efficientnet/bin/data/model
 # example_basics_frozen_graph
 rm -rfv "$DEST"/example_basics_frozen_graph/bin/data/model.pb
 
+# example_frozen_graph_char_rnn
+rm -rfv "$DEST"/example_frozen_graph_char_rnn/bin/data/models
+
 # example_basics_multi_IO
 rm -rfv "$DEST"/example_basics_multi_IO/bin/data/model
 

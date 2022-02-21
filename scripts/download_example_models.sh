@@ -53,6 +53,7 @@ case "$DOWNLOAD" in
 		download $URL model_basics_multi_IO.zip
 		download $URL model_basics_frozen_graph.zip
 		download $URL model_effnet.zip
+		download $URL model_char_rnn.zip
 		download $URL model_keywordspotting.zip
 		download $URL model_multi_pose.zip
 		download $URL model_pix2pix_edges2shoes_20epochs.zip
@@ -93,6 +94,13 @@ if [ -f model_basics_multi_IO.zip ] ; then
 	unzip model_basics_multi_IO.zip
 	rm -rf "$DEST"/example_basics_multi_IO/bin/data/model
 	mv model "$DEST"/example_basics_multi_IO/bin/data
+fi
+
+# example_frozen_graph_char_rnn
+if [ -f models_char_rnn.zip ] ; then
+	unzip models_char_rnn.zip
+	rm -rf "$DEST"/example_frozen_graph_char_rnn/bin/data/models
+	mv models "$DEST"/example_frozen_graph_char_rnn/bin/data
 fi
 
 # example_keyword_spotting
