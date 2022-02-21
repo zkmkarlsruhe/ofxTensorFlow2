@@ -1,3 +1,11 @@
+1.2.2: 2022 Feb 21
+
+* update cppflow
+* add support for frozen graphs
+* add basic frozen graph example 
+
+* fix ofxTF2::Model::runMultiModel() more less inputs than initially named
+
 1.2.1: 2022 Feb 16
 
 * fixed incorrect changelog version

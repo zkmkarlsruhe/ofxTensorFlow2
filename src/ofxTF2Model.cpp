@@ -94,8 +94,14 @@ Model::runMultiModel(const std::vector<cppflow::tensor> & inputs) const {
 	using inputTuple_t = std::tuple<std::string, cppflow::tensor>;
 	std::vector<inputTuple_t> inputArguments;
 
+	if (inputs.size() > inputNames_.size()) {
+		ofLogError("ofxTensorFlow2") << "Model: number of inputs greater than "
+			<< "number of input names";
+		return std::vector<cppflow::tensor>(-1);
+	}
+
 	// add the names from settings and tensors to the vector of arguments
-	for(unsigned int i = 0; i < inputNames_.size(); i++) {
+	for(unsigned int i = 0; i < inputs.size(); i++) {
 		inputArguments.push_back(inputTuple_t(inputNames_[i], inputs[i]));
 	}
 
