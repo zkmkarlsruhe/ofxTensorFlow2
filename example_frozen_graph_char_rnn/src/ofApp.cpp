@@ -1,7 +1,7 @@
 /*
  * ofxTensorFlow2
  *
- * Copyright (c) 2021 ZKM | Hertz-Lab
+ * Copyright (c) 2022 ZKM | Hertz-Lab
  * Paul Bethge <bethge@zkm.de>
  * Dan Wilcox <dan.wilcox@zkm.de>
  *
@@ -16,6 +16,37 @@
  */
 
 #include "ofApp.h"
+
+
+//--------------------------------------------------------------
+// from msa::tf:: utilities
+template<typename T> vector<T> adjustProbsWithTemp(const vector<T>& p_in, float t) {
+    if(t>0) {
+        vector<T> p_out(p_in.size());
+        T sum = 0;
+        for(size_t i=0; i<p_in.size(); i++) {
+            p_out[i] = exp( log((double)p_in[i]) / (double)t );
+            sum += p_out[i];
+        }
+
+        if(sum > 0)
+            for(size_t i=0; i<p_out.size(); i++) p_out[i] /= sum;
+
+        return p_out;
+    }
+
+    return p_in;
+}
+
+
+//--------------------------------------------------------------
+// from msa::tf:: utilities
+template<typename T> int sample_from_prob(std::default_random_engine& rng, const vector<T>& p) {
+    std::discrete_distribution<int> rdist (p.begin(),p.end());
+    int r = rdist(rng);
+    return r;
+}
+
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -38,16 +69,15 @@ void ofApp::setup() {
 	};
 	model.setup(inputNames, outputNames);
 
-
 	// scan models dir
-	models_dir.listDir("models");
-	if(models_dir.size()==0) {
+	modelsDir.listDir("models");
+	if(modelsDir.size()==0) {
 		ofLogError() << "Couldn't find models folder.";
 		assert(false);
 		ofExit(1);
 	}
-	models_dir.sort();
-	load_model_index(0); // load first model
+	modelsDir.sort();
+	loadModelIndex(0); // load first model
 
 	// seed rng
 	rng.seed(ofGetSystemTimeMicros());
@@ -58,124 +88,79 @@ void ofApp::setup() {
 
 
 //--------------------------------------------------------------
-// Load model by folder INDEX
-void ofApp::load_model_index(int index) {
-	cur_model_index = ofClamp(index, 0, models_dir.size()-1);
-	load_model(models_dir.getPath(cur_model_index));
+void ofApp::loadModelIndex(int index) {
+	curModelIndex = ofClamp(index, 0, modelsDir.size()-1);
+	loadModel(modelsDir.getPath(curModelIndex));
 }
 
 
 //--------------------------------------------------------------
-// Load graph (model trained in and exported from python) by folder NAME, and initialize session
-void ofApp::load_model(std::string dir) {
+void ofApp::loadModel(std::string dir) {
 
-	// TODO load model from 'dir'
 	// load the model, bail out on error
-	const std::string model_path = dir + "/graph_frz.pb";
-	if(!model.load(model_path)) {
+	if(!model.load(dir + "/graph_frz.pb")) {
 		std::exit(EXIT_FAILURE);
 	}
 
 	// load character map
-	// TODO load model from 'dir'
-	const std::string chars_path = dir + "/chars.txt";
-	load_chars(chars_path);
+	loadChars(dir + "/chars.txt");
 
 	// init tensor for input
 	// needs to be a single int (index of character)
 	// HOWEVER input is not a scalar or vector, but a rank 2 tensor with shape {1, 1} (i.e. a matrix)
 	// WHY? because that's how the model was designed to make the internal calculations easier (batch size etc)
 	// TBH the model could be redesigned to accept just a rank 1 scalar, and then internally reshaped, but I'm lazy
-	t_data_in = cppflow::fill({1, 1}, 1, TF_INT32);
+	t_dataIn = cppflow::fill({1, 1}, 1, TF_INT32);
 
 	// prime model
-	prime_model(text_full, prime_length);
+	primeModel(textFull, primeLength);
 }
 
 
 //--------------------------------------------------------------
-// load character <-> index mapping
-void ofApp::load_chars(string path) {
+void ofApp::loadChars(string path) {
 	ofLogVerbose() << "load_chars : " << path;
-	int_to_char.clear();
-	char_to_int.clear();
+	intToChar.clear();
+	charToInt.clear();
 	ofBuffer buffer = ofBufferFromFile(path);
 
 	for(auto line : buffer.getLines()) {
 		char c = ofToInt(line); // TODO: will this manage unicode?
-		int_to_char.push_back(c);
-		int i = int_to_char.size()-1;
-		char_to_int[c] = i;
+		intToChar.push_back(c);
+		int i = intToChar.size()-1;
+		charToInt[c] = i;
 		ofLogVerbose() << i << " : " << c;
 	}
 }
 
 
-
 //--------------------------------------------------------------
-// prime model with a sequence of characters
-// this runs the data through the model element by element, so as to update its internal state (stored in t_state)
-// next time we feed the model an element to make a prediction, it will make the prediction primed on this state (i.e. sequence of elements)
-void ofApp::prime_model(string prime_data, int prime_length) {
-
-	ofLogVerbose() << "prime_model : " << prime_data << " (" << prime_length << ")";
-
+void ofApp::primeModel(string primeData, int primeLength) {
 	outputReady = false;
-
-	for(int i=MAX(0, prime_data.size()-prime_length); i<prime_data.size(); i++) {
-		run_model(prime_data[i]);
+	for(unsigned int i=MAX(0, primeData.size()-primeLength); i<primeData.size(); i++) {
+		runModel(primeData[i]);
 	}
 }
 
 
-template<typename T> vector<T> adjust_probs_with_temp(const vector<T>& p_in, float t) {
-    if(t>0) {
-        vector<T> p_out(p_in.size());
-        T sum = 0;
-        for(size_t i=0; i<p_in.size(); i++) {
-            p_out[i] = exp( log((double)p_in[i]) / (double)t );
-            sum += p_out[i];
-        }
-
-        if(sum > 0)
-            for(size_t i=0; i<p_out.size(); i++) p_out[i] /= sum;
-
-        return p_out;
-    }
-
-    return p_in;
-}
-
 //--------------------------------------------------------------
-// run model on a single character
-void ofApp::run_model(char ch) {
+void ofApp::runModel(char ch) {
 
-	ofLogVerbose() << "run_model : " << ch << " (" << char_to_int[ch] << ")";
+	t_dataIn = cppflow::fill({1, 1}, (int)charToInt[ch], TF_INT32);
 
-
-	// copy input data into tensor
-	// ofxTF2::vectorToTensor<int32_t>(std::vector<int32_t>(char_to_int[ch]));
-	// t_data_in = {char_to_int[ch]};
-
-	t_data_in = cppflow::fill({1, 1}, (int)char_to_int[ch], TF_INT32);
-
-	std::vector<cppflow::tensor> vectorOfInputTensors = {t_data_in};
+	std::vector<cppflow::tensor> vectorOfInputTensors = {t_dataIn};
 	
 	if(outputReady) {
 		// use state_in if passed in as parameter
 		vectorOfInputTensors.push_back(t_state);
-		ofLogVerbose() << "state_in is not empty";
-	}
-	else {
-		ofLogVerbose() << "state_in is empty";
 	}
 
 	auto vectorOfOutputTensors = model.runMultiModel(vectorOfInputTensors);
 
 	// convert model output from tensors to more manageable types
 	if(vectorOfOutputTensors.size() > 1) {
-		ofxTF2::tensorToVector<float>(vectorOfOutputTensors[0], last_model_output);
-		last_model_output = adjust_probs_with_temp(last_model_output, sample_temp);
+		ofxTF2::tensorToVector<float>(vectorOfOutputTensors[0], lastModelOutput);
+		lastModelOutput = adjustProbsWithTemp(lastModelOutput, sampleTemp);
 
 		// save lstm state for next run
 		t_state = vectorOfOutputTensors[1];
@@ -185,58 +170,51 @@ void ofApp::run_model(char ch) {
 
 
 //--------------------------------------------------------------
-// add character to string, manage ghetto wrapping for display, run model etc.
-void ofApp::add_char(char ch) {
+void ofApp::addChar(char ch) {
 	// add sampled char to text
 	if(ch == '\n') {
-		text_lines.push_back("");
+		textLines.push_back("");
 	} else {
-		text_lines.back() += ch;
+		textLines.back() += ch;
 	}
 
 	// ghetto word wrap
-	if(text_lines.back().size() > max_line_width) {
-		string text_line_cur = text_lines.back();
-		text_lines.pop_back();
-		auto last_word_pos = text_line_cur.find_last_of(" ");
-		text_lines.push_back(text_line_cur.substr(0, last_word_pos));
-		text_lines.push_back(text_line_cur.substr(last_word_pos));
+	if(textLines.back().size() > maxLineWidth) {
+		std::string textLineCur = textLines.back();
+		textLines.pop_back();
+		auto last_word_pos = textLineCur.find_last_of(" ");
+		textLines.push_back(textLineCur.substr(0, last_word_pos));
+		textLines.push_back(textLineCur.substr(last_word_pos));
 	}
 
 	// ghetto scroll
-	while(text_lines.size() > max_line_num) text_lines.pop_front();
+	while(textLines.size() > maxLineNum) textLines.pop_front();
 
 	// rebuild text
-	text_full.clear();
-	for(auto&& text_line : text_lines) {
-		text_full += "\n" + text_line;
+	textFull.clear();
+	for(auto&& text_line : textLines) {
+		textFull += "\n" + text_line;
 	}
 
 	// feed sampled char back into model
-	run_model(ch);
+	runModel(ch);
 }
 
-
-template<typename T> int sample_from_prob(std::default_random_engine& rng, const vector<T>& p) {
-    std::discrete_distribution<int> rdist (p.begin(),p.end());
-    int r = rdist(rng);
-    return r;
-}
 
 //--------------------------------------------------------------
 void ofApp::draw() {
 	stringstream str;
 	str << ofGetFrameRate() << endl;
 	str << endl;
-	str << "ENTER : toggle auto run " << (do_auto_run ? "(X)" : "( )") << endl;
+	str << "ENTER : toggle auto run " << (doAutoRun ? "(X)" : "( )") << endl;
 	str << "RIGHT : sample one char " << endl;
 	str << "DEL   : clear text " << endl;
 	str << endl;
 
 	str << "Press number key to load model: " << endl;
-	for(int i=0; i<models_dir.size(); i++) {
-		auto marker = (i==cur_model_index) ? ">" : " ";
-		str << " " << (i+1) << " : " << marker << " " << models_dir.getName(i) << endl;
+	for(unsigned int i=0; i<modelsDir.size(); i++) {
+		auto marker = (i==curModelIndex) ? ">" : " ";
+		str << " " << (i+1) << " : " << marker << " " << modelsDir.getName(i) << endl;
 	}
 
 	str << endl;
@@ -247,28 +225,24 @@ void ofApp::draw() {
 
 	if(outputReady) {
 		// sample one character from probability distribution
-		int cur_char_index = sample_from_prob(rng, last_model_output);
-		char cur_char = int_to_char[cur_char_index];
+		int curCharIndex = sample_from_prob(rng, lastModelOutput);
+		char curChar = intToChar[curCharIndex];
 
-		str << "Next char : " << cur_char_index << " | " << cur_char << endl;
+		str << "Next char : " << curCharIndex << " | " << curChar << endl;
 
-		if(do_auto_run || do_run_once) {
-			if(do_run_once) do_run_once = false;
+		if(doAutoRun || doRunOnce) {
+			if(doRunOnce) doRunOnce = false;
 
-			add_char(cur_char);
+			addChar(curChar);
 		}
 	}
-
-	// // display probability histogram
-	// msa::tf::draw_probs(last_model_output, ofRectangle(0, 0, ofGetWidth(), ofGetHeight()));
-
 
 	// draw texts
 	ofSetColor(150);
 	ofDrawBitmapString(str.str(), 20, 20);
 
 	ofSetColor(0, 200, 0);
-	ofDrawBitmapString(text_full + "_", 320, 10);
+	ofDrawBitmapString(textFull + "_", 320, 10);
 }
 
 
@@ -284,79 +258,82 @@ void ofApp::keyPressed(int key) {
 	case '7':
 	case '8':
 	case '9':
-		load_model_index(key-'1');
+		loadModelIndex(key-'1');
 		break;
 
 	case OF_KEY_DEL:
-		text_lines = { "The" };
+		textLines = { "The" };
 		break;
 
 	case OF_KEY_RETURN:
-		do_auto_run ^= true;
+		doAutoRun ^= true;
 		break;
 
 	case OF_KEY_RIGHT:
-		do_run_once = true;
-		do_auto_run = false;
+		doRunOnce = true;
+		doAutoRun = false;
 		break;
 
 	default:
-		do_auto_run = false;
-		if(char_to_int.count(key) > 0) add_char(key);
+		doAutoRun = false;
+		if(charToInt.count(key) > 0) addChar(key);
 		break;
 	}
 
 }
 
 
+//--------------------------------------------------------------
+void ofApp::update() {
 
+}
 
-// //--------------------------------------------------------------
-// void ofApp::keyReleased(int key) {
+//--------------------------------------------------------------
+void ofApp::keyReleased(int key) {
 
-// }
+}
 
-// //--------------------------------------------------------------
-// void ofApp::mouseMoved(int x, int y) {
+//--------------------------------------------------------------
+void ofApp::mouseMoved(int x, int y) {
 
-// }
+}
 
-// //--------------------------------------------------------------
-// void ofApp::mouseDragged(int x, int y, int button) {
+//--------------------------------------------------------------
+void ofApp::mouseDragged(int x, int y, int button) {
 
-// }
+}
 
-// //--------------------------------------------------------------
-// void ofApp::mousePressed(int x, int y, int button) {
+//--------------------------------------------------------------
+void ofApp::mousePressed(int x, int y, int button) {
 
-// }
+}
 
-// //--------------------------------------------------------------
-// void ofApp::mouseReleased(int x, int y, int button) {
+//--------------------------------------------------------------
+void ofApp::mouseReleased(int x, int y, int button) {
 
-// }
+}
 
-// //--------------------------------------------------------------
-// void ofApp::mouseEntered(int x, int y) {
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y) {
 
-// }
+}
 
-// //--------------------------------------------------------------
-// void ofApp::mouseExited(int x, int y) {
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y) {
 
-// }
+}
 
-// //--------------------------------------------------------------
-// void ofApp::windowResized(int w, int h) {
+//--------------------------------------------------------------
+void ofApp::windowResized(int w, int h) {
 
-// }
+}
 
-// //--------------------------------------------------------------
-// void ofApp::gotMessage(ofMessage msg) {
+//--------------------------------------------------------------
+void ofApp::gotMessage(ofMessage msg) {
 
-// }
+}
 
-// //--------------------------------------------------------------
-// void ofApp::dragEvent(ofDragInfo dragInfo) {
+//--------------------------------------------------------------
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 
-// }
+}
