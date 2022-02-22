@@ -2,7 +2,8 @@
 
 * update cppflow
 * add support for frozen graphs
-* add basic frozen graph example 
+* add basic frozen graph example
+* add updated version of ofxMSATensorFlow's example_char_rnn
 
 * fix ofxTF2::Model::runMultiModel() more less inputs than initially named
 
