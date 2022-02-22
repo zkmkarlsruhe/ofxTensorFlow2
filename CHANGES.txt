@@ -1,11 +1,15 @@
-1.2.2: 2022 Feb 21
+1.3.0: 2022 Feb 22
 
-* update cppflow
-* add support for frozen graphs
-* add basic frozen graph example
-* add updated version of ofxMSATensorFlow's example_char_rnn
+* added support for frozen graphs (TF < 1.15 model format)
+* added basic frozen graph example
+* added updated version of ofxMSATensorFlow example_char_rnn
 
-* fix ofxTF2::Model::runMultiModel() more less inputs than initially named
+* fixed ofxTF2::Model::runMultiModel() more less inputs than initially named
+
+* update to latest cppflow with frozen graph support (Paul Bethge)
+* improved example model download script to accept list of zip filenames
+* added example model download script -l/--list flag to print known model zip
+  filenames
 
 1.2.1: 2022 Feb 16
 
