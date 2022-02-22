@@ -4,7 +4,7 @@ This example demonstrates how to load and run a frozen graph developed in Tensor
 ![](../media/charRnn.gif)
 
 ### TensorFlow
-From Memo Akten's example:
+From Memo Akten's [example_char_rnn](https://github.com/memo/ofxMSATensorFlow/tree/master/example-char-rnn):
 
 > Models are trained and saved in python with this code (https://github.com/memo/char-rnn-tensorflow)
 and loaded in openframeworks for prediction.
