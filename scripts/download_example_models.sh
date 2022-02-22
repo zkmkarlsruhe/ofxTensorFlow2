@@ -23,7 +23,7 @@ model_basics.zip \
 model_basics_multi_IO.zip \
 model_basics_frozen_graph.zip \
 model_effnet.zip \
-model_char_rnn.zip \
+models_char_rnn.zip \
 model_keywordspotting.zip \
 model_multi_pose.zip \
 model_pix2pix_edges2shoes_20epochs.zip \
