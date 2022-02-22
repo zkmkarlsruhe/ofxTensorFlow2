@@ -12,12 +12,12 @@
  * This code has been developed at ZKM | Hertz-Lab as part of „The Intelligent 
  * Museum“ generously funded by the German Federal Cultural Foundation.
  * 
- * This code is based on Memo Akten's ofxMSATensorFlow example.
+ * This code is based on Memo Akten's ofxMSATensorFlow example-char-rnn:
+ * https://github.com/memo/ofxMSATensorFlow
  */
 
+/* Memo Akten writes:
 
-/* From Memo Akten's ofxMSATensorFlow example */
-/*
 Generative character based Long Short-Term Memory (LSTM) Recurrent Neural Network (RNN) demo,
 ala Karpathy's char-rnn(http://karpathy.github.io/2015/05/21/rnn-effectiveness/)
 and Graves2013(https://arxiv.org/abs/1308.0850).
@@ -39,13 +39,11 @@ So they're not great. A bit of hyperparameter tuning would give much better resu
 The openframeworks code won't change at all, it'll just load the better model.
 */
 
-
 #pragma once
 
 #include "ofMain.h"
 #include "ofxTensorFlow2.h"
 #include <random>
-
 
 //--------------------------------------------------------------
 class ofApp : public ofBaseApp {
@@ -89,9 +87,9 @@ public:
     std::map<int, char> charToInt;
 
     // tensors in and out of model
-    cppflow::tensor t_dataIn;              // data in
-    cppflow::tensor t_state;                // current lstm state
-    std::vector<float> lastModelOutput;   // probabilities
+    cppflow::tensor t_dataIn;           // data in
+    cppflow::tensor t_state;            // current lstm state
+    std::vector<float> lastModelOutput; // probabilities
 
     // generated text
     std::string textFull;
@@ -103,7 +101,7 @@ public:
     float sampleTemp = 0.5f;
 
     // model file management
-    ofDirectory modelsDir;    // data/models folder which contains subfolders for each model
+    ofDirectory modelsDir;          // data/models folder which contains subfolders for each model
     unsigned int curModelIndex = 0; // which model (i.e. folder) we're currently using
 
     // random generator for sampling
@@ -111,7 +109,6 @@ public:
 
     // other vars
     bool outputReady = false;
-    bool doAutoRun = true;    // auto run every frame
-    bool doRunOnce = false;   // only run one character
-
+    bool doAutoRun = true;  // auto run every frame
+    bool doRunOnce = false; // only run one character
 };
