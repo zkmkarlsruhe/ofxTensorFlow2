@@ -21,37 +21,37 @@
 //--------------------------------------------------------------
 // from msa::tf::utilities
 template<typename T> vector<T> adjustProbsWithTemp(const vector<T>& p_in, float t) {
-    if(t > 0) {
-        vector<T> p_out(p_in.size());
-        T sum = 0;
-        for(size_t i = 0; i < p_in.size(); i++) {
-            p_out[i] = exp(log((double)p_in[i]) / (double)t);
-            sum += p_out[i];
-        }
-        if(sum > 0) {
-            for(size_t i = 0; i < p_out.size(); i++) {p_out[i] /= sum;}
-        }
-        return p_out;
-    }
-    return p_in;
+	if(t > 0) {
+		vector<T> p_out(p_in.size());
+		T sum = 0;
+		for(size_t i = 0; i < p_in.size(); i++) {
+			p_out[i] = exp(log((double)p_in[i]) / (double)t);
+			sum += p_out[i];
+		}
+		if(sum > 0) {
+			for(size_t i = 0; i < p_out.size(); i++) {p_out[i] /= sum;}
+		}
+		return p_out;
+	}
+	return p_in;
 }
 
 //--------------------------------------------------------------
 // from msa::tf::utilities
 template<typename T> int sample_from_prob(std::default_random_engine& rng, const vector<T>& p) {
-    std::discrete_distribution<int> rdist(p.begin(), p.end());
-    int r = rdist(rng);
-    return r;
+	std::discrete_distribution<int> rdist(p.begin(), p.end());
+	int r = rdist(rng);
+	return r;
 }
 
 //--------------------------------------------------------------
 void ofApp::setup() {
 	ofSetVerticalSync(true);
-    ofSetFrameRate(20); // generating a character per frame at 60fps is too fast to read in realtime
+	ofSetFrameRate(20); // generating a character per frame at 60fps is too fast to read in realtime
 	ofSetWindowTitle("example_frozen_graph_char_rnn");
-    ofSetColor(255);
-    ofBackground(0);
-    ofSetLogLevel(OF_LOG_VERBOSE);
+	ofSetColor(255);
+	ofBackground(0);
+	ofSetLogLevel(OF_LOG_VERBOSE);
 
 	// set model type and i/o names
 	model.setModelType(cppflow::model::TYPE::FROZEN_GRAPH);
@@ -165,7 +165,7 @@ void ofApp::addChar(char ch) {
 	if(ch == '\n') {
 		textLines.push_back("");
 	}
-    else {
+	else {
 		textLines.back() += ch;
 	}
 
@@ -179,7 +179,7 @@ void ofApp::addChar(char ch) {
 	}
 
 	// ghetto scroll
-    while(textLines.size() > maxLineNum) {textLines.pop_front();}
+	while(textLines.size() > maxLineNum) {textLines.pop_front();}
 
 	// rebuild text
 	textFull.clear();
@@ -203,7 +203,7 @@ void ofApp::draw() {
 
 	str << "Press number key to load model: " << endl;
 	for(unsigned int i = 0; i < modelsDir.size(); i++) {
-        auto marker = (i == curModelIndex ? ">" : " ");
+		auto marker = (i == curModelIndex ? ">" : " ");
 		str << " " << (i+1) << " : " << marker << " " << modelsDir.getName(i) << endl;
 	}
 
@@ -218,7 +218,7 @@ void ofApp::draw() {
 		char curChar = intToChar[curCharIndex];
 		str << "Next char : " << curCharIndex << " | " << curChar << endl;
 		if(doAutoRun || doRunOnce) {
-            if(doRunOnce) {doRunOnce = false;}
+			if(doRunOnce) {doRunOnce = false;}
 			addChar(curChar);
 		}
 	}
@@ -234,28 +234,28 @@ void ofApp::draw() {
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
 	switch(key) {
-        case '1': case '2': case '3': case '4': case '5':
-        case '6': case '7': case '8': case '9':
-            loadModelIndex(key-'1');
-            break;
+		case '1': case '2': case '3': case '4': case '5':
+		case '6': case '7': case '8': case '9':
+			loadModelIndex(key-'1');
+			break;
 
-        case OF_KEY_DEL:
-            textLines = { "The" };
-            break;
+		case OF_KEY_DEL:
+			textLines = { "The" };
+			break;
 
-        case OF_KEY_RETURN:
-            doAutoRun ^= true;
-            break;
+		case OF_KEY_RETURN:
+			doAutoRun ^= true;
+			break;
 
-        case OF_KEY_RIGHT:
-            doRunOnce = true;
-            doAutoRun = false;
-            break;
+		case OF_KEY_RIGHT:
+			doRunOnce = true;
+			doAutoRun = false;
+			break;
 
-        default:
-            doAutoRun = false;
-            if(charToInt.count(key) > 0) {addChar(key);}
-            break;
+		default:
+			doAutoRun = false;
+			if(charToInt.count(key) > 0) {addChar(key);}
+			break;
 	}
 }
 

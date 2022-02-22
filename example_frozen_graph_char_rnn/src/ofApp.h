@@ -49,66 +49,66 @@ The openframeworks code won't change at all, it'll just load the better model.
 class ofApp : public ofBaseApp {
 public:
 
-    //--------------------------------------------------------------
-    void setup();
-    void draw();
-    void keyPressed(int key);
+	//--------------------------------------------------------------
+	void setup();
+	void draw();
+	void keyPressed(int key);
 
-    void loadModelIndex(int index);
-    void loadModel(std::string dir);
-    void loadChars(std::string path);
-    void runModel(char ch);
-    void addChar(char ch);
+	void loadModelIndex(int index);
+	void loadModel(std::string dir);
+	void loadChars(std::string path);
+	void runModel(char ch);
+	void addChar(char ch);
 
-    // prime model with a sequence of characters
-    // this runs the data through the model element by element, so as to update its internal state (stored in t_state)
-    // next time we feed the model an element to make a prediction, it will make the prediction primed on this state (i.e. sequence of elements)
-    void primeModel(std::string primeData, int primeLength);
+	// prime model with a sequence of characters
+	// this runs the data through the model element by element, so as to update its internal state (stored in t_state)
+	// next time we feed the model an element to make a prediction, it will make the prediction primed on this state (i.e. sequence of elements)
+	void primeModel(std::string primeData, int primeLength);
 
-    void update();
-    void keyReleased(int key);
-    void mouseMoved(int x, int y);
-    void mouseDragged( int x, int y, int button);
-    void mousePressed( int x, int y, int button);
-    void mouseReleased(int x, int y, int button);
-    void mouseEntered(int x, int y);
-    void mouseExited(int x, int y);
-    void windowResized(int w, int h);
-    void dragEvent(ofDragInfo dragInfo);
-    void gotMessage(ofMessage msg);
+	void update();
+	void keyReleased(int key);
+	void mouseMoved(int x, int y);
+	void mouseDragged( int x, int y, int button);
+	void mousePressed( int x, int y, int button);
+	void mouseReleased(int x, int y, int button);
+	void mouseEntered(int x, int y);
+	void mouseExited(int x, int y);
+	void windowResized(int w, int h);
+	void dragEvent(ofDragInfo dragInfo);
+	void gotMessage(ofMessage msg);
 
-    //--------------------------------------------------------------
+	//--------------------------------------------------------------
 
-    // base model object
-    ofxTF2::Model model;
+	// base model object
+	ofxTF2::Model model;
 
-    // for managing character <-> index mapping
-    std::vector<char> intToChar;
-    std::map<int, char> charToInt;
+	// for managing character <-> index mapping
+	std::vector<char> intToChar;
+	std::map<int, char> charToInt;
 
-    // tensors in and out of model
-    cppflow::tensor t_dataIn;           // data in
-    cppflow::tensor t_state;            // current lstm state
-    std::vector<float> lastModelOutput; // probabilities
+	// tensors in and out of model
+	cppflow::tensor t_dataIn;           // data in
+	cppflow::tensor t_state;            // current lstm state
+	std::vector<float> lastModelOutput; // probabilities
 
-    // generated text
-    std::string textFull;
-    std::list<std::string> textLines = { "The" };
+	// generated text
+	std::string textFull;
+	std::list<std::string> textLines = { "The" };
 	ofTrueTypeFont font;
-    unsigned int maxLineWidth = 80;
-    unsigned int maxLineNum = 50;
-    unsigned int primeLength = 50;
-    float sampleTemp = 0.5f;
+	unsigned int maxLineWidth = 80;
+	unsigned int maxLineNum = 50;
+	unsigned int primeLength = 50;
+	float sampleTemp = 0.5f;
 
-    // model file management
-    ofDirectory modelsDir;          // data/models folder which contains subfolders for each model
-    unsigned int curModelIndex = 0; // which model (i.e. folder) we're currently using
+	// model file management
+	ofDirectory modelsDir;          // data/models folder which contains subfolders for each model
+	unsigned int curModelIndex = 0; // which model (i.e. folder) we're currently using
 
-    // random generator for sampling
-    std::default_random_engine rng;
+	// random generator for sampling
+	std::default_random_engine rng;
 
-    // other vars
-    bool outputReady = false;
-    bool doAutoRun = true;  // auto run every frame
-    bool doRunOnce = false; // only run one character
+	// other vars
+	bool outputReady = false;
+	bool doAutoRun = true;  // auto run every frame
+	bool doRunOnce = false; // only run one character
 };
