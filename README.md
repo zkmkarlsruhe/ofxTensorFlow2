@@ -14,13 +14,13 @@ WARRANTIES, see the file, "LICENSE.txt," in this distribution.
 
 Selected examples:
 
-| Style Transfer | Keyword Spotting |
-| :--: | :--: 
-| ![](media/style_transfer.gif) | ![](media/keyword_spotting.gif) | 
+| Style Transfer | Keyword Spotting | CharRnn (Frozen Graph) |
+| :--: | :--: | :--: |
+| ![](media/style_transfer.gif) | ![](media/keyword_spotting.gif) |  ![](media/charRnn.gif) | 
 
-| Pose Estimation | Pix2Pix |
-| :--: | :--: |
-![](media/movenet.gif) | ![](media/pix2pix.gif) | 
+| Pose Estimation | Pix2Pix | 
+| :--: | :--: | 
+| ![](media/movenet.gif) | ![](media/pix2pix.gif) | 
 
 | Video Matting |
 | :--: |
@@ -243,7 +243,7 @@ The example projects are located in the `example_XXXX` directories.
 
 ### Downloading Pre-Trained Models
 
-Each example contains code to create a neural network and export it in the [SavedModel format](https://www.tensorflow.org/guide/saved_model). Neural networks require training which may take hours or days in order to produce a satisfying output, therefore we provide pre-trained models which you can download as ZIP files, either from the release page on GitHub or from a public shared link here:
+Each example contains code to create a neural network and export it in the [SavedModel format](https://www.tensorflow.org/guide/saved_model) or previous frozen GraphDef format. Neural networks require training which may take hours or days in order to produce a satisfying output, therefore we provide pre-trained models which you can download as ZIP files, either from the release page on GitHub or from a public shared link here:
 
 <https://cloud.zkm.de/index.php/s/gfWEjyEr9X4gyY6>
 
@@ -297,7 +297,7 @@ Simply select ofxTensorFlow2 from the available addons in the OF ProjectGenerato
 
 #### Model Format
 
-ofxTensorFlow2 works with the TensorFlow 2 [SavedModel format](https://www.tensorflow.org/guide/saved_model).
+ofxTensorFlow2 works with the TensorFlow [SavedModel format](https://www.tensorflow.org/guide/saved_model) (preferred) and the older TensorFlow 1 frozen GraphDef format (legacy).
 
 When referring to the "SavedModel" we mean the parent folder of the exported neural network containing two subfolder `assets` and `variables` and a `saved_model.pb` file. Do not change anything inside this folder, however renaming the folder is permitted. Keep in mind to use the correct file path within the application.
 

@@ -98,7 +98,6 @@ rm -rf $DEST/*
 ##### download & install
 
 # get latest source
-echo "curl -O ${HOST}/${DOWNLOAD}.${EXT}"
 RETCODE=$(curl -LO -w "%{http_code}" ${HOST}/${DOWNLOAD}.${EXT})
 if [ "$RETCODE" != "200" ] ; then
 	echo "download failed: HTTP $RETCODE"

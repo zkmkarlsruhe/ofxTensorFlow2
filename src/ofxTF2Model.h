@@ -64,13 +64,19 @@ class Model {
 public:
 
 	Model() = default;
-	Model(const std::string & modelPath);
+	Model(const std::string & modelPath, const cppflow::model::TYPE type=cppflow::model::SAVED_MODEL);
 	virtual ~Model();
 
-	/// load a SavedModel directory relative to bin/data
+	/// load a model from directory or file relative to bin/data
+	/// type maybe either cppflow::model::TYPE::SAVED_MODEL or cppflow::model::TYPE::FROZEN_GRAPH
 	/// directories for SavedModels include assets, variables, and a .pb file
+	/// file for frozen graph is a .pb file
 	/// returns true on success
 	virtual bool load(const std::string & modelPath);
+
+	/// set the model type
+	/// type maybe either cppflow::model::TYPE::SAVED_MODEL or cppflow::model::TYPE::FROZEN_GRAPH
+	virtual void setModelType(const cppflow::model::TYPE type);
 
 	/// set input and output names or reset to defaults (call without args)
 	/// use the CLI tool "saved_model_cli" to inspect the SavedModel e.g.
@@ -101,7 +107,7 @@ public:
 	virtual void printOperations();
 
 protected:
-
+	cppflow::model::TYPE type = cppflow::model::TYPE::SAVED_MODEL;
 	std::string modelPath_ = "";
 	std::vector<std::string> inputNames_  = {{"serving_default_input_1"}};
 	std::vector<std::string> outputNames_ = {{"StatefulPartitionedCall"}};
