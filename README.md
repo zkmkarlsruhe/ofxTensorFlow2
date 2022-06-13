@@ -206,7 +206,7 @@ $OF_PATH/addons/ofxTensorFlow2/scripts/macos_install_libs.sh "$TARGET_BUILD_DIR/
 4. Put the files from C:\Program Files\NVIDIA GPU Computing Toolkit\CUDNN\v8.4.1.50\bin and zlibwapi.dll into C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.7\bin
 5. Install Tensorflow for GPU with the included script:
 TYPE=gpu ./scripts/download_tensorflow.sh 2.9.0
-6. Rename ofxTensorFlow2\libs\tensorflow\lib\msys to ofxTensorFlow2\libs\tensorflow\lib\vs.
+6. Rename ofxTensorFlow2\libs\tensorflow\lib\msys to ofxTensorFlow2\libs\tensorflow\lib\vs
 
 #### Makefile build
 
