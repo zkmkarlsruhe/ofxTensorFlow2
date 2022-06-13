@@ -202,10 +202,9 @@ $OF_PATH/addons/ofxTensorFlow2/scripts/macos_install_libs.sh "$TARGET_BUILD_DIR/
 
 1. Install CUDA 11.7
 2. Install CUDNN 8.4.1.50
-3. Install Zlib
-4. Put the files from C:\Program Files\NVIDIA GPU Computing Toolkit\CUDNN\v8.4.1.50\bin and zlibwapi.dll into C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.7\bin
-5. Put https://github.com/serizba/cppflow into ofxTensorFlow2\libs\cppflow
-6. Put libtensorflow-gpu-windows-x86_64-2.8.0 from https://www.tensorflow.org/install/lang_c into ofxTensorFlow2\libs\tensorflow
+3. Put the files from C:\Program Files\NVIDIA GPU Computing Toolkit\CUDNN\v8.4.1.50\bin and zlibwapi.dll from http://www.winimage.com/zLibDll/zlib123dllx64.zip into C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.7\bin
+4. Put https://github.com/serizba/cppflow into ofxTensorFlow2\libs\cppflow
+5. Put libtensorflow-gpu-windows-x86_64-2.8.0 from https://www.tensorflow.org/install/lang_c into ofxTensorFlow2\libs\tensorflow
 
 #### Makefile build
 
