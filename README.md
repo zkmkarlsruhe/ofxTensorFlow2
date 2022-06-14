@@ -52,7 +52,7 @@ Minimal quick start for a Unix shell to clone cppflow, download pre-built Tensor
 
 ```shell
 cd addons
-git clone git@git.zkm.de:Hertz-Lab/Research/intelligent-museum/ofxTensorFlow2.git
+git clone https://github.com/zkmkarlsruhe/ofxTensorFlow2.git
 cd ofxTensorFlow2
 git submodule update --init --recursive
 ./scripts/download_tensorflow.sh
