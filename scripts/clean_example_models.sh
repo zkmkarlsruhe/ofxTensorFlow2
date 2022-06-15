@@ -6,7 +6,6 @@
 
 # stop on error
 set -e
-set -x
 
 DEST=..
 

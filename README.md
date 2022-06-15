@@ -52,7 +52,7 @@ Minimal quick start for a Unix shell to clone cppflow, download pre-built Tensor
 
 ```shell
 cd addons
-git clone git@git.zkm.de:Hertz-Lab/Research/intelligent-museum/ofxTensorFlow2.git
+git clone https://github.com/zkmkarlsruhe/ofxTensorFlow2.git
 cd ofxTensorFlow2
 git submodule update --init --recursive
 ./scripts/download_tensorflow.sh
@@ -83,11 +83,11 @@ The main supported operating systems & architectures are those which have pre-bu
 Installation and Build
 ----------------------
 
-Clone (or download and extract) this repository to the addon folder of openFrameworks. Replace OF_ROOT with the path to your openFrameworks installation
+Clone (or download and extract) this repository to the addon folder of openFrameworks. Replace OF_ROOT with the path to your openFrameworks installation.
 
 ```shell
 cd OF_ROOT/addons
-git clone git@hertz-gitlab.zkm.de:Hertz-Lab/Research/intelligent-museum/ofxTensorFlow2.git
+git clone https://github.com/zkmkarlsruhe/ofxTensorFlow2.git
 ```
 
 ### Dependencies
