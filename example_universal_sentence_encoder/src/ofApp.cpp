@@ -55,8 +55,7 @@ void ofApp::keyPressed(int key) {
 	}
 	int maxElementIndex = std::max_element(cosine.begin(), cosine.end()) - cosine.begin() + 1;
 	double maxElement = *std::max_element(cosine.begin() + 1, cosine.end());
-	std::cout << "Subtitle: " << maxElementIndex << ", cosine similarity: " << maxElement << ". The cosine similarity between '" << currentString << "' and '" << vector_sub[maxElementIndex].second << "' is " << maxElement << "." << std::endl;
-	show = "Subtitle: " + ofToString(maxElementIndex) + ", cosine similarity: " + ofToString(maxElement) + ".\nThe cosine similarity between\n'"  + currentString + "'\nand\n'" + vector_sub[maxElementIndex].second + "'\nis: " + ofToString(maxElement) + ".";
+	show = "Subtitle: " + ofToString(maxElementIndex) + ".\n\nThe cosine similarity between\n'"  + currentString + "'\nand\n'" + vector_sub[maxElementIndex].second + "'\nis: " + ofToString(maxElement) + ".\n\nSubtitles left: " + ofToString(vector_sub.size()) + ".";
 	currentVector = vector_sub[maxElementIndex].first;
 	currentString = vector_sub[maxElementIndex].second;
 	vector_sub.erase(vector_sub.begin() + maxElementIndex);
