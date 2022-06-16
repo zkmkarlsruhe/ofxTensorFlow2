@@ -2,6 +2,8 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
+	cppflow::tensor tensor;
+	std::vector<double> vec;
 
 	ofSetFrameRate(60);
 	ofSetVerticalSync(true);
@@ -21,14 +23,13 @@ void ofApp::setup() {
 	SubtitleParser* parser = subParserFactory->getParser();
 	std::vector<SubtitleItem*> sub = parser->getSubtitles();
 	for (auto element : sub) {
-		std::vector<double> vec;
-		cppflow::tensor sen = model.runModel(cppflow::reshape(cppflow::tensor(element->getDialogue()), { -1 }));
-		ofxTF2::tensorToVector(sen, vec);
-		tensor_sub.push_back(std::make_pair(vec, element->getDialogue()));
+		tensor = model.runModel(cppflow::reshape(cppflow::tensor(element->getDialogue()), { -1 }));
+		ofxTF2::tensorToVector(tensor, vec);
+		vector_sub.push_back(std::make_pair(vec, element->getDialogue()));
 	}
 	std::cout << "Subtitles loaded." << std::endl;
-	currentVector = tensor_sub[0].first;
-	currentString = tensor_sub[0].second;
+	currentVector = vector_sub[0].first;
+	currentString = vector_sub[0].second;
 }
 
 //--------------------------------------------------------------
@@ -45,20 +46,20 @@ void ofApp::draw() {
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
 	std::vector<double> cosine;
-	for (int x = 1; x < tensor_sub.size(); x++ ) {
+	for (int x = 1; x < vector_sub.size(); x++ ) {
 		double cosine_similarity = 0;
-		for (int i = 0; i < tensor_sub[x].first.size(); i++) {
-			cosine_similarity += currentVector[i] * tensor_sub[x].first[i];
+		for (int i = 0; i < vector_sub[x].first.size(); i++) {
+			cosine_similarity += currentVector[i] * vector_sub[x].first[i];
 		}
 		cosine.push_back(cosine_similarity);
 	}
 	int maxElementIndex = std::max_element(cosine.begin(), cosine.end()) - cosine.begin() + 1;
 	double maxElement = *std::max_element(cosine.begin() + 1, cosine.end());
-	std::cout << "Subtitle: " << maxElementIndex << ", cosine similarity: " << maxElement << ". The cosine similarity between '" << currentString << "' and '" << tensor_sub[maxElementIndex].second << "' is " << maxElement << "." << std::endl;
-	show = "Subtitle: " + ofToString(maxElementIndex) + ", cosine similarity: " + ofToString(maxElement) + ".\nThe cosine similarity between\n'"  + currentString + "'\nand\n'" + tensor_sub[maxElementIndex].second + "'\nis: " + ofToString(maxElement) + ".";
-	currentVector = tensor_sub[maxElementIndex].first;
-	currentString = tensor_sub[maxElementIndex].second;
-	tensor_sub.erase(tensor_sub.begin() + maxElementIndex);
+	std::cout << "Subtitle: " << maxElementIndex << ", cosine similarity: " << maxElement << ". The cosine similarity between '" << currentString << "' and '" << vector_sub[maxElementIndex].second << "' is " << maxElement << "." << std::endl;
+	show = "Subtitle: " + ofToString(maxElementIndex) + ", cosine similarity: " + ofToString(maxElement) + ".\nThe cosine similarity between\n'"  + currentString + "'\nand\n'" + vector_sub[maxElementIndex].second + "'\nis: " + ofToString(maxElement) + ".";
+	currentVector = vector_sub[maxElementIndex].first;
+	currentString = vector_sub[maxElementIndex].second;
+	vector_sub.erase(vector_sub.begin() + maxElementIndex);
 }
 
 //--------------------------------------------------------------

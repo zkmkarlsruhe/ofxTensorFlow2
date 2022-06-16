@@ -24,7 +24,7 @@ class ofApp : public ofBaseApp {
 		void gotMessage(ofMessage msg);
 
 		ofxTF2::Model model;
-		std::vector<std::pair<std::vector<double>, std::string>> tensor_sub;
+		std::vector<std::pair<std::vector<double>, std::string>> vector_sub;
 		std::vector<double> currentVector;
 		std::string currentString;
 		std::string show;
