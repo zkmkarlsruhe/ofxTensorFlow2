@@ -5,8 +5,6 @@ void ofApp::setup() {
 	cppflow::tensor tensor;
 	std::vector<double> vec;
 
-	ofSetFrameRate(60);
-	ofSetVerticalSync(true);
 	ofSetWindowTitle("example_universal_sentence_encoder");
 
 	// use only a portion of the GPU memory & grow as needed
