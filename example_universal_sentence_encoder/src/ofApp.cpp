@@ -26,9 +26,11 @@ void ofApp::setup() {
 		ofxTF2::tensorToVector(tensor, vec);
 		vector_sub.push_back(std::make_pair(vec, element->getDialogue()));
 	}
+	vector_sub_copy = vector_sub;
 	std::cout << "Subtitles loaded." << std::endl;
-	currentVector = vector_sub[0].first;
-	currentString = vector_sub[0].second;
+	currentVector = vector_sub_copy[0].first;
+	currentString = vector_sub_copy[0].second;
+	vector_sub_copy.erase(vector_sub_copy.begin());
 }
 
 //--------------------------------------------------------------
@@ -45,19 +47,22 @@ void ofApp::draw() {
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
 	std::vector<double> cosine;
-	for (int x = 1; x < vector_sub.size(); x++ ) {
+	for (int x = 0; x < vector_sub_copy.size(); x++ ) {
 		double cosine_similarity = 0;
-		for (int i = 0; i < vector_sub[x].first.size(); i++) {
-			cosine_similarity += currentVector[i] * vector_sub[x].first[i];
+		for (int i = 0; i < vector_sub_copy[x].first.size(); i++) {
+			cosine_similarity += currentVector[i] * vector_sub_copy[x].first[i];
 		}
 		cosine.push_back(cosine_similarity);
 	}
-	int maxElementIndex = std::max_element(cosine.begin(), cosine.end()) - cosine.begin() + 1;
-	double maxElement = *std::max_element(cosine.begin() + 1, cosine.end());
-	show = "Subtitle: " + ofToString(maxElementIndex) + ".\n\nThe cosine similarity between\n'"  + currentString + "'\nand\n'" + vector_sub[maxElementIndex].second + "'\nis: " + ofToString(maxElement) + ".\n\nSubtitles left: " + ofToString(vector_sub.size() - 1) + ".";
-	currentVector = vector_sub[maxElementIndex].first;
-	currentString = vector_sub[maxElementIndex].second;
-	vector_sub.erase(vector_sub.begin() + maxElementIndex);
+	int maxElementIndex = std::max_element(cosine.begin(), cosine.end()) - cosine.begin();
+	double maxElement = *std::max_element(cosine.begin(), cosine.end());
+	show = "Subtitle: " + ofToString(maxElementIndex) + ".\n\nThe cosine similarity between\n'"  + currentString + "'\nand\n'" + vector_sub_copy[maxElementIndex].second + "'\nis: " + ofToString(maxElement) + ".\n\nSubtitles left: " + ofToString(vector_sub_copy.size() - 1) + ".";
+	currentVector = vector_sub_copy[maxElementIndex].first;
+	currentString = vector_sub_copy[maxElementIndex].second;
+	vector_sub_copy.erase(vector_sub_copy.begin() + maxElementIndex);
+	if (vector_sub_copy.size() < 1) {
+		vector_sub_copy = vector_sub;
+	}
 }
 
 //--------------------------------------------------------------
