@@ -24,12 +24,12 @@ void ofApp::setup() {
 	for (auto element : sub) {
 		tensor = model.runModel(cppflow::reshape(cppflow::tensor(element->getDialogue()), { -1 }));
 		ofxTF2::tensorToVector(tensor, vec);
-		vector_sub.push_back(std::make_pair(vec, element->getDialogue()));
+		vector_sub.push_back(std::make_pair(vec, element));
 	}
 	vector_sub_copy = vector_sub;
 	std::cout << "Subtitles loaded." << std::endl;
 	currentVector = vector_sub_copy[0].first;
-	currentString = vector_sub_copy[0].second;
+	currentString = vector_sub_copy[0].second -> getDialogue();
 	vector_sub_copy.erase(vector_sub_copy.begin());
 }
 
@@ -56,9 +56,9 @@ void ofApp::keyPressed(int key) {
 	}
 	int maxElementIndex = std::max_element(cosine.begin(), cosine.end()) - cosine.begin();
 	double maxElement = *std::max_element(cosine.begin(), cosine.end());
-	show = "Subtitle: " + ofToString(maxElementIndex) + ".\n\nThe cosine similarity between\n'"  + currentString + "'\nand\n'" + vector_sub_copy[maxElementIndex].second + "'\nis: " + ofToString(maxElement) + ".\n\nSubtitles left: " + ofToString(vector_sub_copy.size() - 1) + ".";
+	show = "Subtitle: " + ofToString(vector_sub_copy[maxElementIndex].second -> getSubNo()) + ".\n\nThe cosine similarity between\n'"  + currentString + "'\nand\n'" + vector_sub_copy[maxElementIndex].second -> getDialogue() + "'\nis: " + ofToString(maxElement) + ".\n\nSubtitles left: " + ofToString(vector_sub_copy.size() - 1) + ".";
 	currentVector = vector_sub_copy[maxElementIndex].first;
-	currentString = vector_sub_copy[maxElementIndex].second;
+	currentString = vector_sub_copy[maxElementIndex].second -> getDialogue();
 	vector_sub_copy.erase(vector_sub_copy.begin() + maxElementIndex);
 	if (vector_sub_copy.size() < 1) {
 		vector_sub_copy = vector_sub;

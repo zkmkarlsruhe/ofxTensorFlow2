@@ -24,8 +24,8 @@ class ofApp : public ofBaseApp {
 		void gotMessage(ofMessage msg);
 
 		ofxTF2::Model model;
-		std::vector<std::pair<std::vector<double>, std::string>> vector_sub;
-		std::vector<std::pair<std::vector<double>, std::string>> vector_sub_copy;
+		std::vector<std::pair<std::vector<double>, SubtitleItem*>> vector_sub;
+		std::vector<std::pair<std::vector<double>, SubtitleItem*>> vector_sub_copy;
 		std::vector<double> currentVector;
 		std::string currentString;
 		std::string show;
