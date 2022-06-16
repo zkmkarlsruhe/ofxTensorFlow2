@@ -17,6 +17,7 @@ void ofApp::setup() {
 		std::exit(EXIT_FAILURE);
 	}
 	model.setup({ {"serving_default_inputs:0"} }, { {"StatefulPartitionedCall_1:0"} });
+
 	SubtitleParserFactory* subParserFactory = new SubtitleParserFactory(ofToDataPath("stranger.srt"));
 	SubtitleParser* parser = subParserFactory->getParser();
 	std::vector<SubtitleItem*> sub = parser->getSubtitles();
