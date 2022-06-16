@@ -5,7 +5,7 @@ void ofApp::setup() {
 
 	ofSetFrameRate(60);
 	ofSetVerticalSync(true);
-	ofSetWindowTitle("example_basics_efficientnet");
+	ofSetWindowTitle("example_universal_sentence_encoder");
 
 	// use only a portion of the GPU memory & grow as needed
 	if (!ofxTF2::setGPUMaxMemory(ofxTF2::GPU_PERCENT_70, true)) {
