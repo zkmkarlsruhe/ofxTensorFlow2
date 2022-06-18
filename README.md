@@ -205,7 +205,8 @@ $OF_PATH/addons/ofxTensorFlow2/scripts/macos_install_libs.sh "$TARGET_BUILD_DIR/
 3. Put the files from C:\Program Files\NVIDIA GPU Computing Toolkit\CUDNN\v8.4.1.50\bin and zlibwapi.dll from http://www.winimage.com/zLibDll/zlib123dllx64.zip into C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.7\bin
 4. Put https://github.com/serizba/cppflow into ofxTensorFlow2\libs\cppflow
 5. Put libtensorflow-gpu-windows-x86_64-2.8.0 from https://www.tensorflow.org/install/lang_c into ofxTensorFlow2\libs\tensorflow
-6. Run ofxTensorFlow2\scripts\download_example_models.sh
+6. Create a folder ofxTensorFlow2\libs\tensorflow\lib\vs and put the content from ofxTensorFlow2\libs\tensorflow\lib (2 files) there.
+7. Run ofxTensorFlow2\scripts\download_example_models.sh
 
 #### Makefile build
 
