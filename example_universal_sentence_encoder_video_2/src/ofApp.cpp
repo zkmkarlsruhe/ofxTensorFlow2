@@ -59,10 +59,10 @@ void ofApp::update() {
 		}
 		int maxElementIndex = std::max_element(cosine.begin(), cosine.end()) - cosine.begin();
 		double maxElement = *std::max_element(cosine.begin(), cosine.end());
-		show = "Subtitle: " + ofToString(vector_sub_copy[maxElementIndex].second.first) + " - " + ofToString(vector_sub_copy[maxElementIndex].second.first + vector_sub_copy[maxElementIndex].second.second) + ".\n\nCosine similarity: " + ofToString(maxElement) + ".\n\nSubtitles left: " + ofToString(vector_sub_copy.size() - 1) + ".";
 		currentVector = vector_sub_copy[maxElementIndex].first;
 		currentSubNo = vector_sub_copy[maxElementIndex].second.first;
 		currentSubLenght = vector_sub_copy[maxElementIndex].second.second;
+		show = "Subtitle: " + ofToString(currentSubNo) + " - " + ofToString(currentSubNo + currentSubLenght) + ".\n\nCosine similarity: " + ofToString(maxElement) + ".\n\nSubtitles left: " + ofToString(vector_sub_copy.size() - 1) + ".";
 		vector_sub_copy.erase(vector_sub_copy.begin() + maxElementIndex);
 		if (vector_sub_copy.size() < 1) {
 			vector_sub_copy = vector_sub;
@@ -100,16 +100,16 @@ void ofApp::keyPressed(int key) {
 	}
 	int maxElementIndex = std::max_element(cosine.begin(), cosine.end()) - cosine.begin();
 	double maxElement = *std::max_element(cosine.begin(), cosine.end());
-	show = "Subtitle: " + ofToString(vector_sub_copy[maxElementIndex].second.first) + " - " + ofToString(vector_sub_copy[maxElementIndex].second.first + vector_sub_copy[maxElementIndex].second.second) + ".\n\nCosine similarity: " + ofToString(maxElement) + ".\n\nSubtitles left: " + ofToString(vector_sub_copy.size() - 1) + ".";
 	currentVector = vector_sub_copy[maxElementIndex].first;
 	currentSubNo = vector_sub_copy[maxElementIndex].second.first;
 	currentSubLenght = vector_sub_copy[maxElementIndex].second.second;
+	show = "Subtitle: " + ofToString(currentSubNo) + " - " + ofToString(currentSubNo + currentSubLenght) + ".\n\nCosine similarity: " + ofToString(maxElement) + ".\n\nSubtitles left: " + ofToString(vector_sub_copy.size() - 1) + ".";
 	vector_sub_copy.erase(vector_sub_copy.begin() + maxElementIndex);
 	if (vector_sub_copy.size() < 1) {
 		vector_sub_copy = vector_sub;
 	}
 	if (currentSubNo > 1) {
-		videoPlayer.setPosition((sub[currentSubNo - 2]->getEndTime() + ((sub[currentSubNo - 1]->getStartTime() - sub[currentSubNo - 2]->getEndTime()) / 2)) / videoPlayer.getDuration() / 1000);
+		videoPlayer.setPosition((sub[currentSubNo - 2.]->getEndTime() + ((sub[currentSubNo - 1.]->getStartTime() - sub[currentSubNo - 2.]->getEndTime()) / 2.)) / videoPlayer.getDuration() / 1000);
 	}
 	else {
 		videoPlayer.setPosition(0);
