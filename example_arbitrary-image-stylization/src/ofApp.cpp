@@ -18,7 +18,7 @@ void ofApp::setup() {
 	model.setup({ {"serving_default_placeholder"} ,{"serving_default_placeholder_1"} }, { {"StatefulPartitionedCall"} });
 	input = cppflow::decode_jpeg(cppflow::read_file(std::string(ofToDataPath("wave.jpg"))));
 	input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
-    input = input / 255.f;
+	input = cppflow::div(input, cppflow::tensor({ 255.f }));
 	input = cppflow::expand_dims(input, 0);
 }
 
@@ -29,7 +29,7 @@ void ofApp::update() {
 		ofPixels& pixels = videoPlayer.getPixels();
 		input2 = ofxTF2::pixelsToTensor(pixels);
 		input2 = cppflow::cast(input2, TF_UINT8, TF_FLOAT);
-		input2 = input2 / 255.f;
+		input2 = cppflow::div(input2, cppflow::tensor({ 255.f }));
 		input2 = cppflow::expand_dims(input2, 0);
 		std::vector<cppflow::tensor> vectorOfInputTensors = {
 		 input2, input
