@@ -26,8 +26,7 @@ void ofApp::setup() {
 void ofApp::update() {
 	videoPlayer.update();
 	if (videoPlayer.isFrameNew()) {
-		ofPixels& pixels = videoPlayer.getPixels();
-		input2 = ofxTF2::pixelsToTensor(pixels);
+		input2 = ofxTF2::pixelsToTensor(videoPlayer.getPixels());
 		input2 = cppflow::cast(input2, TF_UINT8, TF_FLOAT);
 		input2 = cppflow::div(input2, cppflow::tensor({ 255.f }));
 		input2 = cppflow::expand_dims(input2, 0);
