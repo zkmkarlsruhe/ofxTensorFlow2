@@ -17,9 +17,10 @@ void ofApp::setup() {
 	}
 	model.setup({ {"serving_default_placeholder"} ,{"serving_default_placeholder_1"} }, { {"StatefulPartitionedCall"} });
 	input = cppflow::decode_jpeg(cppflow::read_file(std::string(ofToDataPath("wave.jpg"))));
+	input = cppflow::expand_dims(input, 0);
+	input = cppflow::resize_bicubic(input, cppflow::tensor({ 256, 256 }), true);
 	input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
 	input = cppflow::div(input, cppflow::tensor({ 255.f }));
-	input = cppflow::expand_dims(input, 0);
 }
 
 //--------------------------------------------------------------
@@ -27,13 +28,13 @@ void ofApp::update() {
 	videoPlayer.update();
 	if (videoPlayer.isFrameNew()) {
 		input2 = ofxTF2::pixelsToTensor(videoPlayer.getPixels());
+		input2 = cppflow::expand_dims(input2, 0);
 		input2 = cppflow::cast(input2, TF_UINT8, TF_FLOAT);
 		input2 = cppflow::div(input2, cppflow::tensor({ 255.f }));
-		input2 = cppflow::expand_dims(input2, 0);
 		std::vector<cppflow::tensor> vectorOfInputTensors = {
 			input2, input
 		};
-		auto output = model.runMultiModel(vectorOfInputTensors);
+		output = model.runMultiModel(vectorOfInputTensors);
 		shape = ofxTF2::getTensorShape(output[0]);
 		imgOut.allocate(shape[2], shape[1], OF_IMAGE_COLOR);
 		ofxTF2::tensorToImage(output[0], imgOut);
