@@ -32,7 +32,7 @@ void ofApp::update() {
 		input2 = cppflow::div(input2, cppflow::tensor({ 255.f }));
 		input2 = cppflow::expand_dims(input2, 0);
 		std::vector<cppflow::tensor> vectorOfInputTensors = {
-		 input2, input
+			input2, input
 		};
 		auto output = model.runMultiModel(vectorOfInputTensors);
 		shape = ofxTF2::getTensorShape(output[0]);
