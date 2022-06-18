@@ -24,6 +24,8 @@ class ofApp : public ofBaseApp {
 		
 		ofxTF2::Model model;
 		cppflow::tensor input;
+		cppflow::tensor input2;
+		std::vector<cppflow::tensor> output;
 		ofVideoPlayer videoPlayer;
 		ofFloatImage imgOut;
 		std::vector<int64_t> shape;
