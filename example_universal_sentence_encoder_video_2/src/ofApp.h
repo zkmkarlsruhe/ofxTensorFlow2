@@ -26,9 +26,9 @@ class ofApp : public ofBaseApp {
 		ofVideoPlayer videoPlayer;
 		ofxTF2::Model model;
 		std::vector<SubtitleItem*> sub;
-		std::vector<std::pair<cppflow::tensor, std::pair<int, int>>> vector_sub;
-		std::vector<std::pair<cppflow::tensor, std::pair<int, int>>> vector_sub_copy;
-		cppflow::tensor currentVector;
+		std::vector<std::pair<std::vector<double>, std::pair<int, int>>> vector_sub;
+		std::vector<std::pair<std::vector<double>, std::pair<int, int>>> vector_sub_copy;
+		std::vector<double> currentVector;
 		int currentSubNo;
 		int currentSubLenght;
 		std::string show;
