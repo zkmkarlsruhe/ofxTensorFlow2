@@ -30,7 +30,8 @@ void ofApp::setup() {
 			std::string currentDialogue = ofJoinString(dialogue, " ");
 			dialogue.clear();
 			tensor = model.runModel(cppflow::reshape(cppflow::tensor(currentDialogue), { -1 }));
-			vector_sub.push_back(std::make_pair(tensor, std::make_pair(element->getSubNo() - counter, counter)));
+			ofxTF2::tensorToVector(tensor, vec);
+			vector_sub.push_back(std::make_pair(vec, std::make_pair(element->getSubNo() - counter, counter)));
 			counter = -1;
 		}
 		counter++;
@@ -49,10 +50,12 @@ void ofApp::update() {
 	videoPlayer.update();
 	if (sub[currentSubNo - 1. + currentSubLenght]->getEndTime() + ((sub[currentSubNo + currentSubLenght]->getStartTime() - sub[currentSubNo - 1. + currentSubLenght]->getEndTime()) / 2.) < videoPlayer.getPosition() * videoPlayer.getDuration() * 1000 ||  videoPlayer.getIsMovieDone()) {
 		std::vector<double> cosine;
-		std::vector<double> vec;
 		for (int x = 0; x < vector_sub_copy.size(); x++) {
-			ofxTF2::tensorToVector(cppflow::sum(currentVector * vector_sub_copy[x].first, 1), vec);
-			cosine.push_back(vec[0]);
+			double cosine_similarity = 0;
+			for (int i = 0; i < vector_sub_copy[x].first.size(); i++) {
+				cosine_similarity += currentVector[i] * vector_sub_copy[x].first[i];
+			}
+			cosine.push_back(cosine_similarity);
 		}
 		int maxElementIndex = std::max_element(cosine.begin(), cosine.end()) - cosine.begin();
 		double maxElement = *std::max_element(cosine.begin(), cosine.end());
@@ -88,10 +91,12 @@ void ofApp::draw() {
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
 	std::vector<double> cosine;
-	std::vector<double> vec;
 	for (int x = 0; x < vector_sub_copy.size(); x++) {
-		ofxTF2::tensorToVector(cppflow::sum(currentVector * vector_sub_copy[x].first, 1), vec);
-		cosine.push_back(vec[0]);
+		double cosine_similarity = 0;
+		for (int i = 0; i < vector_sub_copy[x].first.size(); i++) {
+			cosine_similarity += currentVector[i] * vector_sub_copy[x].first[i];
+		}
+		cosine.push_back(cosine_similarity);
 	}
 	int maxElementIndex = std::max_element(cosine.begin(), cosine.end()) - cosine.begin();
 	double maxElement = *std::max_element(cosine.begin(), cosine.end());
