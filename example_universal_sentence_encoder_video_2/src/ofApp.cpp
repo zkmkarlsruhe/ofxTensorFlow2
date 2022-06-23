@@ -51,7 +51,7 @@ void ofApp::update() {
 		std::vector<double> cosine;
 		std::vector<double> vec;
 		for (int x = 0; x < vector_sub_copy.size(); x++) {
-			ofxTF2::tensorToVector(cppflow::sum(cppflow::mul(currentVector, vector_sub_copy[x].first), 1), vec);
+			ofxTF2::tensorToVector(cppflow::sum(currentVector * vector_sub_copy[x].first, 1), vec);
 			cosine.push_back(vec[0]);
 		}
 		int maxElementIndex = std::max_element(cosine.begin(), cosine.end()) - cosine.begin();
@@ -90,7 +90,7 @@ void ofApp::keyPressed(int key) {
 	std::vector<double> cosine;
 	std::vector<double> vec;
 	for (int x = 0; x < vector_sub_copy.size(); x++) {
-		ofxTF2::tensorToVector(cppflow::sum(cppflow::mul(currentVector, vector_sub_copy[x].first), 1), vec);
+		ofxTF2::tensorToVector(cppflow::sum(currentVector * vector_sub_copy[x].first, 1), vec);
 		cosine.push_back(vec[0]);
 	}
 	int maxElementIndex = std::max_element(cosine.begin(), cosine.end()) - cosine.begin();
