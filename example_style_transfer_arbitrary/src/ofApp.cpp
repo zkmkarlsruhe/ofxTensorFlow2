@@ -5,7 +5,8 @@ void ofApp::setup() {
 	ofSetFrameRate(60);
 	ofSetVerticalSync(true);
 	ofSetWindowTitle(ofToString(ofGetFrameRate()));
-	videoPlayer.load("Frenzy.mp4");
+	videoPlayer.load("Godard.mp4");
+	imgOut.allocate(videoPlayer.getWidth(), videoPlayer.getHeight(), OF_IMAGE_COLOR);
 	videoPlayer.play();
 
 	if (!ofxTF2::setGPUMaxMemory(ofxTF2::GPU_PERCENT_70, true)) {
@@ -16,13 +17,13 @@ void ofApp::setup() {
 		std::exit(EXIT_FAILURE);
 	}
 	model.setup({ {"serving_default_placeholder"} ,{"serving_default_placeholder_1"} }, { {"StatefulPartitionedCall"} });
-	
+
 	// load style image
 	style = cppflow::decode_jpeg(cppflow::read_file(std::string(ofToDataPath("wave.jpg"))));
 	style = cppflow::expand_dims(style, 0);
 	style = cppflow::resize_bicubic(style, cppflow::tensor({ 256, 256 }), true);
 	style = cppflow::cast(style, TF_UINT8, TF_FLOAT);
-	style = cppflow::div(style, cppflow::tensor({ 255.f }));
+	style = cppflow::mul(style, cppflow::tensor({ 1.0f / 255.f }));
 }
 
 //--------------------------------------------------------------
@@ -32,11 +33,13 @@ void ofApp::update() {
 		input = ofxTF2::pixelsToTensor(videoPlayer.getPixels());
 		input = cppflow::expand_dims(input, 0);
 		input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
-		input = cppflow::div(input, cppflow::tensor({ 255.f }));
-		inputVector = {input, style};
+		input = cppflow::mul(input, cppflow::tensor({ 1.0f / 255.f }));
+		inputVector = {
+			input, style
+		};
 		output = model.runMultiModel(inputVector);
-		shape = ofxTF2::getTensorShape(output[0]);
-		imgOut.allocate(shape[2], shape[1], OF_IMAGE_COLOR);
+		// shape = ofxTF2::getTensorShape(output[0]);
+		// imgOut.allocate(shape[2], shape[1], OF_IMAGE_COLOR);
 		ofxTF2::tensorToImage(output[0], imgOut);
 		imgOut.update();
 	}
@@ -44,7 +47,7 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-	imgOut.draw(0, 0, shape[2], shape[1]);
+	imgOut.draw(0, 0, videoPlayer.getWidth(), videoPlayer.getHeight());
 }
 
 //--------------------------------------------------------------
