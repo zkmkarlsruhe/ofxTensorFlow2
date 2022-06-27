@@ -4,10 +4,11 @@
 void ofApp::setup() {
 	ofSetFrameRate(10);
 	ofSetVerticalSync(true);
-	ofSetWindowTitle(ofToString(ofGetFrameRate()));
+	ofSetWindowTitle("example_style_transfer_arbitrary");
+
 	videoPlayer.load("Frenzy.mp4");
-	imgOut.allocate(480, 360, OF_IMAGE_COLOR);
 	videoPlayer.play();
+	imgOut.allocate(480, 360, OF_IMAGE_COLOR);
 
 	if (!ofxTF2::setGPUMaxMemory(ofxTF2::GPU_PERCENT_70, true)) {
 		ofLogError() << "failed to set GPU Memory options!";
