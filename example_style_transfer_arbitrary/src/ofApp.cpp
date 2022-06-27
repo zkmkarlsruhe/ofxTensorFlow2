@@ -24,6 +24,7 @@ void ofApp::setup() {
 	style = cppflow::resize_bicubic(style, cppflow::tensor({ 256, 256 }), true);
 	style = cppflow::cast(style, TF_UINT8, TF_FLOAT);
 	style = cppflow::mul(style, cppflow::tensor({ 1.0f / 255.f }));
+	inputVector = { style, style };
 }
 
 //--------------------------------------------------------------
@@ -34,9 +35,7 @@ void ofApp::update() {
 		input = cppflow::expand_dims(input, 0);
 		input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
 		input = cppflow::mul(input, cppflow::tensor({ 1.0f / 255.f }));
-		inputVector = {
-			input, style
-		};
+		inputVector[0] = input;
 		output = model.runMultiModel(inputVector);
 		// shape = ofxTF2::getTensorShape(output[0]);
 		// imgOut.allocate(shape[2], shape[1], OF_IMAGE_COLOR);
