@@ -31,9 +31,7 @@ void ofApp::update() {
 		input = cppflow::expand_dims(input, 0);
 		input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
 		input = cppflow::div(input, cppflow::tensor({ 255.f }));
-		inputVector = {
-			input, style
-		};
+		inputVector = {input, style};
 		output = model.runMultiModel(inputVector);
 		shape = ofxTF2::getTensorShape(output[0]);
 		imgOut.allocate(shape[2], shape[1], OF_IMAGE_COLOR);
