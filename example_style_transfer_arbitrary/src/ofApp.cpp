@@ -45,7 +45,7 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-	imgOut.draw(0, 0, videoPlayer.getWidth(), videoPlayer.getHeight());
+	imgOut.draw(0, 0);
 }
 
 //--------------------------------------------------------------
