@@ -30,5 +30,4 @@ public:
 	ofVideoPlayer videoPlayer;
 	ofFloatPixels floatPixels;
 	ofFloatImage imgOut;
-	std::vector<int64_t> shape;
 };

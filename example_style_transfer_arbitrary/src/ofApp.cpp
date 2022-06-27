@@ -5,8 +5,8 @@ void ofApp::setup() {
 	ofSetFrameRate(10);
 	ofSetVerticalSync(true);
 	ofSetWindowTitle(ofToString(ofGetFrameRate()));
-	videoPlayer.load("Godard.mp4");
-	imgOut.allocate(videoPlayer.getWidth(), videoPlayer.getHeight(), OF_IMAGE_COLOR);
+	videoPlayer.load("Frenzy.mp4");
+	imgOut.allocate(480, 360, OF_IMAGE_COLOR);
 	videoPlayer.play();
 
 	if (!ofxTF2::setGPUMaxMemory(ofxTF2::GPU_PERCENT_70, true)) {
@@ -34,10 +34,9 @@ void ofApp::update() {
 		videoPlayer.getTexture().readToPixels(floatPixels);
 		input = ofxTF2::pixelsToTensor(floatPixels);
 		input = cppflow::expand_dims(input, 0);
+		input = cppflow::resize_bicubic(input, cppflow::tensor({ 360, 480 }), true);
 		inputVector[0] = input;
 		output = model.runMultiModel(inputVector);
-		// shape = ofxTF2::getTensorShape(output[0]);
-		// imgOut.allocate(shape[2], shape[1], OF_IMAGE_COLOR);
 		ofxTF2::tensorToImage(output[0], imgOut);
 		imgOut.update();
 	}
@@ -45,7 +44,7 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-	imgOut.draw(0, 0);
+	imgOut.draw(10, 10);
 }
 
 //--------------------------------------------------------------
