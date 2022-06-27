@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
-	ofSetFrameRate(60);
+	ofSetFrameRate(10);
 	ofSetVerticalSync(true);
 	ofSetWindowTitle(ofToString(ofGetFrameRate()));
 	videoPlayer.load("Godard.mp4");
@@ -16,7 +16,7 @@ void ofApp::setup() {
 	if (!model.load("model")) {
 		std::exit(EXIT_FAILURE);
 	}
-	model.setup({ {"serving_default_placeholder"} ,{"serving_default_placeholder_1"} }, { {"StatefulPartitionedCall"} });
+	model.setup({ {"serving_default_placeholder"} ,{"serving_default_placeholder_1"} },  {"StatefulPartitionedCall"} );
 
 	// load style image
 	style = cppflow::decode_jpeg(cppflow::read_file(std::string(ofToDataPath("wave.jpg"))));
@@ -31,10 +31,9 @@ void ofApp::setup() {
 void ofApp::update() {
 	videoPlayer.update();
 	if (videoPlayer.isFrameNew()) {
-		input = ofxTF2::pixelsToTensor(videoPlayer.getPixels());
+		videoPlayer.getTexture().readToPixels(floatPixels);
+		input = ofxTF2::pixelsToTensor(floatPixels);
 		input = cppflow::expand_dims(input, 0);
-		input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
-		input = cppflow::mul(input, cppflow::tensor({ 1.0f / 255.f }));
 		inputVector[0] = input;
 		output = model.runMultiModel(inputVector);
 		// shape = ofxTF2::getTensorShape(output[0]);

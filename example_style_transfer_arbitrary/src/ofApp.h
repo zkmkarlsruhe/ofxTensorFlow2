@@ -28,7 +28,7 @@ public:
 	std::vector<cppflow::tensor> inputVector;
 	std::vector<cppflow::tensor> output;
 	ofVideoPlayer videoPlayer;
+	ofFloatPixels floatPixels;
 	ofFloatImage imgOut;
 	std::vector<int64_t> shape;
-	ofImage img;
 };
