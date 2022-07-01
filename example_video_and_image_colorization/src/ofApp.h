@@ -37,6 +37,7 @@ public:
 	ofImage imgIn;
 #endif
 
+	cv::Mat imgMat;
 	ofFloatImage imgOut;
 	int width;
 	int height;

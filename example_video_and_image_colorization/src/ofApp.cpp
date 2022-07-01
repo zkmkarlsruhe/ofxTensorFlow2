@@ -1,6 +1,4 @@
 #include "ofApp.h"
-using namespace cv;
-using namespace ofxCv;
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -33,19 +31,18 @@ void ofApp::setup() {
 	input = ofxTF2::pixelsToTensor(imgIn.getPixels().getChannel(0));
 	input = cppflow::expand_dims(input, 0);
 	input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
-	input = cppflow::div(input, cppflow::tensor({ 255.f }));
-	input = cppflow::mul(input, cppflow::tensor({ 100.f }));
+	input = cppflow::div(input, cppflow::tensor({ 255.f / 100.f }));
 	input_resized = cppflow::resize_bicubic(input, cppflow::tensor({ 256, 256 }), true);
 
 	output = model.runModel(input_resized);
 	output = cppflow::cast(output, TF_UINT8, TF_FLOAT);
-	output = cppflow::mul(output, cppflow::tensor({ 255.f }));
+	output = cppflow::div(output, cppflow::tensor({ 1.f / 255.f }));
 	output = cppflow::resize_bicubic(output, cppflow::tensor({ height, width }), true);
 	vectorOfInputTensors = { input, output };
 	output = cppflow::concat(cppflow::tensor({ 3 }), vectorOfInputTensors);
 	ofxTF2::tensorToImage(output, imgOut);
-	Mat imgMat = toCv(imgOut);
-	cvtColor(imgMat, imgMat, CV_Lab2RGB);
+	imgMat = ofxCv::toCv(imgOut);
+	cv::cvtColor(imgMat, imgMat, CV_Lab2RGB);
 	imgOut.update();
 	imgOut.save("wald_colorized.jpg");
 #endif
@@ -59,19 +56,18 @@ void ofApp::update() {
 		input = ofxTF2::pixelsToTensor(videoPlayer.getPixels().getChannel(0));
 		input = cppflow::expand_dims(input, 0);
 		input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
-		input = cppflow::div(input, cppflow::tensor({ 255.f }));
-		input = cppflow::mul(input, cppflow::tensor({ 100.f }));
+		input = cppflow::div(input, cppflow::tensor({ 255.f / 100.f }));
 		input_resized = cppflow::resize_bicubic(input, cppflow::tensor({ 256, 256 }), true);
 
 		output = model.runModel(input_resized);
 		output = cppflow::cast(output, TF_UINT8, TF_FLOAT);
-		output = cppflow::mul(output, cppflow::tensor({ 255.f }));
+		output = cppflow::div(output, cppflow::tensor({ 1.f / 255.f }));
 		output = cppflow::resize_bicubic(output, cppflow::tensor({ height, width }), true);
 		vectorOfInputTensors = { input, output };
 		output = cppflow::concat(cppflow::tensor({ 3 }), vectorOfInputTensors);	
 		ofxTF2::tensorToImage(output, imgOut);
-		Mat imgMat = toCv(imgOut);
-		cvtColor(imgMat, imgMat, CV_Lab2RGB);
+		imgMat = ofxCv::toCv(imgOut);
+		cv::cvtColor(imgMat, imgMat, CV_Lab2RGB);
 		imgOut.update();
 	}
 #endif
