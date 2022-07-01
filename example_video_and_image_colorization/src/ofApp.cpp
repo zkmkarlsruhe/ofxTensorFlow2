@@ -47,6 +47,7 @@ void ofApp::setup() {
 	Mat imgMat = toCv(imgOut);
 	cvtColor(imgMat, imgMat, CV_Lab2RGB);
 	imgOut.update();
+	imgOut.save("wald_colorized.jpg");
 #endif
 }
 
