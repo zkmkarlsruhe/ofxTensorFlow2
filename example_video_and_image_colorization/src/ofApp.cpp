@@ -13,7 +13,6 @@ void ofApp::setup() {
 	if (!model.load("model")) {
 		std::exit(EXIT_FAILURE);
 	}
-
 	model.setup({ "serving_default_input_1" }, { "StatefulPartitionedCall" });
 
 #ifdef USE_VIDEO
