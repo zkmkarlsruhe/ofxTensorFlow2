@@ -34,7 +34,6 @@ void ofApp::setup() {
 	input_resized = cppflow::resize_bicubic(input, cppflow::tensor({ 256, 256 }), true);
 
 	output = model.runModel(input_resized);
-	output = cppflow::cast(output, TF_UINT8, TF_FLOAT);
 	output = cppflow::div(output, cppflow::tensor({ 1.f / 255.f }));
 	output = cppflow::resize_bicubic(output, cppflow::tensor({ height, width }), true);
 	vectorOfInputTensors = { input, output };
