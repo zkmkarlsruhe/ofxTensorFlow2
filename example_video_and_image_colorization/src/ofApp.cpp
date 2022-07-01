@@ -6,7 +6,7 @@ using namespace ofxCv;
 void ofApp::setup() {
 	ofSetFrameRate(60);
 	ofSetVerticalSync(true);
-	ofSetWindowTitle(ofToString(ofGetFrameRate()));
+	ofSetWindowTitle("example_video_and_image_colorization");
 
 	if (!ofxTF2::setGPUMaxMemory(ofxTF2::GPU_PERCENT_70, true)) {
 		ofLogError() << "failed to set GPU Memory options!";
