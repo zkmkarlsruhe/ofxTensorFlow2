@@ -10,7 +10,6 @@ void ofApp::setup() {
 		ofLogError() << "failed to set GPU Memory options!";
 	}
 
-	// load first model, bail out on error
 	if (!model.load("model")) {
 		std::exit(EXIT_FAILURE);
 	}
