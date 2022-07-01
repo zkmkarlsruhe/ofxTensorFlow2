@@ -42,7 +42,7 @@ void ofApp::setup() {
 	output = cppflow::mul(output, cppflow::tensor({ 255.f }));
 	output = cppflow::resize_bicubic(output, cppflow::tensor({ height, width }), true);
 	vectorOfInputTensors = { input, output };
-	output = cppflow::concat(cppflow::tensor({ 3 }), vectorOfInputTensors1);
+	output = cppflow::concat(cppflow::tensor({ 3 }), vectorOfInputTensors);
 	ofxTF2::tensorToImage(output, imgOut);
 	Mat imgMat = toCv(imgOut);
 	cvtColor(imgMat, imgMat, CV_Lab2RGB);
@@ -67,8 +67,8 @@ void ofApp::update() {
 		output = cppflow::cast(output, TF_UINT8, TF_FLOAT);
 		output = cppflow::mul(output, cppflow::tensor({ 255.f }));
 		output = cppflow::resize_bicubic(output, cppflow::tensor({ height, width }), true);
-		vectorOfInputTensors1 = { input, output };
-		output = cppflow::concat(cppflow::tensor({ 3 }), vectorOfInputTensors1);	
+		vectorOfInputTensors = { input, output };
+		output = cppflow::concat(cppflow::tensor({ 3 }), vectorOfInputTensors);	
 		ofxTF2::tensorToImage(output, imgOut);
 		Mat imgMat = toCv(imgOut);
 		cvtColor(imgMat, imgMat, CV_Lab2RGB);
