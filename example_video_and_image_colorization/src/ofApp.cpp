@@ -41,7 +41,7 @@ void ofApp::setup() {
 	output = cppflow::cast(output, TF_UINT8, TF_FLOAT);
 	output = cppflow::mul(output, cppflow::tensor({ 255.f }));
 	output = cppflow::resize_bicubic(output, cppflow::tensor({ height, width }), true);
-	std::vector<cppflow::tensor> vectorOfInputTensors1 = { input, output };
+	vectorOfInputTensors = { input, output };
 	output = cppflow::concat(cppflow::tensor({ 3 }), vectorOfInputTensors1);
 	ofxTF2::tensorToImage(output, imgOut);
 	Mat imgMat = toCv(imgOut);
@@ -67,7 +67,7 @@ void ofApp::update() {
 		output = cppflow::cast(output, TF_UINT8, TF_FLOAT);
 		output = cppflow::mul(output, cppflow::tensor({ 255.f }));
 		output = cppflow::resize_bicubic(output, cppflow::tensor({ height, width }), true);
-		std::vector<cppflow::tensor> vectorOfInputTensors1 = { input, output };
+		vectorOfInputTensors1 = { input, output };
 		output = cppflow::concat(cppflow::tensor({ 3 }), vectorOfInputTensors1);	
 		ofxTF2::tensorToImage(output, imgOut);
 		Mat imgMat = toCv(imgOut);

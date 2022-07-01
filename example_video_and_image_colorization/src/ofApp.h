@@ -29,6 +29,7 @@ public:
 	cppflow::tensor input;
 	cppflow::tensor input_resized;
 	cppflow::tensor output;
+	std::vector<cppflow::tensor> vectorOfInputTensors;
 
 #ifdef USE_VIDEO
 	ofVideoPlayer videoPlayer;
