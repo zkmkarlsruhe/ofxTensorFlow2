@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void ofApp::setup() {
 	ofBuffer buffer = ofBufferFromFile("cocoClasses.txt");
-	for (auto line : buffer.getLines()) {
+	for (auto& line : buffer.getLines()) {
 		cocoClasses.push_back(line);
 	}
 	ofSetFrameRate(60);
@@ -21,7 +21,7 @@ void ofApp::setup() {
 	model.setup({ "serving_default_input_1" }, { "StatefulPartitionedCall" });
 
 #ifdef USE_VIDEO
-	videoPlayer.load("Godard.mp4");
+	videoPlayer.load("Frenzy.mp4");
 	videoPlayer.play();
 #else
 	imgIn.load("eisenstein.jpg");
@@ -35,13 +35,13 @@ void ofApp::setup() {
 	ofxTF2::tensorToVector(output, vec);
 	std::vector<std::vector<float>> boundings;
 	for (int i = 0; i < vec.size() / 84; i++) {
-		vector<float>::const_iterator first = vec.begin() + 84. * i;
-		vector<float>::const_iterator last = vec.begin() + 84. * i + 4;
-		vector<float> newVec(first, last);
+		first = vec.begin() + 84. * i;
+		last = vec.begin() + 84. * i + 4;
+		std::vector<float> newVec(first, last);
 		boundings.push_back(newVec);
-		vector<float>::const_iterator first1 = vec.begin() + 84. * i + 4;
-		vector<float>::const_iterator last1 = vec.begin() + 84. * i + 84;
-		vector<float> newVecId(first1, last1);
+		first = vec.begin() + 84. * i + 4;
+		last = vec.begin() + 84. * i + 84;
+		vector<float> newVecId(first, last);
 		int maxElementIndex = max_element(newVecId.begin(), newVecId.end()) - newVecId.begin();
 		float maxElement = *max_element(newVecId.begin(), newVecId.end());
 		id.push_back(std::make_pair(maxElementIndex, maxElement));
@@ -66,13 +66,13 @@ void ofApp::update() {
 		ofxTF2::tensorToVector(output, vec);
 		std::vector<std::vector<float>> boundings;
 		for (int i = 0; i < vec.size() / 84; i++) {
-			vector<float>::const_iterator first = vec.begin() + 84. * i;
-			vector<float>::const_iterator last = vec.begin() + 84. * i + 4;
-			vector<float> newVec(first, last);
+			first = vec.begin() + 84. * i;
+			last = vec.begin() + 84. * i + 4;
+			std::vector<float> newVec(first, last);
 			boundings.push_back(newVec);
-			vector<float>::const_iterator first1 = vec.begin() + 84. * i + 4;
-			vector<float>::const_iterator last1 = vec.begin() + 84. * i + 84;
-			vector<float> newVecId(first1, last1);
+			first = vec.begin() + 84. * i + 4;
+			last = vec.begin() + 84. * i + 84;
+			std::vector<float> newVecId(first, last);
 			int maxElementIndex = max_element(newVecId.begin(), newVecId.end()) - newVecId.begin();
 			float maxElement = *max_element(newVecId.begin(), newVecId.end());
 			id.push_back(std::make_pair(maxElementIndex, maxElement));
@@ -94,7 +94,7 @@ void ofApp::draw() {
 	for (int i = 0; i < rectangles.size(); i++){
 		if (id[rectangles[i].second].second > 0.2) {
 			ofDrawRectangle(rectangles[i].first[1] * 480 + 20, rectangles[i].first[0] * 360 + 20, rectangles[i].first[3] * 480 - rectangles[i].first[1] * 480, rectangles[i].first[2] * 360 - rectangles[i].first[0] * 360);
-			ofDrawBitmapString("id: " + cocoClasses[id[rectangles[i].second].first] + ", prob: " + ofToString(id[rectangles[i].second].second), rectangles[i].first[1] * 480 + 30, rectangles[i].first[0] * 360 + 40);
+			ofDrawBitmapStringHighlight("id: " + cocoClasses[id[rectangles[i].second].first] + ", prob: " + ofToString(id[rectangles[i].second].second), rectangles[i].first[1] * 480 + 30, rectangles[i].first[0] * 360 + 40);
 		}
 	}
 }

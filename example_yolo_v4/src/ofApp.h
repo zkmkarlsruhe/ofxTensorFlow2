@@ -4,7 +4,7 @@
 #include "ofxTensorFlow2.h"
 #include "nms.hpp"
 
-#define USE_VIDEO
+// #define USE_VIDEO
 
 class ofApp : public ofBaseApp {
 
@@ -24,6 +24,7 @@ public:
 	void windowResized(int w, int h);
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
+
 	std::vector<float> vec;
 	ofxTF2::Model model;
 	cppflow::tensor input;
@@ -38,5 +39,7 @@ public:
 
 	std::vector<string> cocoClasses;
 	std::vector<std::pair<std::vector<float>, int>> rectangles;
+	std::vector<float>::const_iterator first;
+	std::vector<float>::const_iterator last;
 	std::vector<std::pair<int, float>> id;
 };
