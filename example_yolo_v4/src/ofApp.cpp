@@ -21,7 +21,7 @@ void ofApp::setup() {
 	model.setup({ "serving_default_input_1" }, { "StatefulPartitionedCall" });
 
 #ifdef USE_VIDEO
-	videoPlayer.load("Frenzy.mp4");
+	videoPlayer.load("Godard.mp4");
 	videoPlayer.play();
 #else
 	imgIn.load("eisenstein.jpg");
