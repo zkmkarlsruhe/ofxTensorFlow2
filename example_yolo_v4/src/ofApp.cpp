@@ -88,10 +88,10 @@ void ofApp::draw() {
 #ifdef USE_VIDEO
 	videoPlayer.draw(20, 20, 480, 360);
 #else
-	imgIn.draw(0, 0, 480, 360);
+	imgIn.draw(20, 20, 480, 360);
 #endif
 	ofSetColor(255,20,20);
-	for (int i = 0; i < rectangles.size(); i++){
+	for (int i = 0; i < rectangles.size(); i++) {
 		if (id[rectangles[i].second].second > 0.2) {
 			ofDrawRectangle(rectangles[i].first[1] * 480 + 20, rectangles[i].first[0] * 360 + 20, rectangles[i].first[3] * 480 - rectangles[i].first[1] * 480, rectangles[i].first[2] * 360 - rectangles[i].first[0] * 360);
 			ofDrawBitmapStringHighlight("id: " + cocoClasses[id[rectangles[i].second].first] + ", prob: " + ofToString(id[rectangles[i].second].second), rectangles[i].first[1] * 480 + 30, rectangles[i].first[0] * 360 + 40);
