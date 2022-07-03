@@ -203,7 +203,7 @@ vector<int> RemoveByIndexes(const vector<int> & vec,
   auto offset = 0;
   
   for (const auto & idx : idxs) {
-    resultVec.erase(resultVec.begin() + idx + offset);
+    resultVec.erase(resultVec.begin() + (idx + offset));
     offset -= 1;
   }
   
