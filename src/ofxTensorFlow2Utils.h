@@ -138,7 +138,7 @@ namespace ofxTF2 {
 
 	template <typename T>
 	cppflow::tensor vectorToTensor(const std::vector<T> & srcVector,
-	                               const shapeVector & shape) {
+								   const shapeVector & shape) {
 		auto shape_ = shape; 
 		// by default and if shape is (0) create a flat vector
 		if(shape == shapeVector{0}) {
@@ -154,6 +154,10 @@ namespace ofxTF2 {
 
 	template <typename T>
 	cppflow::tensor pixelsToTensor(const ofPixels_<T> & pixels) {
+		if(!pixels.isAllocated()) {
+			ofLogError("ofxTensorFlow2") << "pixelsToTensor image unallocated";
+			return cppflow::tensor(-1);
+		}
 		const shape_t w = pixels.getWidth();
 		const shape_t h = pixels.getHeight();
 		shape_t c;
