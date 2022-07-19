@@ -6,11 +6,11 @@ void ofApp::setup() {
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("example_style_transfer_arbitrary");
 
-	videoPlayer.load("Frenzy.mp4");
+	videoPlayer.load("Movie.mp4");
 	videoPlayer.play();
-	imgOut.allocate(480, 360, OF_IMAGE_COLOR);
+	imgOut.allocate(resultWidth, resultHeight, OF_IMAGE_COLOR);
 
-	if (!ofxTF2::setGPUMaxMemory(ofxTF2::GPU_PERCENT_70, true)) {
+	if (!ofxTF2::setGPUMaxMemory(ofxTF2::GPU_PERCENT_90, true)) {
 		ofLogError() << "failed to set GPU Memory options!";
 	}
 	// load first model, bail out on error
@@ -35,7 +35,9 @@ void ofApp::update() {
 		videoPlayer.getTexture().readToPixels(floatPixels);
 		input = ofxTF2::pixelsToTensor(floatPixels);
 		input = cppflow::expand_dims(input, 0);
-		input = cppflow::resize_bicubic(input, cppflow::tensor({ 360, 480 }), true);
+		if (resultHeight != videoPlayer.getHeight() || resultWidth != videoPlayer.getWidth()){
+			input = cppflow::resize_bicubic(input, cppflow::tensor({resultHeight, resultWidth}), true);
+		}
 		inputVector[0] = input;
 		output = model.runMultiModel(inputVector);
 		ofxTF2::tensorToImage(output[0], imgOut);
@@ -45,7 +47,7 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-	imgOut.draw(10, 10);
+	imgOut.draw(0,0);
 }
 
 //--------------------------------------------------------------

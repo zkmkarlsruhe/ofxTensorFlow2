@@ -30,4 +30,7 @@ public:
 	ofVideoPlayer videoPlayer;
 	ofFloatPixels floatPixels;
 	ofFloatImage imgOut;
+
+	int resultWidth = 640;
+	int resultHeight = 480;
 };
