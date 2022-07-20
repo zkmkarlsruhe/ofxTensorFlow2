@@ -1,42 +1,57 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
+cppflow::tensor runInference(cppflow::tensor & input, const ofxTF2::Model & model, int width, int height) {
+	cppflow::tensor inputResized;
+	cppflow::tensor output;
+	std::vector<cppflow::tensor> vectorOfInputTensors;
+	// convert, scale and resize the input
+	input = cppflow::expand_dims(input, 0);
+	input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
+	inputResized = cppflow::mul(input, cppflow::tensor({ 100.f / 255.f }));
+	inputResized = cppflow::resize_bicubic(inputResized, cppflow::tensor({ 256, 256 }), true);
+	// compute, scale and resize the remaining channels
+	output = model.runModel(inputResized);
+	output = cppflow::mul(output, cppflow::tensor({ 255.f }));
+	output = cppflow::resize_bicubic(output, cppflow::tensor({ height, width }), true);
+	// concatenate the computed channels with the input
+	vectorOfInputTensors = { input, output };
+	return cppflow::concat(cppflow::tensor({ 3 }), vectorOfInputTensors);
+}
+
+//--------------------------------------------------------------
 void ofApp::setup() {
 	ofSetFrameRate(60);
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("example_video_and_image_colorization");
 
+	// ofxTF2 setup
 	if (!ofxTF2::setGPUMaxMemory(ofxTF2::GPU_PERCENT_70, true)) {
 		ofLogError() << "failed to set GPU Memory options!";
 	}
-
 	if (!model.load("model")) {
 		std::exit(EXIT_FAILURE);
 	}
 	model.setup({ "serving_default_input_1" }, { "StatefulPartitionedCall" });
 
-#ifdef USE_VIDEO
-	videoPlayer.load("Godard.mp4");
-	imgOut.allocate(videoPlayer.getWidth(), videoPlayer.getHeight(), OF_IMAGE_COLOR);
+#ifdef USE_MOVIE
+	// load video and allocate memory
+	videoPlayer.load("movie2.mp4");
 	width = videoPlayer.getWidth();
 	height = videoPlayer.getHeight();
+	imgOut.allocate(width, height, OF_IMAGE_COLOR);
 	videoPlayer.play();
 #else
+	// load image and allocate memory
 	imgIn.load("wald.jpg");
-	imgOut.allocate(imgIn.getWidth(), imgIn.getHeight(), OF_IMAGE_COLOR);
 	width = imgIn.getWidth();
 	height = imgIn.getHeight();
+	imgOut.allocate(width, height, OF_IMAGE_COLOR);
+	// convert the image to pixels
 	input = ofxTF2::pixelsToTensor(imgIn.getPixels().getChannel(0));
-	input = cppflow::expand_dims(input, 0);
-	input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
-	input = cppflow::div(input, cppflow::tensor({ 255.f / 100.f }));
-	input_resized = cppflow::resize_bicubic(input, cppflow::tensor({ 256, 256 }), true);
-
-	output = model.runModel(input_resized);
-	output = cppflow::div(output, cppflow::tensor({ 1.f / 255.f }));
-	output = cppflow::resize_bicubic(output, cppflow::tensor({ height, width }), true);
-	vectorOfInputTensors = { input, output };
-	output = cppflow::concat(cppflow::tensor({ 3 }), vectorOfInputTensors);
+	// compute the colorized image
+	output = runInference(input, model, width, height);
+	// convert image
 	ofxTF2::tensorToImage(output, imgOut);
 	imgMat = ofxCv::toCv(imgOut);
 	cv::cvtColor(imgMat, imgMat, CV_Lab2RGB);
@@ -47,20 +62,14 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
-#ifdef USE_VIDEO
+#ifdef USE_MOVIE
 	videoPlayer.update();
 	if (videoPlayer.isFrameNew()) {
+		// get new frame
 		input = ofxTF2::pixelsToTensor(videoPlayer.getPixels().getChannel(0));
-		input = cppflow::expand_dims(input, 0);
-		input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
-		input = cppflow::div(input, cppflow::tensor({ 255.f / 100.f }));
-		input_resized = cppflow::resize_bicubic(input, cppflow::tensor({ 256, 256 }), true);
-
-		output = model.runModel(input_resized);
-		output = cppflow::div(output, cppflow::tensor({ 1.f / 255.f }));
-		output = cppflow::resize_bicubic(output, cppflow::tensor({ height, width }), true);
-		vectorOfInputTensors = { input, output };
-		output = cppflow::concat(cppflow::tensor({ 3 }), vectorOfInputTensors);	
+		// compute the colorized image
+		output = runInference(input, model, width, height);
+		// convert image
 		ofxTF2::tensorToImage(output, imgOut);
 		imgMat = ofxCv::toCv(imgOut);
 		cv::cvtColor(imgMat, imgMat, CV_Lab2RGB);

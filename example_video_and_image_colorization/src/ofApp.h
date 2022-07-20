@@ -4,7 +4,7 @@
 #include "ofxTensorFlow2.h"
 #include "ofxCv.h"
 
-// #define USE_VIDEO
+//#define USE_MOVIE
 
 class ofApp : public ofBaseApp {
 
@@ -27,11 +27,9 @@ public:
 
 	ofxTF2::Model model;
 	cppflow::tensor input;
-	cppflow::tensor input_resized;
 	cppflow::tensor output;
-	std::vector<cppflow::tensor> vectorOfInputTensors;
 
-#ifdef USE_VIDEO
+#ifdef USE_MOVIE
 	ofVideoPlayer videoPlayer;
 #else
 	ofImage imgIn;
