@@ -1,6 +1,39 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
+std::vector<std::pair<std::vector<float>, int>> computeBoundingBoxes(cppflow::tensor & input, const ofxTF2::Model & model, std::vector<std::pair<int, float>> & id) {
+	cppflow::tensor output;
+	std::vector<float> vec;
+	std::vector<float>::const_iterator first;
+	std::vector<float>::const_iterator last;
+	cppflow::tensor input_resized;
+
+	// expand, cast, scale and resize the input image
+	input = cppflow::expand_dims(input, 0);
+	input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
+	input = cppflow::mul(input, cppflow::tensor({ 1/255.f }));
+	input_resized = cppflow::resize_bicubic(input, cppflow::tensor({ 416, 416 }), true);
+	// run the model on the input
+	output = model.runModel(input_resized);
+	// compute the bounding boxes and add them to the id array
+	ofxTF2::tensorToVector(output, vec);
+	std::vector<std::vector<float>> boundings;
+	for (int i = 0; i < vec.size() / 84; i++) {
+		first = vec.begin() + 84. * i;
+		last = vec.begin() + 84. * i + 4;;
+		std::vector<float> newVec(first, last);
+		boundings.push_back( newVec );
+		first = vec.begin() + 84. * i + 4;
+		last = vec.begin() + 84. * i + 84;
+		vector<float> newVecId(first, last);
+		int maxElementIndex = max_element(newVecId.begin(), newVecId.end()) - newVecId.begin();
+		float maxElement = *max_element(newVecId.begin(), newVecId.end());
+		id.push_back(std::make_pair(maxElementIndex, maxElement));
+	}
+	return nms(boundings, 0.9);
+}
+
+//--------------------------------------------------------------
 void ofApp::setup() {
 	ofBuffer buffer = ofBufferFromFile("cocoClasses.txt");
 	for (auto& line : buffer.getLines()) {
@@ -11,73 +44,33 @@ void ofApp::setup() {
 	ofSetWindowTitle("example_yolo_v4");
 	ofNoFill();
 
+	// ofxTF2 setup
 	if (!ofxTF2::setGPUMaxMemory(ofxTF2::GPU_PERCENT_70, true)) {
 		ofLogError() << "failed to set GPU Memory options!";
 	}
-
 	if (!model.load("model")) {
 		std::exit(EXIT_FAILURE);
 	}
 	model.setup({ "serving_default_input_1" }, { "StatefulPartitionedCall" });
 
-#ifdef USE_VIDEO
-	videoPlayer.load("Godard.mp4");
+#ifdef USE_MOVIE
+	videoPlayer.load("movie.mp4");
 	videoPlayer.play();
 #else
-	imgIn.load("eisenstein.jpg");
+	imgIn.load("image.jpg");
 	input = ofxTF2::imageToTensor(imgIn);
-	input = cppflow::expand_dims(input, 0);
-	input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
-	input = cppflow::div(input, cppflow::tensor({ 255.f }));
-	input_resized = cppflow::resize_bicubic(input, cppflow::tensor({ 416, 416 }), true);
-
-	output = model.runModel(input_resized);
-	ofxTF2::tensorToVector(output, vec);
-	std::vector<std::vector<float>> boundings;
-	for (int i = 0; i < vec.size() / 84; i++) {
-		first = vec.begin() + 84. * i;
-		last = vec.begin() + 84. * i + 4;
-		std::vector<float> newVec(first, last);
-		boundings.push_back(newVec);
-		first = vec.begin() + 84. * i + 4;
-		last = vec.begin() + 84. * i + 84;
-		vector<float> newVecId(first, last);
-		int maxElementIndex = max_element(newVecId.begin(), newVecId.end()) - newVecId.begin();
-		float maxElement = *max_element(newVecId.begin(), newVecId.end());
-		id.push_back(std::make_pair(maxElementIndex, maxElement));
-	}
-	rectangles = nms(boundings, 0.9);
+	rectangles = computeBoundingBoxes(input, model, id);
 #endif
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
-#ifdef USE_VIDEO
+#ifdef USE_MOVIE
 	videoPlayer.update();
 	if (videoPlayer.isFrameNew()) {
 		id.clear();
 		input = ofxTF2::pixelsToTensor(videoPlayer.getPixels());
-		input = cppflow::expand_dims(input, 0);
-		input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
-		input = cppflow::div(input, cppflow::tensor({ 255.f }));
-		input_resized = cppflow::resize_bicubic(input, cppflow::tensor({ 416, 416 }), true);
-
-		output = model.runModel(input_resized);
-		ofxTF2::tensorToVector(output, vec);
-		std::vector<std::vector<float>> boundings;
-		for (int i = 0; i < vec.size() / 84; i++) {
-			first = vec.begin() + 84. * i;
-			last = vec.begin() + 84. * i + 4;
-			std::vector<float> newVec(first, last);
-			boundings.push_back(newVec);
-			first = vec.begin() + 84. * i + 4;
-			last = vec.begin() + 84. * i + 84;
-			std::vector<float> newVecId(first, last);
-			int maxElementIndex = max_element(newVecId.begin(), newVecId.end()) - newVecId.begin();
-			float maxElement = *max_element(newVecId.begin(), newVecId.end());
-			id.push_back(std::make_pair(maxElementIndex, maxElement));
-		}
-		rectangles = nms(boundings, 0.9);
+		rectangles = computeBoundingBoxes(input, model, id);
 	}
 #endif
 }
@@ -85,7 +78,7 @@ void ofApp::update() {
 //--------------------------------------------------------------
 void ofApp::draw() {
 	ofSetColor(255);
-#ifdef USE_VIDEO
+#ifdef USE_MOVIE
 	videoPlayer.draw(20, 20, 480, 360);
 #else
 	imgIn.draw(20, 20, 480, 360);
