@@ -9,6 +9,7 @@ Example made with love by [Jonathhhan](https://github.com/Jonathhhan) 2022.
 
 ###### TODO add image
 
+Video credits to [Videvo](https://www.videvo.net/video/busy-hong-kong-street-at-sunset/7906/)
 
 ### Notes
 The model was trained on the COCO dataset. The dataset consists of 80 everyday classes. Here is an excerpt of things it is able to recognize:
