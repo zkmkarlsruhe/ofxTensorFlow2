@@ -14,19 +14,19 @@ WARRANTIES, see the file, "LICENSE.txt," in this distribution.
 
 Selected examples:
 
-| Style Transfer | Object Recognition | CharRnn (Frozen Graph) |
+| [Style Transfer regular](example_style_transfer) & [arbitrary](example_style_transfer_arbitrary) | [Object Recognition](example_yolo_v4) | [CharRnn (Frozen Graph)](example_basics_frozen_graph) |
 | :--: | :--: | :--: |
 | ![](media/style_transfer.gif) | ![](media/yolo.gif) |  ![](media/charRnn.gif) | 
 
-| Pose Estimation | Pix2Pix | Keyword Spotting |
+| [Pose Estimation](example_movenet) | [Pix2Pix](example_pix2pix) | [Keyword Spotting](example_keyword_spotting) |
 | :--: | :--: | :--: |
 | ![](media/movenet.gif) | ![](media/pix2pix.gif) | ![](media/keyword_spotting.gif)  |
 
-| Image Colorization |
+| [Image Colorization](example_image_colorization) |
 | :--: |
 | ![](media/image_colorization.gif) |
 
-| Video Matting |
+| [Video Matting](example_video_matting) |
 | :--: |
 | ![](media/video_matting.gif) | 
 
