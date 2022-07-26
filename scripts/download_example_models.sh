@@ -24,11 +24,14 @@ model_basics_multi_IO.zip \
 model_basics_frozen_graph.zip \
 model_effnet.zip \
 models_char_rnn.zip \
-model_keywordspotting.zip \
+model_video_matting.zip \
+model_image_colorization.zip \
 model_multi_pose.zip \
 model_pix2pix_edges2shoes_20epochs.zip \
 models_style_transfer_640x480.zip \
+model_style_transfer_arbitrary.zip \
 model_video_matting.zip \
+model_yolo_v4.zip \
 "
 
 # download target(s)
@@ -133,6 +136,17 @@ if [ -f models_char_rnn.zip ] ; then
 	mv -v models "$DEST"/example_frozen_graph_char_rnn/bin/data
 fi
 
+# example_image_colorization
+if [ -f model_image_colorization.zip ] ; then
+	unzip model_image_colorization.zip
+	rm -rf "$DEST"/example_image_colorization/bin/data/model
+	rm -rf "$DEST"/example_image_colorization/bin/data/wald.jpg
+	rm -rf "$DEST"/example_image_colorization/bin/data/sunset_baw.mp4
+	mv -v model "$DEST"/example_image_colorization/bin/data
+	mv -v sunset_baw.mp4 "$DEST"/example_image_colorization/bin/data
+	mv -v wald.jpg "$DEST"/example_image_colorization/bin/data
+fi
+
 # example_keyword_spotting
 if [ -f model_keywordspotting.zip ] ; then
 	unzip model_keywordspotting.zip
@@ -161,6 +175,17 @@ if [ -f models_style_transfer_640x480.zip ] ; then
 	mv -v models "$DEST"/example_style_transfer/bin/data
 fi
 
+# example_style_transfer_arbitrary
+if [ -f model_style_transfer_arbitrary.zip ] ; then
+	unzip model_style_transfer_arbitrary.zip
+	rm -rf "$DEST"/example_style_transfer_arbitrary/bin/data/model
+	rm -rf "$DEST"/example_style_transfer_arbitrary/bin/data/Movie.mp4
+	rm -rf "$DEST"/example_style_transfer_arbitrary/bin/data/wave.jpg
+	mv -v model "$DEST"/example_style_transfer_arbitrary/bin/data
+	mv -v Movie.mp4 "$DEST"/example_style_transfer_arbitrary/bin/data
+	mv -v wave.jpg "$DEST"/example_style_transfer_arbitrary/bin/data
+fi
+
 # example_video_matting
 if [ -f model_video_matting.zip ] ; then
 	unzip model_video_matting.zip
@@ -170,6 +195,15 @@ if [ -f model_video_matting.zip ] ; then
 	mv -v model "$DEST"/example_video_matting/bin/data
 	mv -v codylexi.mp4 "$DEST"/example_video_matting/bin/data
 	mv -v bg.jpg "$DEST"/example_video_matting/bin/data
+fi
+
+# example_yolo_v4
+if [ -f model_yolo_v4.zip ] ; then
+	unzip model_yolo_v4.zip
+	rm -rf "$DEST"/example_yolo_v4/bin/data/model
+	rm -rf "$DEST"/example_yolo_v4/bin/data/movie.mp4
+	mv -v model "$DEST"/example_yolo_v4/bin/data
+	mv -v movie.mp4 "$DEST"/example_yolo_v4/bin/data
 fi
 
 # cleanup
