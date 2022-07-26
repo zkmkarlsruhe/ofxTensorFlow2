@@ -1,11 +1,13 @@
 # Realtime Arbitrary Style Transfer
 This is an example for realtime Arbitrary Image Stylization over a video using [Magenta's arbitrary-image-stylization model](https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/2).
 Other than in the regular Image Stylization this model is not trained on one specific style, but can apply any style given by a style image.
-##### TODO add GIF
 
+##### TODO add GIF
 
 Example made with love by Jonathhhan 2022  
 https://github.com/Jonathhhan
+
+Video available at this [Google Drive](https://drive.google.com/drive/folders/1VFnWwuu-YXDKG-N6vcjK_nL7YZMFapMU)
 
 
 ### TensorFlow2
