@@ -1,9 +1,11 @@
 # Image Colorization
 This is an example of realtime image colorization.
 
-Example made with love by [Jonathhhan](https://github.com/Jonathhhan) 2021  
+Example made with love by [Jonathhhan](https://github.com/Jonathhhan) 2022
+
 https://github.com/Jonathhhan
 
+Video credits to [Videvo](https://www.videvo.net/video/time-lapse-day-to-night-city/2644/)
 
 ### TensorFlow2
 The example uses a pretrained model converted to saved model format from [this repository](https://github.com/EnigmAI/Artistia/tree/main/ImageColorization/trained_models_v2).
