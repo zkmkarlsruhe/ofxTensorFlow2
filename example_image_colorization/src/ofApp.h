@@ -4,7 +4,7 @@
 #include "ofxTensorFlow2.h"
 #include "ofxCv.h"
 
-//#define USE_MOVIE
+#define USE_MOVIE
 
 class ofApp : public ofBaseApp {
 
@@ -31,12 +31,10 @@ public:
 
 #ifdef USE_MOVIE
 	ofVideoPlayer videoPlayer;
-#else
-	ofImage imgIn;
 #endif
 
-	cv::Mat imgMat;
 	ofFloatImage imgOut;
+	ofFloatImage imgIn;
 	int width;
 	int height;
 };

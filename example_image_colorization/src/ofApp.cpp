@@ -1,20 +1,34 @@
 #include "ofApp.h"
 
+
+//--------------------------------------------------------------
+void imageToLAB(ofFloatImage & imgIn){
+	cv::Mat imgMat = ofxCv::toCv(imgIn);
+	if (imgIn.getImageType() == OF_IMAGE_GRAYSCALE) {
+		cv::cvtColor(imgMat, imgMat, CV_GRAY2RGB);
+	}
+	cv::cvtColor(imgMat, imgMat, CV_RGB2Lab);
+}
+
+//--------------------------------------------------------------
+void LABtoImage(ofFloatImage & imgIn){
+	cv::Mat imgMat = ofxCv::toCv(imgIn);
+	cv::cvtColor(imgMat, imgMat, CV_Lab2RGB);
+}
+
 //--------------------------------------------------------------
 cppflow::tensor runInference(cppflow::tensor & input, const ofxTF2::Model & model, int width, int height) {
 	cppflow::tensor inputResized;
 	cppflow::tensor output;
 	std::vector<cppflow::tensor> vectorOfInputTensors;
-	// convert, scale and resize the input
+	// expand and resize the input
 	input = cppflow::expand_dims(input, 0);
-	input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
-	inputResized = cppflow::mul(input, cppflow::tensor({ 100.f / 255.f }));
-	inputResized = cppflow::resize_bicubic(inputResized, cppflow::tensor({ 256, 256 }), true);
+	inputResized = cppflow::resize_bicubic(input, cppflow::tensor({ 256, 256 }), true);
 	// compute, scale and resize the remaining channels
 	output = model.runModel(inputResized);
-	output = cppflow::mul(output, cppflow::tensor({ 255.f }));
+	output = cppflow::mul(output, cppflow::tensor({ 128.f }));
 	output = cppflow::resize_bicubic(output, cppflow::tensor({ height, width }), true);
-	// concatenate the computed channels with the input
+	// concat the output
 	vectorOfInputTensors = { input, output };
 	return cppflow::concat(cppflow::tensor({ 3 }), vectorOfInputTensors);
 }
@@ -23,7 +37,7 @@ cppflow::tensor runInference(cppflow::tensor & input, const ofxTF2::Model & mode
 void ofApp::setup() {
 	ofSetFrameRate(60);
 	ofSetVerticalSync(true);
-	ofSetWindowTitle("example_video_and_image_colorization");
+	ofSetWindowTitle("example_image_colorization");
 
 	// ofxTF2 setup
 	if (!ofxTF2::setGPUMaxMemory(ofxTF2::GPU_PERCENT_70, true)) {
@@ -36,10 +50,11 @@ void ofApp::setup() {
 
 #ifdef USE_MOVIE
 	// load video and allocate memory
-	videoPlayer.load("movie2.mp4");
+	videoPlayer.load("sunset_baw.mp4");
 	width = videoPlayer.getWidth();
 	height = videoPlayer.getHeight();
 	imgOut.allocate(width, height, OF_IMAGE_COLOR);
+	imgIn.allocate(width, height, OF_IMAGE_COLOR);
 	videoPlayer.play();
 #else
 	// load image and allocate memory
@@ -47,14 +62,15 @@ void ofApp::setup() {
 	width = imgIn.getWidth();
 	height = imgIn.getHeight();
 	imgOut.allocate(width, height, OF_IMAGE_COLOR);
+	// convert to LAB
+	imageToLAB(imgIn);
 	// convert the image to pixels
 	input = ofxTF2::pixelsToTensor(imgIn.getPixels().getChannel(0));
 	// compute the colorized image
 	output = runInference(input, model, width, height);
 	// convert image
 	ofxTF2::tensorToImage(output, imgOut);
-	imgMat = ofxCv::toCv(imgOut);
-	cv::cvtColor(imgMat, imgMat, CV_Lab2RGB);
+	LABtoImage(imgOut);
 	imgOut.update();
 	imgOut.save("wald_colorized.jpg");
 #endif
@@ -66,13 +82,15 @@ void ofApp::update() {
 	videoPlayer.update();
 	if (videoPlayer.isFrameNew()) {
 		// get new frame
-		input = ofxTF2::pixelsToTensor(videoPlayer.getPixels().getChannel(0));
+		imgIn.setFromPixels(videoPlayer.getPixels()); // convert to ofFloatImage
+		imgIn.update();
+		imageToLAB(imgIn); // convert to LAB space
+		input = ofxTF2::pixelsToTensor(imgIn.getPixels().getChannel(0)); // convert first channel to tensor
 		// compute the colorized image
 		output = runInference(input, model, width, height);
 		// convert image
 		ofxTF2::tensorToImage(output, imgOut);
-		imgMat = ofxCv::toCv(imgOut);
-		cv::cvtColor(imgMat, imgMat, CV_Lab2RGB);
+		LABtoImage(imgOut);
 		imgOut.update();
 	}
 #endif
@@ -80,7 +98,8 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-	imgOut.draw(20, 20, 480, 360);
+	imgIn.draw(20, 20, 480, 360);
+	imgOut.draw(500, 20, 480, 360);
 }
 
 //--------------------------------------------------------------
