@@ -1,15 +1,16 @@
 # Realtime Object Recognition 
-Realtime Object Recognition for video using YOLOv4 on the COCO dataset.
+Realtime Object Recognition on the COCO dataset using YOLOv4.
+
+![](../media/yolo.gif)
+
+Example made with love by [Jonathhhan](https://github.com/Jonathhhan) 2022  
+https://github.com/Jonathhhan
+
+Video credits to [Videvo](https://www.videvo.net/video/busy-hong-kong-street-at-sunset/7906/)
 
 Model provided by https://github.com/AlexeyAB/darknet
 
 Model converted by https://github.com/hunglc007/tensorflow-yolov4-tflite
-
-Example made with love by [Jonathhhan](https://github.com/Jonathhhan) 2022.
-
-###### TODO add image
-
-Video credits to [Videvo](https://www.videvo.net/video/busy-hong-kong-street-at-sunset/7906/)
 
 ### Notes
 The model was trained on the COCO dataset. The dataset consists of 80 everyday classes. Here is an excerpt of things it is able to recognize:
@@ -32,7 +33,7 @@ The model was trained on the COCO dataset. The dataset consists of 80 everyday c
 For the full list please checkout `bin/data/cocoClasses.txt`
 
 
-### Tensorflow 2
+### Tensorflow2
 This example comes with a converted model. If you are interested in the approach of conversion feel free to check out [this repository](https://github.com/hunglc007/tensorflow-yolov4-tflite).
 
 ### OpenFrameworks

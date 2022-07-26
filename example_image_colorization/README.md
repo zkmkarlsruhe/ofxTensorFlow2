@@ -1,8 +1,9 @@
 # Image Colorization
 This is an example of realtime image colorization.
 
-Example made with love by [Jonathhhan](https://github.com/Jonathhhan) 2022
+![](../media/image_colorization.gif)
 
+Example made with love by [Jonathhhan](https://github.com/Jonathhhan) 2022  
 https://github.com/Jonathhhan
 
 Video credits to [Videvo](https://www.videvo.net/video/time-lapse-day-to-night-city/2644/)

@@ -14,13 +14,17 @@ WARRANTIES, see the file, "LICENSE.txt," in this distribution.
 
 Selected examples:
 
-| Style Transfer | Keyword Spotting | CharRnn (Frozen Graph) |
+| Style Transfer | Object Recognition | CharRnn (Frozen Graph) |
 | :--: | :--: | :--: |
-| ![](media/style_transfer.gif) | ![](media/keyword_spotting.gif) |  ![](media/charRnn.gif) | 
+| ![](media/style_transfer.gif) | ![](media/yolo.gif) |  ![](media/charRnn.gif) | 
 
-| Pose Estimation | Pix2Pix | 
-| :--: | :--: | 
-| ![](media/movenet.gif) | ![](media/pix2pix.gif) | 
+| Pose Estimation | Pix2Pix | Keyword Spotting |
+| :--: | :--: | :--: |
+| ![](media/movenet.gif) | ![](media/pix2pix.gif) | ![](media/keyword_spotting.gif)  |
+
+| Image Colorization |
+| :--: |
+| ![](media/image_colorization.gif) |
 
 | Video Matting |
 | :--: |
