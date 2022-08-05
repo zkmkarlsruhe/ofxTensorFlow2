@@ -1,9 +1,15 @@
+/*
+ * Example made with love by Jonathhhan 2022
+ * https://github.com/Jonathhhan
+ * Updated by members of the ZKM | Hertz-Lab 2022
+ */
 #pragma once
 
 #include "ofMain.h"
 #include "ofxTensorFlow2.h"
 #include "nms.hpp"
 
+// uncomment this to use a video file otherwise, we'll use an image
 #define USE_MOVIE
 
 class ofApp : public ofBaseApp {
@@ -27,7 +33,7 @@ public:
 
 	ofxTF2::Model model;
 	cppflow::tensor input;
-	std::vector<string> cocoClasses;
+	std::vector<std::string> cocoClasses;
 	std::vector<std::pair<std::vector<float>, int>> rectangles;
 	std::vector<std::pair<int, float>> id;
 
