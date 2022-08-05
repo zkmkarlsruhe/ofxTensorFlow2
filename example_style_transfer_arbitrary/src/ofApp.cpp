@@ -51,7 +51,7 @@ void ofApp::setup() {
 	inputVector = {style, style};
 
 	// input video
-	videoPlayer.load("Movie.mp4");
+	videoPlayer.load("movie.mp4");
 	videoPlayer.play();
 
 	// output image
