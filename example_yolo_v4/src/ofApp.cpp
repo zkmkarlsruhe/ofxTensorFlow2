@@ -101,16 +101,25 @@ void ofApp::draw() {
 				rectangles[i].first[3] * 480 - rectangles[i].first[1] * 480,
 				rectangles[i].first[2] * 360 - rectangles[i].first[0] * 360);
 			ofDrawBitmapStringHighlight(
-                "id: " + cocoClasses[id[rectangles[i].second].first] + ", prob: " +
-                ofToString(id[rectangles[i].second].second), rectangles[i].first[1] * 480 + 30,
-                                        rectangles[i].first[0] * 360 + 40);
+				"id: " + cocoClasses[id[rectangles[i].second].first] + ", prob: " +
+				ofToString(id[rectangles[i].second].second), rectangles[i].first[1] * 480 + 30,
+				rectangles[i].first[0] * 360 + 40);
 		}
 	}
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
-
+	switch(key) {
+		case ' ':
+#ifdef USE_MOVIE
+			// toggle video playback
+			videoPlayer.setPaused(!videoPlayer.isPaused());
+#endif
+			break;
+		default:
+			break;
+	}
 }
 
 //--------------------------------------------------------------
