@@ -27,15 +27,13 @@ void ofApp::setup() {
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("example_style_transfer_arbitrary");
 
-	if (!ofxTF2::setGPUMaxMemory(ofxTF2::GPU_PERCENT_90, true)) {
+	// ofxTF2 setup
+	if(!ofxTF2::setGPUMaxMemory(ofxTF2::GPU_PERCENT_90, true)) {
 		ofLogError() << "failed to set GPU Memory options!";
 	}
-	// load first model, bail out on error
-	if (!model.load("model")) {
+	if(!model.load("model")) {
 		std::exit(EXIT_FAILURE);
 	}
-
-	// setup: define the input and output names
 	std::vector<std::string> inputNames = {
 		"serving_default_placeholder",
 		"serving_default_placeholder_1"
