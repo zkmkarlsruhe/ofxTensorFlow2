@@ -1,6 +1,6 @@
 # Realtime Arbitrary Style Transfer
 This is an example for realtime Arbitrary Image Stylization using [Magenta's arbitrary-image-stylization model](https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/2).
-Other than in the regular Image Stylization this model is not trained on one specific style, but can apply any style given by a style image.
+Different from regular Image Stylization, this model is not trained on one specific style, but can apply any style given by an input style image.
 
 ![](../media/styleTransferArbitrary.gif)
 

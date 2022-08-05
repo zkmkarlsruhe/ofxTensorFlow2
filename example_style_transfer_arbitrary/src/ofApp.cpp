@@ -1,14 +1,31 @@
+/*
+ * Example made with love by Jonathhhan 2022
+ * https://github.com/Jonathhhan
+ * Updated by members of the ZKM | Hertz-Lab 2022
+ */
 #include "ofApp.h"
 
 //--------------------------------------------------------------
+template <typename T>
+cppflow::tensor pixelsToFloatTensor(const ofPixels_<T> & pixels) {
+	auto t = ofxTF2::pixelsToTensor(pixels);
+	t = cppflow::expand_dims(t, 0);
+	t = cppflow::cast(t, TF_UINT8, TF_FLOAT);
+	t = cppflow::mul(t, cppflow::tensor({1.0f / 255.f}));
+	return t;
+}
+
+//--------------------------------------------------------------
+template <typename T>
+cppflow::tensor imageToFloatTensor(const ofImage_<T> & image) {
+	return pixelsToFloatTensor(image.getPixels());
+}
+
+//--------------------------------------------------------------
 void ofApp::setup() {
-	ofSetFrameRate(10);
+	ofSetFrameRate(60);
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("example_style_transfer_arbitrary");
-
-	videoPlayer.load("Movie.mp4");
-	videoPlayer.play();
-	imgOut.allocate(resultWidth, resultHeight, OF_IMAGE_COLOR);
 
 	if (!ofxTF2::setGPUMaxMemory(ofxTF2::GPU_PERCENT_90, true)) {
 		ofLogError() << "failed to set GPU Memory options!";
@@ -17,25 +34,36 @@ void ofApp::setup() {
 	if (!model.load("model")) {
 		std::exit(EXIT_FAILURE);
 	}
-	model.setup({ {"serving_default_placeholder"} ,{"serving_default_placeholder_1"} },  {"StatefulPartitionedCall"} );
 
-	// load style image
-	style = cppflow::decode_jpeg(cppflow::read_file(std::string(ofToDataPath("wave.jpg"))));
-	style = cppflow::expand_dims(style, 0);
-	style = cppflow::resize_bicubic(style, cppflow::tensor({ 256, 256 }), true);
-	style = cppflow::cast(style, TF_UINT8, TF_FLOAT);
-	style = cppflow::mul(style, cppflow::tensor({ 1.0f / 255.f }));
-	inputVector = { style, style };
+	// setup: define the input and output names
+	std::vector<std::string> inputNames = {
+		"serving_default_placeholder",
+		"serving_default_placeholder_1"
+	};
+	std::vector<std::string> outputNames = {
+		"StatefulPartitionedCall"
+	};
+	model.setup(inputNames, outputNames);
+
+	// input style image
+	style = imageToFloatTensor(ofImage("wave.jpg"));
+	style = cppflow::resize_bicubic(style, cppflow::tensor({256, 256}), true);
+	inputVector = {style, style};
+
+	// input video
+	videoPlayer.load("Movie.mp4");
+	videoPlayer.play();
+
+	// output image
+	imgOut.allocate(resultWidth, resultHeight, OF_IMAGE_COLOR);
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
 	videoPlayer.update();
-	if (videoPlayer.isFrameNew()) {
-		videoPlayer.getTexture().readToPixels(floatPixels);
-		input = ofxTF2::pixelsToTensor(floatPixels);
-		input = cppflow::expand_dims(input, 0);
-		if (resultHeight != videoPlayer.getHeight() || resultWidth != videoPlayer.getWidth()){
+	if(videoPlayer.isFrameNew()) {
+		input = pixelsToFloatTensor(videoPlayer.getPixels());
+		if(resultHeight != videoPlayer.getHeight() || resultWidth != videoPlayer.getWidth()) {
 			input = cppflow::resize_bicubic(input, cppflow::tensor({resultHeight, resultWidth}), true);
 		}
 		inputVector[0] = input;
