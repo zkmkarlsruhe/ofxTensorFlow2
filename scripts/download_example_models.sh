@@ -182,7 +182,7 @@ if [ -f model_style_transfer_arbitrary.zip ] ; then
 	rm -rf "$DEST"/example_style_transfer_arbitrary/bin/data/Movie.mp4
 	rm -rf "$DEST"/example_style_transfer_arbitrary/bin/data/wave.jpg
 	mv -v model "$DEST"/example_style_transfer_arbitrary/bin/data
-	mv -v Movie.mp4 "$DEST"/example_style_transfer_arbitrary/bin/data
+	mv -v movie.mp4 "$DEST"/example_style_transfer_arbitrary/bin/data
 	mv -v wave.jpg "$DEST"/example_style_transfer_arbitrary/bin/data
 fi
 
