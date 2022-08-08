@@ -48,14 +48,14 @@
 class ofxMovenet {
 	public:
 
-		static const int NUM_SKELETONS = 6; //< max skeletons tracked
-		static const int DATA_PER_SKELETON = 56; //< output values per skeleton
-		static const int BONES_PER_SKELETON = 17; //< bone points per skeleton
+		static const int NUM_SKELETONS = 6; ///< max skeletons tracked
+		static const int DATA_PER_SKELETON = 56; ///< output values per skeleton
+		static const int BONES_PER_SKELETON = 17; ///< bone points per skeleton
 
 		/// single skeleton bone point
 		struct Bone {
-			glm::vec3 point;  //< 3d position
-			float confidence; //< confidence 0-1
+			glm::vec3 point;  ///< 3d position
+			float confidence; ///< confidence 0-1
 		};
 
 		/// skeleton bone point index
@@ -81,9 +81,9 @@ class ofxMovenet {
 
 		/// single detected skeleton
 		struct Skeleton {
-			Bone bones[BONES_PER_SKELETON]; //< detected skeleton bone points
-			ofRectangle bbox; //< detected skeleton bounding box
-			float confidence; //< skeleton bounding box confidence 0-1
+			Bone bones[BONES_PER_SKELETON]; ///< detected skeleton bone points
+			ofRectangle bbox; ///< detected skeleton bounding box
+			float confidence; ///< skeleton bounding box confidence 0-1
 
 			/// draw a line between two bone points
 			void drawBone(BoneIndex b1, BoneIndex b2) {
@@ -270,7 +270,7 @@ class ofxMovenet {
 		struct Size {
 			int width = 1;
 			int height = 1;
-		} inputSize_; //< pixel input size
-		cppflow::tensor input_; //< pixel input tensor
-		bool newInput_ = false; //< is the input tensor new?
+		} inputSize_; ///< pixel input size
+		cppflow::tensor input_; ///< pixel input tensor
+		bool newInput_ = false; ///< is the input tensor new?
 };
