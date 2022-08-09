@@ -7,10 +7,10 @@
 
 #include "ofMain.h"
 #include "ofxTensorFlow2.h"
-#include "nms.hpp"
+#include "ofxYolo.h"
 
-// uncomment this to use a video file otherwise, we'll use an image
-#define USE_MOVIE
+// uncomment this to use a video file, otherwise we'll use an image
+//#define USE_MOVIE
 
 class ofApp : public ofBaseApp {
 
@@ -31,16 +31,13 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 
-	ofxTF2::Model model;
-	cppflow::tensor input;
-	std::vector<std::string> cocoClasses;
-	std::vector<std::pair<std::vector<float>, int>> rectangles;
-	std::vector<std::pair<int, float>> id;
+	// yolo model
+	ofxYolo yolo;
 
+	// input source
 #ifdef USE_MOVIE
 	ofVideoPlayer videoPlayer;
 #else
 	ofImage imgIn;
 #endif
-
 };

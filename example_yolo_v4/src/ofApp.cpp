@@ -6,71 +6,27 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-std::vector<std::pair<std::vector<float>, int>>
-computeBoundingBoxes(cppflow::tensor & input, const ofxTF2::Model & model,
-	                 std::vector<std::pair<int, float>> & id) {
-	cppflow::tensor output;
-	std::vector<float> vec;
-	std::vector<float>::const_iterator first;
-	std::vector<float>::const_iterator last;
-	cppflow::tensor inputResized;
-
-	// expand, cast, scale and resize the input image
-	input = cppflow::expand_dims(input, 0);
-	input = cppflow::cast(input, TF_UINT8, TF_FLOAT);
-	input = cppflow::mul(input, cppflow::tensor({1/255.f}));
-	inputResized = cppflow::resize_bicubic(input, cppflow::tensor({416, 416}), true);
-
-	// run the model on the input
-	output = model.runModel(inputResized);
-
-	// compute the bounding boxes and add them to the id array
-	ofxTF2::tensorToVector(output, vec);
-	std::vector<std::vector<float>> boundings;
-	for(int i = 0; i < vec.size() / 84; i++) {
-		first = vec.begin() + 84. * i;
-		last = vec.begin() + 84. * i + 4;;
-		std::vector<float> newVec(first, last);
-		boundings.push_back(newVec);
-		first = vec.begin() + 84. * i + 4;
-		last = vec.begin() + 84. * i + 84;
-		vector<float> newVecId(first, last);
-		int maxElementIndex = max_element(newVecId.begin(), newVecId.end()) - newVecId.begin();
-		float maxElement = *max_element(newVecId.begin(), newVecId.end());
-		id.push_back(std::make_pair(maxElementIndex, maxElement));
-	}
-	return nms(boundings, 0.9);
-}
-
-//--------------------------------------------------------------
 void ofApp::setup() {
 	ofSetFrameRate(60);
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("example_yolo_v4");
-	ofNoFill();
 
-	// ofxTF2 setup
-	if(!ofxTF2::setGPUMaxMemory(ofxTF2::GPU_PERCENT_70, true)) {
-		ofLogError() << "failed to set GPU Memory options!";
-	}
-	if(!model.load("model")) {
+	// setup yolo with path to model folder and txt file with COCO classes aka
+	// identifiable object classification strings
+	if(!yolo.setup("model", "classes.txt")) {
 		std::exit(EXIT_FAILURE);
 	}
-	model.setup({"serving_default_input_1"}, {"StatefulPartitionedCall"});
+	yolo.setNormalize(true); // normalize object bounding box coords?
 
-	ofBuffer buffer = ofBufferFromFile("cocoClasses.txt");
-	for(auto& line : buffer.getLines()) {
-		cocoClasses.push_back(line);
-	}
-
-#ifdef USE_MOVIE
-	videoPlayer.load("movie.mp4");
-	videoPlayer.play();
-#else
-	imgIn.load("image.jpg");
-	input = ofxTF2::imageToTensor(imgIn);
-	rectangles = computeBoundingBoxes(input, model, id);
-#endif
+	// input source
+	#ifdef USE_MOVIE
+		videoPlayer.load("movie.mp4");
+		videoPlayer.play();
+	#else
+		imgIn.load("dog.jpg");
+		yolo.setInput(imgIn.getPixels());
+		yolo.update();
+	#endif
 }
 
 //--------------------------------------------------------------
@@ -78,33 +34,44 @@ void ofApp::update() {
 #ifdef USE_MOVIE
 	videoPlayer.update();
 	if(videoPlayer.isFrameNew()) {
-		id.clear();
-		input = ofxTF2::pixelsToTensor(videoPlayer.getPixels());
-		rectangles = computeBoundingBoxes(input, model, id);
+		// feed input frame as pixels
+		yolo.setInput(videoPlayer.getPixels());
 	}
+
+	// run model on current input frame
+	yolo.update();
 #endif
 }
 
 //--------------------------------------------------------------
 void ofApp::draw() {
+	float x = 20, y = 20, w = 480, h = 360;
 	ofSetColor(255);
 #ifdef USE_MOVIE
-	videoPlayer.draw(20, 20, 480, 360);
+	videoPlayer.draw(x, y, w, h);
 #else
-	imgIn.draw(20, 20, 480, 360);
+	imgIn.draw(x, y, w, h);
 #endif
-	ofSetColor(255, 0, 0);
-	for(int i = 0; i < rectangles.size(); i++) {
-		if(id[rectangles[i].second].second > 0.2) {
-			ofDrawRectangle(rectangles[i].first[1] * 480 + 20,
-				rectangles[i].first[0] * 360 + 20,
-				rectangles[i].first[3] * 480 - rectangles[i].first[1] * 480,
-				rectangles[i].first[2] * 360 - rectangles[i].first[0] * 360);
-			ofDrawBitmapStringHighlight(
-				"id: " + cocoClasses[id[rectangles[i].second].first] + ", prob: " +
-				ofToString(id[rectangles[i].second].second), rectangles[i].first[1] * 480 + 30,
-				rectangles[i].first[0] * 360 + 40);
+	// draw detected objects
+	if(yolo.getNormalize()) {
+		// draw manually with normalized coords, requires yolo.setNormalize(true)
+		ofNoFill();
+		for(auto object : yolo.getObjects()) {
+			ofSetColor(ofColor::red);
+			ofDrawRectangle(object.bbox.x * w + x, object.bbox.y * h + y,
+			                object.bbox.width * w, object.bbox.height * h);
+			ofSetColor(ofColor::green);
+			ofDrawBitmapStringHighlight(object.ident + "\n" + ofToString(object.confidence, 2),
+			                            object.bbox.x * w + x, object.bbox.y * h + y);
 		}
+	}
+	else {
+		// draw within input image size
+		ofPushMatrix();
+		ofTranslate(x, y);
+		ofScale(w / yolo.getWidth(), h / yolo.getHeight());
+		yolo.draw();
+		ofPopMatrix();
 	}
 }
 

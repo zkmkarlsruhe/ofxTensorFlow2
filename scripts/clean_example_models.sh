@@ -52,3 +52,5 @@ rm -rfv "$DEST"/example_video_matting/bin/data/model
 
 # example_yolo_v4
 rm -rfv "$DEST"/example_yolo_v4/bin/data/model
+rm -rfv "$DEST"/example_yolo_v4/bin/data/dog.jpg
+rm -rfv "$DEST"/example_yolo_v4/bin/data/movie.mp4
