@@ -10,7 +10,7 @@
 #include "ofxYolo.h"
 
 // uncomment this to use a video file, otherwise we'll use an image
-//#define USE_MOVIE
+#define USE_MOVIE
 
 class ofApp : public ofBaseApp {
 

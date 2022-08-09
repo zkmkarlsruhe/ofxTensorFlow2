@@ -8,11 +8,12 @@
 
 #include "ofxTensorFlow2.h"
 #include "ofFileUtils.h"
-#include "nms.hpp"
 
 /// \class ofxYOLO
-/// \brief wrapper for realtime object recognition on the COCO dataset using the
-///        YOLOv4 model
+/// \brief wrapper for the YOLOv4 realtime object recognition model
+///
+/// this model works with the COCO dataset via a textfile with one class string
+/// per line
 ///
 /// the model accepts a single input image only, the image is automatically
 /// resized to the expected input size internally
@@ -234,47 +235,58 @@ class ofxYolo {
 			std::vector<float> vectorOut;
 			ofxTF2::tensorToVector(output, vectorOut);
 
-			// parse vector to objects
-			std::vector<std::vector<float>> boundings;
-			std::vector<std::pair<int, float>> id;
+			// parse vector to detected rectangles
 			std::vector<float>::const_iterator first;
 			std::vector<float>::const_iterator last;
-			for(int i = 0; i < vectorOut.size() / NUM_OBJECTS; i++) {
+			std::vector<int> maxElementIndexVector;
+			std::vector<float> maxElementVector;
+			std::vector<std::vector<float>> boundings;
+			std::vector<int> rectangleIndices;
+			int numRectangles = vectorOut.size() / NUM_OBJECTS;
+			std::vector<float> bound;
+			for (int i = 0; i < numRectangles; i++) {
 				first = vectorOut.begin() + NUM_OBJECTS * i;
 				last = vectorOut.begin() + NUM_OBJECTS * i + 4;
-				std::vector<float> newVec(first, last);
-				boundings.push_back(newVec);
+				std::vector<float> new_vec(first, last);
+				boundings.push_back(new_vec);
+				bound.insert(bound.end(), new_vec.begin(), new_vec.end());
 				first = vectorOut.begin() + NUM_OBJECTS * i + 4;
 				last = vectorOut.begin() + NUM_OBJECTS * i + NUM_OBJECTS;
-				std::vector<float> newVecId(first, last);
-				int maxElementIndex = max_element(newVecId.begin(), newVecId.end()) - newVecId.begin();
-				float maxElement = *max_element(newVecId.begin(), newVecId.end());
-				id.push_back(std::make_pair(maxElementIndex, maxElement));
+				std::vector<float> new_vec_id(first, last);
+				int max_element_index = std::max_element(new_vec_id.begin(), new_vec_id.end()) - new_vec_id.begin();
+				float max_element = new_vec_id[max_element_index];
+				maxElementIndexVector.push_back(max_element_index);
+				maxElementVector.push_back(max_element);
 			}
-			std::vector<std::pair<std::vector<float>, int>> rectangles = nms(boundings, 0.9); // perform non-max regression
+			cppflow::tensor rectangleTensor = ofxTF2::vectorToTensor(bound, ofxTF2::shapeVector{numRectangles, 4});
+			cppflow::tensor maxElementTensor = ofxTF2::vectorToTensor(maxElementVector);
+			cppflow::tensor rectangleIndicesTensor = cppflow::non_max_suppression(rectangleTensor, maxElementTensor, 10, 0.5);
+			ofxTF2::tensorToVector(rectangleIndicesTensor, rectangleIndices);
+
+			// convert detected rectangles to ofxYolo::Objects
 			objects.clear();
-			for(int i = 0; i < rectangles.size(); i++) {
-				float confidence = id[rectangles[i].second].second;
-				int index = id[rectangles[i].second].first;
+			for(int index : rectangleIndices) {
+				int classIndex = maxElementIndexVector[index];
+				float confidence = maxElementVector[index];
 				if(confidence < threshold_) {continue;}
-				if(index >= classes_.size()) {
+				if(classIndex >= classes_.size()) {
 					ofLogWarning("ofxYolo") << "ignoring unknown object class index " << index;
 					continue;
 				}
-				Object object(index, classes_[index]);
+				Object object(classIndex, classes_[classIndex]);
 				if(normalize_) { // normalized bbox coords
-					object.bbox.x = rectangles[i].first[1];
-					object.bbox.y = rectangles[i].first[0];
-					object.bbox.width = rectangles[i].first[3] - object.bbox.x;
-					object.bbox.height = rectangles[i].first[2] - object.bbox.y;
+					object.bbox.x = boundings[index][1];
+					object.bbox.y = boundings[index][0];
+					object.bbox.width = boundings[index][3] - object.bbox.x;
+					object.bbox.height = boundings[index][2] - object.bbox.y;
 				}
 				else { // use input image size
-					object.bbox.x = rectangles[i].first[1] * (float)inputSize_.width;
-					object.bbox.y = rectangles[i].first[0] * (float)inputSize_.height;
-					object.bbox.width = (rectangles[i].first[3] * (float)inputSize_.width) - object.bbox.x;
-					object.bbox.height = (rectangles[i].first[2] * (float)inputSize_.height) - object.bbox.y;
+					object.bbox.x = boundings[index][1] * (float)inputSize_.width;
+					object.bbox.y = boundings[index][0] * (float)inputSize_.height;
+					object.bbox.width = (boundings[index][3] * (float)inputSize_.width) - object.bbox.x;
+					object.bbox.height = (boundings[index][2] * (float)inputSize_.height) - object.bbox.y;
 				}
-				object.confidence = id[rectangles[i].second].second;
+				object.confidence = confidence;
 				objects.push_back(object);
 			}
 		}

@@ -8,6 +8,8 @@ https://github.com/Jonathhhan
 
 Video credits to [Videvo](https://www.videvo.net/video/busy-hong-kong-street-at-sunset/7906/)
 
+Image credits to [pytorch-YOLOv4](https://github.com/Tianxiaomo/pytorch-YOLOv4/tree/master/data) (or wherever they got it...)
+
 Model provided by https://github.com/AlexeyAB/darknet
 
 Model converted by https://github.com/hunglc007/tensorflow-yolov4-tflite

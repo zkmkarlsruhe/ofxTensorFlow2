@@ -11,7 +11,7 @@ void ofApp::setup() {
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("example_yolo_v4");
 
-	// setup yolo with path to model folder and txt file with COCO classes aka
+	// set up yolo with path to model folder and txt file with COCO classes aka
 	// identifiable object classification strings
 	if(!yolo.setup("model", "classes.txt")) {
 		std::exit(EXIT_FAILURE);
@@ -57,10 +57,17 @@ void ofApp::draw() {
 		// draw manually with normalized coords, requires yolo.setNormalize(true)
 		ofNoFill();
 		for(auto object : yolo.getObjects()) {
-			ofSetColor(ofColor::red);
+			if(object.index == 0) { // person
+				ofSetColor(ofColor::blue);
+			}
+			else if(object.index == 2) { // car
+				ofSetColor(ofColor::green);
+			}
+			else { // everything else...
+				ofSetColor(ofColor::red);
+			}
 			ofDrawRectangle(object.bbox.x * w + x, object.bbox.y * h + y,
 			                object.bbox.width * w, object.bbox.height * h);
-			ofSetColor(ofColor::green);
 			ofDrawBitmapStringHighlight(object.ident + "\n" + ofToString(object.confidence, 2),
 			                            object.bbox.x * w + x, object.bbox.y * h + y);
 		}
