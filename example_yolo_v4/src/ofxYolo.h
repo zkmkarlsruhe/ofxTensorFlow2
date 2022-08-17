@@ -192,7 +192,7 @@ class ofxYolo {
 		bool isThreadRunning() {return model.isThreadRunning();}
 
 		/// returns a reference to the detected objects, check the confidence
-		/// value to determine which are valid, ex. confidence > 0.2, etc
+		/// value to determine which are valid, ex. confidence > 0.5, etc
 		std::vector<Object> & getObjects() {return objects;}
 
 		/// returns a references to the detale object class names
