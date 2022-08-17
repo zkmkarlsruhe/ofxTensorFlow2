@@ -27,15 +27,35 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 
-	ofxTF2::Model model;
-	cppflow::tensor input;
-	cppflow::tensor style;
-	std::vector<cppflow::tensor> inputVector;
-	std::vector<cppflow::tensor> output;
-	ofVideoPlayer videoPlayer;
-	ofFloatPixels floatPixels;
-	ofFloatImage imgOut;
+	/// goto prev style in the stylePaths vector
+	void prevStyle();
 
-	int resultWidth = 640;
-	int resultHeight = 480;
+	/// goto next style in the stylePaths vector
+	void nextStyle();
+
+	/// set style from given input image
+	void setStyle(std::string & path);
+
+	ofxTF2::Model model;
+	cppflow::tensor style; // style image
+	std::vector<cppflow::tensor> input; // {input image, style image}
+	ofVideoPlayer videoPlayer; // source video
+	ofFloatImage imgOut; // output image
+
+	// image input & output size expected by model
+	const static int imageWidth = 640;
+	const static int imageHeight = 480;
+
+	// style image size expected by model
+	static const int styleWidth = 256;
+	static const int styleHeight = 256;
+
+	// paths to available style images
+	std::vector<std::string> stylePaths = {
+		"style/wave.jpg",
+		"style/ZKM000092996.jpg",
+		"style/chipset.jpg",
+		"style/mondrian.jpg"
+	};
+	std::size_t styleIndex = 0; // current model path index
 };

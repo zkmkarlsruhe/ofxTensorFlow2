@@ -6,6 +6,7 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
+// help to convert ofPixels to a float image tensor
 template <typename T>
 cppflow::tensor pixelsToFloatTensor(const ofPixels_<T> & pixels) {
 	auto t = ofxTF2::pixelsToTensor(pixels);
@@ -13,12 +14,6 @@ cppflow::tensor pixelsToFloatTensor(const ofPixels_<T> & pixels) {
 	t = cppflow::cast(t, TF_UINT8, TF_FLOAT);
 	t = cppflow::mul(t, cppflow::tensor({1.0f / 255.f}));
 	return t;
-}
-
-//--------------------------------------------------------------
-template <typename T>
-cppflow::tensor imageToFloatTensor(const ofImage_<T> & image) {
-	return pixelsToFloatTensor(image.getPixels());
 }
 
 //--------------------------------------------------------------
@@ -43,29 +38,29 @@ void ofApp::setup() {
 	};
 	model.setup(inputNames, outputNames);
 
-	// input style image
-	style = imageToFloatTensor(ofImage("wave.jpg"));
-	style = cppflow::resize_bicubic(style, cppflow::tensor({256, 256}), true);
-	inputVector = {style, style};
+	// style image
+	input = {cppflow::tensor(0), cppflow::tensor(0)};
+	setStyle(stylePaths[styleIndex]);
 
-	// input video
+	// video
 	videoPlayer.load("movie.mp4");
 	videoPlayer.play();
 
 	// output image
-	imgOut.allocate(resultWidth, resultHeight, OF_IMAGE_COLOR);
+	imgOut.allocate(imageWidth, imageHeight, OF_IMAGE_COLOR);
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
 	videoPlayer.update();
 	if(videoPlayer.isFrameNew()) {
-		input = pixelsToFloatTensor(videoPlayer.getPixels());
-		if(resultHeight != videoPlayer.getHeight() || resultWidth != videoPlayer.getWidth()) {
-			input = cppflow::resize_bicubic(input, cppflow::tensor({resultHeight, resultWidth}), true);
+		// convert video frame to input tensor and resize as needed
+		cppflow::tensor image = pixelsToFloatTensor(videoPlayer.getPixels());
+		if(videoPlayer.getHeight() != imageWidth || videoPlayer.getWidth() != imageHeight) {
+			image = cppflow::resize_bicubic(image, cppflow::tensor({imageHeight, imageWidth}), true);
 		}
-		inputVector[0] = input;
-		output = model.runMultiModel(inputVector);
+		input[0] = image;
+		auto output = model.runMultiModel(input);
 		ofxTF2::tensorToImage(output[0], imgOut);
 		imgOut.update();
 	}
@@ -78,7 +73,18 @@ void ofApp::draw() {
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
-
+	switch(key) {
+		case OF_KEY_LEFT:
+			prevStyle();
+			break;
+		case OF_KEY_RIGHT:
+			nextStyle();
+			break;
+		case ' ':
+			videoPlayer.setPaused(!videoPlayer.isPaused());
+			break;
+		default: break;
+	}
 }
 
 //--------------------------------------------------------------
@@ -129,4 +135,40 @@ void ofApp::dragEvent(ofDragInfo dragInfo) {
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg) {
 
+}
+
+//--------------------------------------------------------------
+void ofApp::prevStyle() {
+	if(styleIndex == 0) {
+		styleIndex = stylePaths.size()-1;
+	}
+	else {
+		styleIndex--;
+	}
+	setStyle(stylePaths[styleIndex]);
+}
+
+//--------------------------------------------------------------
+void ofApp::nextStyle() {
+	styleIndex++;
+	if(styleIndex >= stylePaths.size()) {
+		styleIndex = 0;
+	}
+	setStyle(stylePaths[styleIndex]);
+}
+
+//--------------------------------------------------------------
+void ofApp::setStyle(std::string & path) {
+	ofImage styleImg;
+	if(!styleImg.load(path)) {
+		return;
+	}
+	ofLog() << "style: " << ofFilePath::getFileName(path);
+
+	// convert style image to float tensor
+	style = pixelsToFloatTensor(styleImg.getPixels());
+
+	// resize to expected model input size
+	style = cppflow::resize_bicubic(style, cppflow::tensor({styleWidth, styleHeight}), true);
+	input[1] = style;
 }

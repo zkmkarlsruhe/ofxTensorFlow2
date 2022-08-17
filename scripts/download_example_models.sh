@@ -179,11 +179,11 @@ fi
 if [ -f model_style_transfer_arbitrary.zip ] ; then
 	unzip model_style_transfer_arbitrary.zip
 	rm -rf "$DEST"/example_style_transfer_arbitrary/bin/data/model
-	rm -rf "$DEST"/example_style_transfer_arbitrary/bin/data/Movie.mp4
-	rm -rf "$DEST"/example_style_transfer_arbitrary/bin/data/wave.jpg
+	rm -rf "$DEST"/example_style_transfer_arbitrary/bin/data/movie.mp4
+	rm -rf "$DEST"/example_style_transfer_arbitrary/bin/data/style
 	mv -v model "$DEST"/example_style_transfer_arbitrary/bin/data
 	mv -v movie.mp4 "$DEST"/example_style_transfer_arbitrary/bin/data
-	mv -v wave.jpg "$DEST"/example_style_transfer_arbitrary/bin/data
+	mv -v style "$DEST"/example_style_transfer_arbitrary/bin/data
 fi
 
 # example_video_matting
