@@ -8,6 +8,9 @@
 #include "ofMain.h"
 #include "ofxTensorFlow2.h"
 
+// uncomment this to use a live camera otherwise, we'll use a video file
+//#define USE_LIVE_VIDEO
+
 class ofApp : public ofBaseApp {
 
 public:
@@ -38,9 +41,16 @@ public:
 
 	ofxTF2::Model model;
 	cppflow::tensor style; // style image
-	std::vector<cppflow::tensor> input; // {input image, style image}
-	ofVideoPlayer videoPlayer; // source video
+	std::vector<cppflow::tensor> inputVector; // {input image, style image}
 	ofFloatImage imgOut; // output image
+
+	// video source
+	#ifdef USE_LIVE_VIDEO
+		ofVideoGrabber video;
+		bool mirror = true;
+	#else
+		ofVideoPlayer video;
+	#endif
 
 	// image input & output size expected by model
 	const static int imageWidth = 640;

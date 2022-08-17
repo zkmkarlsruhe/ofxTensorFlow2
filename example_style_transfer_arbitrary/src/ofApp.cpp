@@ -39,12 +39,18 @@ void ofApp::setup() {
 	model.setup(inputNames, outputNames);
 
 	// style image
-	input = {cppflow::tensor(0), cppflow::tensor(0)};
+	inputVector = {cppflow::tensor(0), cppflow::tensor(0)};
 	setStyle(stylePaths[styleIndex]);
 
 	// video
-	videoPlayer.load("movie.mp4");
-	videoPlayer.play();
+	#ifdef USE_LIVE_VIDEO
+		video.setDesiredFrameRate(30);
+		video.setup(imageWidth, imageHeight);
+	#else
+		video.load("movie.mp4");
+		video.setVolume(0); // blah blah blah
+		video.play();
+	#endif
 
 	// output image
 	imgOut.allocate(imageWidth, imageHeight, OF_IMAGE_COLOR);
@@ -52,16 +58,26 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
-	videoPlayer.update();
-	if(videoPlayer.isFrameNew()) {
+	video.update();
+	if(video.isFrameNew()) {
+
 		// convert video frame to input tensor and resize as needed
-		cppflow::tensor image = pixelsToFloatTensor(videoPlayer.getPixels());
-		if(videoPlayer.getHeight() != imageWidth || videoPlayer.getWidth() != imageHeight) {
+		cppflow::tensor image = pixelsToFloatTensor(video.getPixels());
+		if(video.getHeight() != imageWidth || video.getWidth() != imageHeight) {
 			image = cppflow::resize_bicubic(image, cppflow::tensor({imageHeight, imageWidth}), true);
 		}
-		input[0] = image;
-		auto output = model.runMultiModel(input);
+		inputVector[0] = image;
+
+		// run model
+		auto output = model.runMultiModel(inputVector);
+
+		// convert output tensor to image
 		ofxTF2::tensorToImage(output[0], imgOut);
+		#ifdef USE_LIVE_VIDEO
+			if(mirror) {
+				imgOut.mirror(false, true);
+			}
+		#endif
 		imgOut.update();
 	}
 }
@@ -80,8 +96,24 @@ void ofApp::keyPressed(int key) {
 		case OF_KEY_RIGHT:
 			nextStyle();
 			break;
+		case 'm':
+			// toggle camera mirroring
+			#ifdef USE_LIVE_VIDEO
+				mirror = !mirror;
+			#endif
+			break;
 		case ' ':
-			videoPlayer.setPaused(!videoPlayer.isPaused());
+			// toggle video playback
+			#ifndef USE_LIVE_VIDEO
+				video.setPaused(!video.isPaused());
+			#endif
+			break;
+		case 'r':
+			// restart video
+			#ifndef USE_LIVE_VIDEO
+				video.stop();
+				video.play();
+			#endif
 			break;
 		default: break;
 	}
@@ -170,5 +202,5 @@ void ofApp::setStyle(std::string & path) {
 
 	// resize to expected model input size
 	style = cppflow::resize_bicubic(style, cppflow::tensor({styleWidth, styleHeight}), true);
-	input[1] = style;
+	inputVector[1] = style;
 }
