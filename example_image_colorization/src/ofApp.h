@@ -1,10 +1,15 @@
+/*
+ * Example made with love by Jonathhhan 2022
+ * https://github.com/Jonathhhan
+ * Updated by members of the ZKM | Hertz-Lab 2022
+ */
 #pragma once
 
 #include "ofMain.h"
 #include "ofxTensorFlow2.h"
-#include "ofxCv.h"
 
-#define USE_MOVIE
+// uncomment this to use a video, otherwise we'll use an image
+//#define USE_MOVIE
 
 class ofApp : public ofBaseApp {
 
@@ -26,15 +31,16 @@ public:
 	void gotMessage(ofMessage msg);
 
 	ofxTF2::Model model;
-	cppflow::tensor input;
-	cppflow::tensor output;
 
-#ifdef USE_MOVIE
-	ofVideoPlayer videoPlayer;
-#endif
+	ofFloatImage imgIn; // input image
+	ofFloatImage imgOut; // output image
 
-	ofFloatImage imgOut;
-	ofFloatImage imgIn;
-	int width;
-	int height;
+	// input & output image size
+	int imageWidth;
+	int imageHeight;
+
+	// video source
+	#ifdef USE_MOVIE
+		ofVideoPlayer video;
+	#endif
 };
