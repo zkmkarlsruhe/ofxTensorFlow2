@@ -20,8 +20,8 @@ void ofApp::setup() {
 
 	// input source
 	#ifdef USE_MOVIE
-		videoPlayer.load("movie.mp4");
-		videoPlayer.play();
+		video.load("movie.mp4");
+		video.play();
 	#else
 		imgIn.load("dog.jpg");
 		yolo.setInput(imgIn.getPixels());
@@ -32,10 +32,10 @@ void ofApp::setup() {
 //--------------------------------------------------------------
 void ofApp::update() {
 #ifdef USE_MOVIE
-	videoPlayer.update();
-	if(videoPlayer.isFrameNew()) {
+	video.update();
+	if(video.isFrameNew()) {
 		// feed input frame as pixels
-		yolo.setInput(videoPlayer.getPixels());
+		yolo.setInput(video.getPixels());
 	}
 
 	// run model on current input frame
@@ -48,7 +48,7 @@ void ofApp::draw() {
 	float x = 20, y = 20, w = 480, h = 360;
 	ofSetColor(255);
 #ifdef USE_MOVIE
-	videoPlayer.draw(x, y, w, h);
+	video.draw(x, y, w, h);
 #else
 	imgIn.draw(x, y, w, h);
 #endif
@@ -88,7 +88,7 @@ void ofApp::keyPressed(int key) {
 		case ' ':
 #ifdef USE_MOVIE
 			// toggle video playback
-			videoPlayer.setPaused(!videoPlayer.isPaused());
+			video.setPaused(!video.isPaused());
 #endif
 			break;
 		default:

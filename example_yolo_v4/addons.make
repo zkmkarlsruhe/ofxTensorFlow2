@@ -1,2 +1,1 @@
-ofxOpenCv
 ofxTensorFlow2

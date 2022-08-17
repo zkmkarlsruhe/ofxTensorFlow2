@@ -36,7 +36,7 @@ public:
 
 	// input source
 #ifdef USE_MOVIE
-	ofVideoPlayer videoPlayer;
+	ofVideoPlayer video;
 #else
 	ofImage imgIn;
 #endif
