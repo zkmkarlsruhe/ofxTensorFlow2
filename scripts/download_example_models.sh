@@ -25,7 +25,6 @@ model_basics_frozen_graph.zip \
 model_effnet.zip \
 models_char_rnn.zip \
 model_video_matting.zip \
-model_image_colorization.zip \
 model_multi_pose.zip \
 model_pix2pix_edges2shoes_20epochs.zip \
 models_style_transfer_640x480.zip \
@@ -134,17 +133,6 @@ if [ -f models_char_rnn.zip ] ; then
 	unzip models_char_rnn.zip
 	rm -rf "$DEST"/example_frozen_graph_char_rnn/bin/data/models
 	mv -v models "$DEST"/example_frozen_graph_char_rnn/bin/data
-fi
-
-# example_image_colorization
-if [ -f model_image_colorization.zip ] ; then
-	unzip model_image_colorization.zip
-	rm -rf "$DEST"/example_image_colorization/bin/data/model
-	rm -rf "$DEST"/example_image_colorization/bin/data/wald.jpg
-	rm -rf "$DEST"/example_image_colorization/bin/data/sunset_baw.mp4
-	mv -v model "$DEST"/example_image_colorization/bin/data
-	mv -v sunset_baw.mp4 "$DEST"/example_image_colorization/bin/data
-	mv -v wald.jpg "$DEST"/example_image_colorization/bin/data
 fi
 
 # example_keyword_spotting
