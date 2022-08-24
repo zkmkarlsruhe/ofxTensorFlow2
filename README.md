@@ -22,10 +22,6 @@ Selected examples:
 | :--: | :--: | :--: |
 | ![](media/movenet.gif) | ![](media/pix2pix.gif) | ![](media/keyword_spotting.gif)  |
 
-| [Image Colorization](example_image_colorization) |
-| :--: |
-| ![](media/image_colorization.gif) |
-
 | [Video Matting](example_video_matting) |
 | :--: |
 | ![](media/video_matting.gif) | 
