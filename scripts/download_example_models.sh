@@ -189,9 +189,11 @@ fi
 if [ -f model_yolo_v4.zip ] ; then
 	unzip model_yolo_v4.zip
 	rm -rf "$DEST"/example_yolo_v4/bin/data/model
+	rm -rf "$DEST"/example_yolo_v4/bin/data/classes.txt
 	rm -rf "$DEST"/example_yolo_v4/bin/data/movie.mp4
 	rm -rf "$DEST"/example_yolo_v4/bin/data/dog.jpg
 	mv -v model "$DEST"/example_yolo_v4/bin/data
+	mv -v classes.txt "$DEST"/example_yolo_v4/bin/data
 	mv -v movie.mp4 "$DEST"/example_yolo_v4/bin/data
 	mv -v dog.jpg "$DEST"/example_yolo_v4/bin/data
 fi

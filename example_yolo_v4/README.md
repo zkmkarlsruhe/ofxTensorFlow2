@@ -32,8 +32,7 @@ The model was trained on the COCO dataset. The dataset consists of 80 everyday c
 - pizza
 - ...
 
-For the full list please checkout `bin/data/cocoClasses.txt`
-
+For the full list please check out `bin/data/cocoClasses.txt` after downloading the example model.
 
 ### Tensorflow2
 This example comes with a converted model. If you are interested in the approach of conversion feel free to check out [this repository](https://github.com/hunglc007/tensorflow-yolov4-tflite).

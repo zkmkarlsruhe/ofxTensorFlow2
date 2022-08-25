@@ -23,6 +23,7 @@ example_*/bin/data/*.png
 example_*/bin/data/*.mp4
 example_*/bin/data/*.mov
 example_*/bin/data/style
+example_yolo_v4/bin/data/classes.txt
 
 # temp
 scripts/libtensorflow*
