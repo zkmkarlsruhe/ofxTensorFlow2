@@ -174,7 +174,7 @@ _Note: When using libtensorflow installed to the system, the `LD_LIBRARY_PATH` e
 
 ### macOS
 
-The cppflow library requires C++14 which needs to be enabled when building on macOS.
+The cppflow library requires C++14 (minimum) or C++17 which needs to be enabled when building on macOS.
 
 libtensorflow is provided as pre-compiled dynamic libraries. On macOS these `.dylib` files need to be configured and copied into the build macOS .app. These steps are automated via the `scripts/macos_install_libs.sh` script and can be invoked when building, either by Xcode or the Makefiles.
 
@@ -182,10 +182,10 @@ Alternatively, you can use libtensorflow compiled and installed to the system, i
 
 #### Xcode build
 
-Enable C++14 features by changing the `CLANG_CXX_LANGUAGE_STANDARD` define in `OF_ROOT/libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig`, for example:
+Enable C++14 or C++17 features by changing the `CLANG_CXX_LANGUAGE_STANDARD` define in `OF_ROOT/libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig`, for example:
 
 ```makefile
-CLANG_CXX_LANGUAGE_STANDARD[arch=x86_64] = c++14
+CLANG_CXX_LANGUAGE_STANDARD[arch=x86_64] = c++17
 ```
 
 After generating project files using the OF Project Generator, add the following to one of the Run Script build phases in the Xcode project to invoke the `macos_install_libs.sh` script:
@@ -200,10 +200,10 @@ $OF_PATH/addons/ofxTensorFlow2/scripts/macos_install_libs.sh "$TARGET_BUILD_DIR/
 
 #### Makefile build
 
-Enable C++14 features by changing `-std=c++11` to `-std=c++14` on line 142 in `OF_ROOT/libs/openFrameworksCompiled/project/osx/config.osx.default.mk`:
+Enable C++14 or C++17 features by changing `-std=c++11` to `-std=c++14` or `-std=c++17` on line 142 in `OF_ROOT/libs/openFrameworksCompiled/project/osx/config.osx.default.mk`:
 
 ```makefile
-PLATFORM_CXXFLAGS += -std=c++14
+PLATFORM_CXXFLAGS += -std=c++17
 ```
 
 When building an application using the makefiles, an additional step is required to install & configure the tensorflow2 dylibs into the project .app. This is partially automated by the `scripts/macos_install_libs.sh` script which is called from the `addon_targets.mk` file. To use it, add the following to the end of the project's `Makefile`:

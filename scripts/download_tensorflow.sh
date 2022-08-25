@@ -12,7 +12,7 @@
 set -e
 
 # tf version: optional argument
-VER=2.7.0
+VER=2.8.0
 if [ "$1" != "" ] ; then
 	VER=$1
 fi
