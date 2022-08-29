@@ -18,7 +18,7 @@
 #include "ofMain.h"
 #include "ofxTensorFlow2.h"
 
-// uncomment this to use a live camera, otherwise we'll use an image file
+// uncomment this to use a live camera otherwise, we'll use an image file
 //#define USE_LIVE_VIDEO
 
 // custom ofxTF2::ThreadedModel implementation with custom pre- & postprocessing

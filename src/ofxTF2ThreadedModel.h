@@ -153,11 +153,11 @@ protected:
 	/// note: not mutex protected, only set when the thread is not running
 	unsigned int idleMS_ = 16;
 
-	std::vector<cppflow::tensor> inputs_;  ///< inputs to be processed, mutex protected
-	std::vector<cppflow::tensor> outputs_; ///< processed outputs, mutex protected
-	bool newInput_ = false;  ///< is the input new? mutex protected
-	bool newOutput_ = false; ///< is the output new? mutex protected
-	std::string newModelPath_ = ""; ///< new model path to load in thread? mutex protected
+	std::vector<cppflow::tensor> inputs_;  //< inputs to be processed, mutex protected
+	std::vector<cppflow::tensor> outputs_; //< processed outputs, mutex protected
+	bool newInput_ = false;  //< is the input new? mutex protected
+	bool newOutput_ = false; //< is the output new? mutex protected
+	std::string newModelPath_ = ""; //< new model path to load in thread? mutex protected
 };
 
 }; // end namespace ofxTF2
