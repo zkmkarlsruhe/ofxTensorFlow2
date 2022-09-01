@@ -9,7 +9,7 @@
 #include "ofMain.h"
 #include "ofxMovenet.h"
 
-// uncomment this to use a live camera otherwise, we'll use a video file
+// uncomment this to use a live camera, otherwise we'll use a video file
 //#define USE_LIVE_VIDEO
 
 class ofApp : public ofBaseApp {

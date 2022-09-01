@@ -18,8 +18,12 @@ example_*/Project.xcconfig
 example_*/*.xcodeproj
 example_*/openFrameworks-Info.plist
 
-example_video_matting/bin/data/*.jpg
-example_video_matting/bin/data/*.mp4
+example_*/bin/data/*.jpg
+example_*/bin/data/*.png
+example_*/bin/data/*.mp4
+example_*/bin/data/*.mov
+example_*/bin/data/style
+example_yolo_v4/bin/data/classes.txt
 
 # temp
 scripts/libtensorflow*

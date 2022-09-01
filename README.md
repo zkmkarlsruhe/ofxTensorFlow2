@@ -14,15 +14,15 @@ WARRANTIES, see the file, "LICENSE.txt," in this distribution.
 
 Selected examples:
 
-| Style Transfer | Keyword Spotting | CharRnn (Frozen Graph) |
+| [Style Transfer regular](example_style_transfer) & [arbitrary](example_style_transfer_arbitrary) | [Object Recognition](example_yolo_v4) | [CharRnn (Frozen Graph)](example_basics_frozen_graph) |
 | :--: | :--: | :--: |
-| ![](media/style_transfer.gif) | ![](media/keyword_spotting.gif) |  ![](media/charRnn.gif) | 
+| ![](media/style_transfer.gif) | ![](media/yolo.gif) |  ![](media/charRnn.gif) | 
 
-| Pose Estimation | Pix2Pix | 
-| :--: | :--: | 
-| ![](media/movenet.gif) | ![](media/pix2pix.gif) | 
+| [Pose Estimation](example_movenet) | [Pix2Pix](example_pix2pix) | [Keyword Spotting](example_keyword_spotting) |
+| :--: | :--: | :--: |
+| ![](media/movenet.gif) | ![](media/pix2pix.gif) | ![](media/keyword_spotting.gif)  |
 
-| Video Matting |
+| [Video Matting](example_video_matting) |
 | :--: |
 | ![](media/video_matting.gif) | 
 
@@ -174,7 +174,9 @@ _Note: When using libtensorflow installed to the system, the `LD_LIBRARY_PATH` e
 
 ### macOS
 
-The cppflow library requires C++14 which needs to be enabled when building on macOS.
+The cppflow library requires C++14 (minimum) or C++17 which needs to be enabled when building on macOS.
+
+_Note: As of summer 2022, C++17 support is only available for the development version of openFrameworks. If you are using a release version and have build issues, try C++14 instead._
 
 libtensorflow is provided as pre-compiled dynamic libraries. On macOS these `.dylib` files need to be configured and copied into the build macOS .app. These steps are automated via the `scripts/macos_install_libs.sh` script and can be invoked when building, either by Xcode or the Makefiles.
 
@@ -182,7 +184,7 @@ Alternatively, you can use libtensorflow compiled and installed to the system, i
 
 #### Xcode build
 
-Enable C++14 features by changing the `CLANG_CXX_LANGUAGE_STANDARD` define in `OF_ROOT/libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig`, for example:
+Enable C++14 or C++17 features by changing the `CLANG_CXX_LANGUAGE_STANDARD` define in `OF_ROOT/libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig`, for example:
 
 ```makefile
 CLANG_CXX_LANGUAGE_STANDARD[arch=x86_64] = c++14
@@ -200,7 +202,7 @@ $OF_PATH/addons/ofxTensorFlow2/scripts/macos_install_libs.sh "$TARGET_BUILD_DIR/
 
 #### Makefile build
 
-Enable C++14 features by changing `-std=c++11` to `-std=c++14` on line 142 in `OF_ROOT/libs/openFrameworksCompiled/project/osx/config.osx.default.mk`:
+Enable C++14 or C++17 features by changing `-std=c++11` to `-std=c++14` or `-std=c++17` on line 142 in `OF_ROOT/libs/openFrameworksCompiled/project/osx/config.osx.default.mk`:
 
 ```makefile
 PLATFORM_CXXFLAGS += -std=c++14
