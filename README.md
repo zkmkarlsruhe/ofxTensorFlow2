@@ -427,6 +427,26 @@ Known Issues
 
 On macOS, the libtensorflow dynamic libraries (dylibs) need to be copied into the .app bundle. This error indicates the library loader cannot find the dylibs when the app starts and the build process is missing a step. Please check the "macOS" subsection under the "Installation & Build" section.
 
+### Building for x86_64 on an Apple Silicon system
+
+_Note: There are unofficial libtensorflow builds for macOS arm64 now._
+
+As of spring 2021, the *official* macOS libtensorflow builds are for x86_64 only. To use them on an Apple Silicon machine (arm64), you can build and run the OF application for x86_64 via Rosetta 2 (implicitly).
+
+The default OF-generated Xcode will try to build for both arm64 and x86_64, so you may see linker errors such as:
+
+~~~
+Ignoring file ../../../addons/ofxTensorFlow2/libs/tensorflow/lib/osx/libtensorflow.2.4.0.dylib, building for macOS-arm64 but attempting to link with file built for macOS-x86_64
+...
+"_TFE_ContextOptionsSetConfig", referenced from:
+~~~
+
+To make the build succeed, you can exclude the arm64 architecture in Xcode so the project is built only for x86_64 so the libtensorflow libraries can be linked:
+
+1. Select the project in the left-hand Xcode project tree
+2. Select the project build target under TARGETS
+3. Under the Build Settings tab, find the Exclude Architectures, and add "arm64"
+
 ### EXC_BAD_INSTRUCTION Crash on macOS
 
 The pre-built libtensorflow downloaded to `libs/tensorflow` comes with AVX (Advanced Vector Extensions) enabled which is an extension to the Intel x86 instruction set for fast vector math. CPUs older than circa 2013 may not support this and the application will simply crash with error such as:
