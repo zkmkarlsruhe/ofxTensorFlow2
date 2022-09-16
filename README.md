@@ -190,8 +190,15 @@ Enable C++14 or C++17 features by changing the `CLANG_CXX_LANGUAGE_STANDARD` def
 CLANG_CXX_LANGUAGE_STANDARD[arch=x86_64] = c++14
 ```
 
-After generating project files using the OF Project Generator, add the following to one of the Run Script build phases in the Xcode project to invoke the `macos_install_libs.sh` script:
+After generating project files using the OF Project Generator, add the following to one of the Run Script build phases in the Xcode project to invoke the `macos_install_libs.sh` script, either via the `configure_xcode.sh` script or manually.
 
+Script method: close the project in Xcode if it's open, then run `configure_xcode.sh` with the path to the project directory as argument, ex:
+
+```shell
+scripts/configure_xcode.sh example_yolo_v4
+```
+
+Manual method:
 1. Select the project in the left-hand Xcode project tree
 2. Select the project build target under TARGETS
 3. Under the Build Phases tab, find the 2nd Run Script, and add the following before the final `echo` line:
@@ -199,6 +206,8 @@ After generating project files using the OF Project Generator, add the following
 ```shell
 $OF_PATH/addons/ofxTensorFlow2/scripts/macos_install_libs.sh "$TARGET_BUILD_DIR/$PRODUCT_NAME.app";
 ```
+
+_Note: Whenever the project files are (re)generated, either method will need to be reapplied._
 
 #### Makefile build
 
