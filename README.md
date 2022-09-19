@@ -150,6 +150,12 @@ This step can also be automated by additional makefile targets provided by the `
 include $(OF_ROOT)/addons/ofxTensorFlow2/addon_targets.mk
 ```
 
+Additionally, this include can be added to an existing project by running the `configure_makefile.sh` script with the [ath to the project directory as an argument:
+
+```shell
+scripts/configure_makefile.sh example_yolo_v4
+```
+
 This adds two additional targets, one for Debug and the other for Release, which run the application after exporting the `LD_LIBRARY_PATH`. For example, to run a debug version of the application:
 
     make RunDebugTF2
@@ -168,7 +174,7 @@ To use libtensorflow installed to a system path, ie. by your system's package ma
 
 1. If libtensorflow was downloaded to `libs/tensorflow/`, remove all files in this folder
 2. Edit `addon_config.mk` under the "linux64" build target: comment the "local path" sections
-3. If using the OF Project Generator, (re)regenerate project files for projects using the addon
+3. If using the OF ProjectGenerator, (re)regenerate project files for projects using the addon
 
 _Note: When using libtensorflow installed to the system, the `LD_LIBRARY_PATH` export is not needed._
 
@@ -190,9 +196,9 @@ Enable C++14 or C++17 features by changing the `CLANG_CXX_LANGUAGE_STANDARD` def
 CLANG_CXX_LANGUAGE_STANDARD[arch=x86_64] = c++14
 ```
 
-After generating project files using the OF Project Generator, add the following to one of the Run Script build phases in the Xcode project to invoke the `macos_install_libs.sh` script, either via the `configure_xcode.sh` script or manually.
+After generating project files using the OF ProjectGenerator, add the following to one of the Run Script build phases in the Xcode project to invoke the `macos_install_libs.sh` script, either via the `configure_xcode.sh` script or manually.
 
-Script method: close the project in Xcode if it's open, then run `configure_xcode.sh` with the path to the project directory as argument, ex:
+Script method: close the project in Xcode if it's open, then run `configure_xcode.sh` with the path to the project directory as argument:
 
 ```shell
 scripts/configure_xcode.sh example_yolo_v4
@@ -224,6 +230,12 @@ When building an application using the makefiles, an additional step is required
 include $(OF_ROOT)/addons/ofxTensorFlow2/addon_targets.mk
 ```
 
+Additionally, this include can be added to an existing project by running the `configure_makefile.sh` script with the [ath to the project directory as an argument:
+
+```shell
+scripts/configure_makefile.sh example_yolo_v4
+```
+
 This adds two additional targets, one for Debug and the other for Release, which call the script to install the .dylibs. For example, to build a debug version of the application *and* install the libs, simply run:
 
     make DebugTF2
@@ -245,7 +257,7 @@ To use libtensorflow installed to a system path, ie. from a package manager like
 2. Edit `addon_config.mk` under the "osx" build target:
   * comment the "local path" sections and uncomment the "system path" sections
   * If needed, change the path for your system, ie. `/usr/local` to `/usr/opt` etc
-3. If using the OF Project Generator, (re)regenerate project files for projects using the addon
+3. If using the OF ProjectGenerator, (re)regenerate project files for projects using the addon
 
 Running the Example Projects
 ----------------------------

@@ -1,6 +1,6 @@
 #! /bin/sh
 # configure ofxTensorFlow2 custom settings for Xcode project files
-# 1. generate projects files with oF ProjectGeneration
+# 1. generate projects files with oF ProjectGenerator
 # 2. run this script on the project directory (not .xcodeproj)
 # 3. open Xcode project and build/run
 # Dan Wilcox ZKM | Hertz-Lab 2022
