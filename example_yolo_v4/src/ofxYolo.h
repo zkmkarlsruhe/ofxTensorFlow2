@@ -40,6 +40,7 @@
 ///         ofLogNotice() << "detected objects updated";
 ///         for(auto object : yolo.getObjects()) {
 ///            // do something with object
+///            ofLog() << "found a " << object.ident.text;
 ///         }
 ///     }
 /// }
@@ -54,12 +55,17 @@ class ofxYolo {
 
 		/// single detected object
 		struct Object {
-			int index; ///< recognized class index within the classes vector
-			std::string & ident; ///< recognized class identification
+			/// identified object class
+			struct Ident {
+				int index;          ///< identified class index within classes vector, 0 to size-1
+				std::string & text; ///< identified class string, ie. "person", "car", etc
+				Ident(int index, std::string & text) : index(index), text(text) {}
+			} ident;
 			ofRectangle bbox; ///< bounding box, coords within input image size (default) or normalized 0-1
 			float confidence; ///< confidence 0-1
 
-			Object(int index, std::string &ident) : index(index), ident(ident) {}
+			/// create with identified class index and string
+			Object(int index, std::string & text) : ident(index, text) {}
 
 			/// draw object bounding box and class info
 			void draw() {
@@ -77,7 +83,7 @@ class ofxYolo {
 			/// draw object class and confidence
 			void drawClass() {
 				ofSetColor(ofColor::cyan);
-				ofDrawBitmapString(ident + "\n" + ofToString(confidence, 2),
+				ofDrawBitmapString(ident.text + "\n" + ofToString(confidence, 2),
 				                   bbox.x, bbox.y);
 			}
 		};
