@@ -32,7 +32,7 @@ VER=$(ls "$SRC" | egrep "libtensorflow\.[0-9]\.[0-9]\.[0-9]" | sed "s/[^0-9]*//"
 VER="$(basename ${VER%.*})"
 
 # copy dylibs to app bundle
-rsync -aed "$SRC"/*.dylib "$DEST"
+rsync -aedl "$SRC"/*.dylib "$DEST"
 
 # change dylib loader path to Frameworks dir in executable
 install_name_tool -change @rpath/libtensorflow.2.dylib @executable_path/../Frameworks/libtensorflow.2.dylib "$APP_PATH/Contents/MacOS/$APP_NAME"
