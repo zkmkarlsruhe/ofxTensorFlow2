@@ -104,25 +104,30 @@ cd ofxTensorFlow2
 git submodule update --init --recursive
 ```
 
-Next, download the pre-built [TensorFlow2 C library](https://www.tensorflow.org/install/lang_c) and extract the following folders to their destination:
+Next, download the pre-built [TensorFlow2 C library](https://www.tensorflow.org/install/lang_c) and extract the following folders to their destination. Note that the lib files (.so, .dylib, .dll) **must** be placed within a subdriectory matching your system and/or build environment (osx, linux64, msys2, vs):
 
 ~~~
 include/ --> libs/tensorflow/include
 lib/ --> libs/tensorflow/lib/[osx/linux64/msys2/vs]
 ~~~
 
+\* **If the libs are placed elsewhere, the OF ProjectGenerator will not find them and you will have linker errors when building.**
+
 To make this quick, you can use a script which automates the download:
 
 ```shell
 ./scripts/download_tensorflow.sh
 ```
+
+By default, the script will try to auto-detect the system architecture. For example, on an Apple Silicon macOS system, the script will download builds for "arm64" while an Intel machine will use "x86_64".
+
 When opting for GPU support set the `TYPE` script variable:
 
 ```shell 
 TYPE=gpu ./scripts/download_tensorflow.sh
 ```
 
-Additionally, to use a specific version supply it as the first argument:
+Additionally, to use a specific version, supply it as the first argument:
 
 ```shell
 ./scripts/download_tensorflow.sh 2.7.0
@@ -192,8 +197,8 @@ Alternatively, you can use libtensorflow compiled and installed to the system, i
 
 Enable C++14 or C++17 features by changing the `CLANG_CXX_LANGUAGE_STANDARD` define in `OF_ROOT/libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig`, for example:
 
-```makefile
-CLANG_CXX_LANGUAGE_STANDARD[arch=x86_64] = c++14
+```
+CLANG_CXX_LANGUAGE_STANDARD = c++14
 ```
 
 After generating project files using the OF ProjectGenerator, add the following to one of the Run Script build phases in the Xcode project to invoke the `macos_install_libs.sh` script, either via the `configure_xcode.sh` script or manually.
@@ -214,6 +219,16 @@ $OF_PATH/addons/ofxTensorFlow2/scripts/macos_install_libs.sh "$TARGET_BUILD_DIR/
 ```
 
 _Note: Whenever the project files are (re)generated, either method will need to be reapplied._
+
+By default, Xcode *Debug* builds are for the current system architecture only. Build and run should work fine. *Release* builds, however, are "universal" and will build for *all* supported architectures, ie. "arm64" and "x86_64". This will cause linker errors since the libtensorflow builds used with this addon are generally single-architecture only.
+
+To disable building for a specific architecture, it can be added to a list of "Excluded Architectures" within Xcode:
+
+1. Select the project in the left-hand Xcode project tree
+2. Select the project build target under TARGETS
+3. Under the Build Settings tab, find Exclude Architectures, double click on the second column, and add:
+  * on an Apple Silicon system: x86_64
+  * on an Intel system: arm64
 
 #### Makefile build
 
@@ -444,17 +459,9 @@ If you find any bugs or suggestions please log them to GitHub as well.
 Known Issues
 ------------
 
-### dyld: Library not loaded: @rpath/libtensorflow.2.dylib
+### TF_* architecture linker errors on macOS
 
-On macOS, the libtensorflow dynamic libraries (dylibs) need to be copied into the .app bundle. This error indicates the library loader cannot find the dylibs when the app starts and the build process is missing a step. Please check the "macOS" subsection under the "Installation & Build" section.
-
-### Building for x86_64 on an Apple Silicon system
-
-_Note: There are unofficial libtensorflow builds for macOS arm64 now._
-
-As of spring 2021, the *official* macOS libtensorflow builds are for x86_64 only. To use them on an Apple Silicon machine (arm64), you can build and run the OF application for x86_64 via Rosetta 2 (implicitly).
-
-The default OF-generated Xcode will try to build for both arm64 and x86_64, so you may see linker errors such as:
+The default OF-generated Xcode project will try to build for both arm64 and x86_64 in *Release*, so you may see linker errors such as:
 
 ~~~
 Ignoring file ../../../addons/ofxTensorFlow2/libs/tensorflow/lib/osx/libtensorflow.2.4.0.dylib, building for macOS-arm64 but attempting to link with file built for macOS-x86_64
@@ -462,11 +469,11 @@ Ignoring file ../../../addons/ofxTensorFlow2/libs/tensorflow/lib/osx/libtensorfl
 "_TFE_ContextOptionsSetConfig", referenced from:
 ~~~
 
-To make the build succeed, you can exclude the arm64 architecture in Xcode so the project is built only for x86_64 so the libtensorflow libraries can be linked:
+To make the build succeed, you can exclude the arm64 architecture in Xcode so the project.See the info in the the "macOS / Xcode build" subsection under the "Installation and Build" section.
 
-1. Select the project in the left-hand Xcode project tree
-2. Select the project build target under TARGETS
-3. Under the Build Settings tab, find the Exclude Architectures, and add "arm64"
+### dyld: Library not loaded: @rpath/libtensorflow.2.dylib
+
+On macOS, the libtensorflow dynamic libraries (dylibs) need to be copied into the .app bundle. This error indicates the library loader cannot find the dylibs when the app starts and the build process is missing a step. Please check the "macOS" subsection under the "Installation and Build" section.
 
 ### EXC_BAD_INSTRUCTION Crash on macOS
 
