@@ -104,14 +104,14 @@ cd ofxTensorFlow2
 git submodule update --init --recursive
 ```
 
-Next, download the pre-built [TensorFlow2 C library](https://www.tensorflow.org/install/lang_c) and extract the following folders to their destination. Note that the lib files (.so, .dylib, .dll) **must** be placed within a subdriectory matching your system and/or build environment (osx, linux64, msys2, vs):
+Next, download the pre-built [TensorFlow2 C library](https://www.tensorflow.org/install/lang_c) and extract the following folders to their destination. Note that the lib files (.so, .dylib, .dll) **must** be placed within a subdirectory matching your system and/or build environment (osx, linux64, msys2, vs):
 
 ~~~
 include/ --> libs/tensorflow/include
 lib/ --> libs/tensorflow/lib/[osx/linux64/msys2/vs]
 ~~~
 
-\* **If the libs are placed elsewhere, the OF ProjectGenerator will not find them and you will have linker errors when building.**
+*Note: If the libs are placed **elsewhere**, the OF ProjectGenerator will not find them and you will have linker errors when building.*
 
 To make this quick, you can use a script which automates the download:
 
