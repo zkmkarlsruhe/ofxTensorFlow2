@@ -26,12 +26,13 @@ if [ "$PROJECT" = "" ] ; then
 	exit 1
 fi
 
-# add call ofxTF2 lib script after last line in 2nd run script build phase
+# add call ofxTF2 lib script before last line in 2nd run script build phase
 # note: if the oF project template ever changes, then LASTLINE likely needs to be updated
 if ! grep -q "# ofxTensorFlow2" "$PROJECT/project.pbxproj" ; then
-	LASTLINE='# install_name_tool -change @rpath\/libfmod.dylib'
-	SCRIPT='$OF_PATH/addons/ofxTensorFlow2/scripts/macos_install_libs.sh "$TARGET_BUILD_DIR/$PRODUCT_NAME.app";'
-	printf "\n# ofxTensorFlow2\n${SCRIPT}\n" | sed -i '' "/$LASTLINE/ r /dev/stdin" "$PROJECT/project.pbxproj"
+	# escape backslashes \ -> \\
+	LASTLINE='\\n\\necho \\"$GCC_PREPROCESSOR_DEFINITIONS\\";\\n";'
+	SCRIPT='\\n\\n# ofxTensorFlow2\\n\\"$OF_PATH\\"/addons/ofxTensorFlow2/scripts/macos_install_libs.sh \\"$TARGET_BUILD_DIR/$PRODUCT_NAME.app\\";'
+	sed -i '' "s|${LASTLINE}|${SCRIPT}${LASTLINE}|" "$PROJECT/project.pbxproj"
 	echo "$PROJECT added macos_install_libs.sh to run script build phase"
 else
 	echo "$PROJECT already configured"
