@@ -3,8 +3,7 @@ Realtime Object Recognition on the COCO dataset using YOLOv4.
 
 ![](../media/yolo.gif)
 
-Example made with love by [Jonathhhan](https://github.com/Jonathhhan) 2022  
-https://github.com/Jonathhhan
+Example made with love by [Jonathan Frank](https://github.com/Jonathhhan) 2022
 
 Video credits to [Videvo](https://www.videvo.net/video/busy-hong-kong-street-at-sunset/7906/)
 

@@ -4,8 +4,7 @@ Different from regular Image Stylization, this model is not trained on one speci
 
 ![](../media/styleTransferArbitrary.gif)
 
-Example made with love by [Jonathhhan](https://github.com/Jonathhhan) 2022  
-https://github.com/Jonathhhan
+Example made with love by [Jonathan Frank](https://github.com/Jonathhhan) 2022
 
 Video available at this [Google Drive](https://drive.google.com/drive/folders/1VFnWwuu-YXDKG-N6vcjK_nL7YZMFapMU)
 

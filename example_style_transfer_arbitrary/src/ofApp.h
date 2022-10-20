@@ -1,5 +1,5 @@
 /*
- * Example made with love by Jonathhhan 2022
+ * Example made with love by Jonathan Frank 2022
  * https://github.com/Jonathhhan
  * Updated by members of the ZKM | Hertz-Lab 2022
  */
