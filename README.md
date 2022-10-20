@@ -274,6 +274,25 @@ To use libtensorflow installed to a system path, ie. from a package manager like
   * If needed, change the path for your system, ie. `/usr/local` to `/usr/opt` etc
 3. If using the OF ProjectGenerator, (re)regenerate project files for projects using the addon
 
+### Windows
+
+In order to use the helper scripts, it is recommended to install the Msys2 distribution which provides both a Unix command shell and MinGW. Download the Msys2 "x86_64" 64 bit installer from: http://www.msys2.org/
+
+In a Msys2 command shell, the `scripts/download_tensorflow.sh` and `scripts/example_models.sh` can be invoked.
+
+#### CUDA
+
+_The following steps were provided by Jonathan Frank Spring 2022 and were tested with Visual Studio 2022, CUDA 11.7, cuDNN 8.4.1.50, and libtensorflow 2.8.0. Help us expand this section as the main devs use Linux and macOS._
+
+For best performance, it is suggested to install Nvidia CUDA for hardware acceleration.
+
+1. Download and install Nvidia CUDA (non-server) https://developer.nvidia.com/cuda-downloads
+2. Download and install Nvidia cuDNN (CUDA Deep Neural Network), requires dev program membership https://developer.nvidia.com/cudnn
+3. Add the following to `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v##.#\bin`
+  * The contents of `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDNN\v#.#.#.#\bin`
+  * `zlibwapi.dll` downloaded from http://www.winimage.com/zLibDll/zlib123dllx64.zip
+4. Install libtensorflow2 _with **GPU** acceleration_ using either manually or via the `scripts/download_tensorflow.sh`
+
 Running the Example Projects
 ----------------------------
 
