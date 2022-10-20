@@ -22,7 +22,9 @@ void ofApp::setup() {
 	ofSetWindowTitle("example_style_transfer");
 	
 	// use only a portion of the GPU memory & grow as needed
-	ofxTF2::setGPUMaxMemory(ofxTF2::GPU_PERCENT_70, true);
+	if(!ofxTF2::setGPUMaxMemory(ofxTF2::GPU_PERCENT_70, true)) {
+		ofLogError() << "failed to set GPU Memory options!";
+	}
 
 	// go through the models directory and print out all the paths
 	ofDirectory modelsDir(ofToDataPath("models"));
@@ -83,10 +85,8 @@ void ofApp::update() {
 			modelIndex = 0;
 		}
 		ofLogNotice() << "Load model: " << modelPaths[modelIndex];
-		if(!model.load(modelPaths[modelIndex])) {
-			// exit gracefully if we can't load model
-			ofExit(EXIT_FAILURE);
-		}
+		//model.load(modelPaths[modelIndex]); // blocks when loading
+		model.loadAsync(modelPaths[modelIndex]); // non-blocking, loads in thread
 		modelName = ofFilePath::getBaseName(modelPaths[modelIndex]);
 		loadTimestamp = ofGetElapsedTimef();
 		newInput = true; // try to update

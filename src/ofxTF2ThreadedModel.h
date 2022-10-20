@@ -88,6 +88,11 @@ public:
 	/// thread-safe call to Model::load()
 	bool load(const std::string & modelPath) override;
 
+	/// thread-safe call to Model::load() in the background thread
+	/// note: does not return a bool, so check model loading status with
+	/// isLoaded() at a later point in time
+	void loadAsync(const std::string & modelPath);
+
 	/// thread-safe call to Model::setup() for multi processing, optional
 	void setup(const std::vector<std::string> & inputNames,
 	           const std::vector<std::string> & outputNames) override;
@@ -101,6 +106,12 @@ public:
     /// override the runMultiModel function so derived classes can redefine it
     virtual std::vector<cppflow::tensor>
 	runMultiModel(const std::vector<cppflow::tensor> & inputs) const override;
+
+	/// thread-safe call to Model::isLoaded()
+	bool isLoaded() override;
+
+	/// thread-safe call to Model::printOperations()
+	void printOperations() override;
     
 	/// returns true if the model is idle and ready for new input
 	bool readyForInput();
@@ -142,10 +153,11 @@ protected:
 	/// note: not mutex protected, only set when the thread is not running
 	unsigned int idleMS_ = 16;
 
-	std::vector<cppflow::tensor> inputs_;  //< inputs to be processed, mutex protected
-	std::vector<cppflow::tensor> outputs_; //< processed outputs, mutex protected
-	bool newInput_ = false;  //< is the input new? mutex protected
-	bool newOutput_ = false; //< is the output new? mutex protected
+	std::vector<cppflow::tensor> inputs_;  ///< inputs to be processed, mutex protected
+	std::vector<cppflow::tensor> outputs_; ///< processed outputs, mutex protected
+	bool newInput_ = false;  ///< is the input new? mutex protected
+	bool newOutput_ = false; ///< is the output new? mutex protected
+	std::string newModelPath_ = ""; ///< new model path to load in thread? mutex protected
 };
 
 }; // end namespace ofxTF2

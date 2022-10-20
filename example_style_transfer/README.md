@@ -1,6 +1,8 @@
 # Realtime Neural Style Transfer
 This is an example for realtime (\~30fps @ RTX 2070 Super) neural style transfer in openFrameworks.
 
+![GIF Style Transfer](../media/style_transfer.gif)
+
 The Python code has been taken from [this repo](https://github.com/cryu854/FastStyle). Neural style transfer can also be done using GANs. However, this method is much faster. Check this [post](https://www.tensorflow.org/tutorials/generative/style_transfer?hl=en) for more information on this topic.
 Nevertheless, we highly recommend using a GPU.
 

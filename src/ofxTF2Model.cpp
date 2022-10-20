@@ -14,6 +14,7 @@
  */
 
 #include "ofxTF2Model.h"
+#include "ofxTensorFlow2Utils.h"
 
 #include "ofFileUtils.h"
 #include "ofUtils.h"
@@ -21,7 +22,8 @@
 
 namespace ofxTF2 {
 
-Model::Model(const std::string & modelPath) {
+Model::Model(const std::string & modelPath, const cppflow::model::TYPE type) {
+	this->type = type;
 	Model::load(modelPath);
 }
 
@@ -29,15 +31,32 @@ Model::~Model(){
 	Model::clear();
 }
 
+void Model::setModelType(const cppflow::model::TYPE type) {
+	this->type = type;
+}
+
 bool Model::load(const std::string & modelPath) {
 	Model::clear();
 	std::string path = ofToDataPath(modelPath);
-	if(!ofDirectory::doesDirectoryExist(path)) {
-		ofLogError("ofxTensorFlow2") << "Model: model path not found: "
-			<< modelPath;
-		return false;
+	if (this->type == cppflow::model::SAVED_MODEL){
+		if(!ofDirectory::doesDirectoryExist(path)) {
+			ofLogError("ofxTensorFlow2") << "Model: model path not found: "
+				<< modelPath;
+			return false;
+		}
 	}
-	auto model = new cppflow::model(path);
+	else if (this->type == cppflow::model::FROZEN_GRAPH){
+		if(!ofFile::doesFileExist(path)) {
+			ofLogError("ofxTensorFlow2") << "Model: model path not found: "
+				<< modelPath;
+			return false;
+		}
+	}
+	else {
+		ofLogError("ofxTensorFlow2") << "Model: model type unknown";
+			return false;
+	}
+	auto model = new cppflow::model(path, this->type);
 	if(!model) {
 		modelPath_ = "";
 		ofLogError("ofxTensorFlow2") << "Model: model could not be initialized!";
@@ -75,8 +94,14 @@ Model::runMultiModel(const std::vector<cppflow::tensor> & inputs) const {
 	using inputTuple_t = std::tuple<std::string, cppflow::tensor>;
 	std::vector<inputTuple_t> inputArguments;
 
+	if (inputs.size() > inputNames_.size()) {
+		ofLogError("ofxTensorFlow2") << "Model: number of inputs greater than "
+			<< "number of input names";
+		return std::vector<cppflow::tensor>(-1);
+	}
+
 	// add the names from settings and tensors to the vector of arguments
-	for(unsigned int i = 0; i < inputNames_.size(); i++) {
+	for(unsigned int i = 0; i < inputs.size(); i++) {
 		inputArguments.push_back(inputTuple_t(inputNames_[i], inputs[i]));
 	}
 
@@ -96,10 +121,13 @@ bool Model::isLoaded() {
 }
 
 void Model::printOperations() {
-	ofLogNotice("ofxTensorFlow2") << "====== Model Operations ======";
+	ofLogNotice("ofxTensorFlow2") << "====== Model Operations with Shapes ======";
 	auto ops = model_->get_operations();
-	for(auto & el : ops) {
-		ofLogNotice("ofxTensorFlow2") << el;
+	for(const auto & el : ops) {
+		if (el.compare("NoOp") != 0){
+			auto s = vectorToString(model_->get_operation_shape(el));
+			ofLogNotice("ofxTensorFlow2") << el << " with shape: " << s;
+		}
 	}
 	ofLogNotice("ofxTensorFlow2") << "============ End ==============";
 }

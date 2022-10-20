@@ -1,15 +1,21 @@
 #! /bin/sh
 #
 # script to download pre-built tensorflow C library from
-# https://www.tensorflow.org/install/lang_c
+# * official: https://www.tensorflow.org/install/lang_c
+# * non-official macOS arm64: https://github.com/vodianyk/libtensorflow-cpu-darwin-arm64
 #
-# Dan Wilcox ZKM | Hertz-Lab 2021
+# ref: https://stackoverflow.com/a/55434980
+#
+# Dan Wilcox ZKM | Hertz-Lab 2021-22
 
 # stop on error
 set -e
 
-# tf version
-VER=2.4.0
+# tf version: optional argument
+VER=2.8.0
+if [ "$1" != "" ] ; then
+	VER=$1
+fi
 
 # tf type: cpu or gpu,
 # override when running via: TYPE=gpu ./download_tensorflow.sh
@@ -17,7 +23,7 @@ if [ "$TYPE" = "" ] ; then
 	TYPE=cpu
 fi
 
-# tf download host url
+# default tf download host url
 HOST=https://storage.googleapis.com/tensorflow/libtensorflow
 
 # tf download file extension
@@ -41,6 +47,11 @@ case "$OS" in
 		if [ "$TYPE" = "gpu" ] ; then
 			echo "macOS TYPE is cpu-only, switching to cpu"
 			TYPE=cpu
+		fi
+		if [ "$ARCH" = "arm64" ] ; then
+			HOST="https://github.com/vodianyk/libtensorflow-cpu-darwin-arm64/raw/main"
+			echo "macOS arm64 builds are non-official and not all version are available"
+			echo "downloading from https://github.com/vodianyk/libtensorflow-cpu-darwin-arm64"
 		fi
 		;;
 	linux)
@@ -87,9 +98,14 @@ rm -rf $DEST/*
 ##### download & install
 
 # get latest source
-curl -O ${HOST}/${DOWNLOAD}.${EXT}
+RETCODE=$(curl -LO -w "%{http_code}" ${HOST}/${DOWNLOAD}.${EXT})
+if [ "$RETCODE" != "200" ] ; then
+	echo "download failed: HTTP $RETCODE"
+	rm -rf $SRC ${DOWNLOAD}.${EXT}
+	exit 1
+fi
 mkdir -p $SRC
-if [ "$EXT" == "zip" ] ; then
+if [ "$EXT" = "zip" ] ; then
 	unzip -d $SRC ${DOWNLOAD}.${EXT}
 else
 	tar -xvf ${DOWNLOAD}.${EXT} -C $SRC
@@ -108,6 +124,22 @@ cp -Rv $SRC/include $DEST/
 # copy libs to subdir using OF OS naming so ProjectGenerator finds them
 mkdir -p $DEST/lib/${OF_OS}
 cp -Rv $SRC/lib/* $DEST/lib/${OF_OS}/
+
+# platform specifics
+if [ "$OF_OS" = "osx" ] ; then
+
+	# remove exec bit
+	chmod -x $DEST/lib/${OF_OS}/*.dylib
+
+	# change loader path to work within .app bundles
+	# note: done in macos_install_libs.sh for now as including this step here
+	#       would break builds where libtensorflow is installed manually
+	# note: the other .dylibs are symlinks to these
+#	cd $DEST/lib/${OF_OS}
+#	install_name_tool -id @executable_path/../Frameworks/libtensorflow.${VER}.dylib libtensorflow.${VER}.dylib
+#	install_name_tool -id @executable_path/../Frameworks/libtensorflow_framework.${VER}.dylib libtensorflow_framework.${VER}.dylib
+#	cd -
+fi
 
 ##### cleanup
 

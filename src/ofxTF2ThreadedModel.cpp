@@ -29,6 +29,12 @@ bool ThreadedModel::load(const std::string & modelPath) {
 	return ret;
 }
 
+void ThreadedModel::loadAsync(const std::string & modelPath) {
+	lock();
+	newModelPath_ = modelPath;
+	unlock();
+}
+
 void ThreadedModel::setup(const std::vector<std::string> & inputNames,
                           const std::vector<std::string> & outputNames) {
 	lock();
@@ -49,6 +55,20 @@ cppflow::tensor ThreadedModel::runModel(const cppflow::tensor & input) const{
 std::vector<cppflow::tensor>
 ThreadedModel::runMultiModel(const std::vector<cppflow::tensor> & inputs) const {
 	return Model::runMultiModel(inputs);
+}
+
+bool ThreadedModel::isLoaded() {
+	bool ret = false;
+	lock();
+	ret = Model::isLoaded();
+	unlock();
+	return ret;
+}
+
+void ThreadedModel::printOperations() {
+	lock();
+	Model::printOperations();
+	unlock();
 }
 
 bool ThreadedModel::readyForInput() {
@@ -106,9 +126,14 @@ void ThreadedModel::setIdleTime(unsigned int ms) {
 void ThreadedModel::threadedFunction() {
 	while(isThreadRunning()) {
 		lock();
+		if(newModelPath_ != "") {
+			// async model loading
+			Model::load(newModelPath_);
+			newModelPath_ = ""; // done
+		}
 		if(newInput_) {
 			// if we have only one in and output use the simpler runModel function
-			// we dont call runMutliModel as we want users to augment runModel
+			// we dont call runMultiModel as we want users to augment runModel
 			if(inputNames_.size() <= 1 && outputNames_.size() <= 1) {
 				outputs_ = {runModel(inputs_[0])};
 			}

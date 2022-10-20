@@ -107,10 +107,14 @@ namespace ofxTF2 {
 	/// set the max amount of reserved GPU memory and optional memory growth
 	/// note: calling this function has no effect when using the CPU library
 	/// to use other a custom policy, check the documentation of cppflow
-	void setGPUMaxMemory(GPUPercent percent, bool growth=false);
+	bool setGPUMaxMemory(GPUPercent percent, bool growth=true);
 
-	/// set TensorFlow context options ConfigProto directly
-	void setContextOptionsConfig(const std::vector<uint8_t> & config);
+	/// set TensorFlow context from ConfigProto directly
+	bool setContext(const std::vector<uint8_t> & config);
+
+	/// set TensorFlow log level using ofLogLevel enums
+	/// FIXME: doesn't seem to work yet...
+	void setLogLevel(ofLogLevel level);
 
 }; // end namespace ofxTF2
 
@@ -134,7 +138,7 @@ namespace ofxTF2 {
 
 	template <typename T>
 	cppflow::tensor vectorToTensor(const std::vector<T> & srcVector,
-	                               const shapeVector & shape) {
+								   const shapeVector & shape) {
 		auto shape_ = shape; 
 		// by default and if shape is (0) create a flat vector
 		if(shape == shapeVector{0}) {
@@ -150,6 +154,10 @@ namespace ofxTF2 {
 
 	template <typename T>
 	cppflow::tensor pixelsToTensor(const ofPixels_<T> & pixels) {
+		if(!pixels.isAllocated()) {
+			ofLogError("ofxTensorFlow2") << "pixelsToTensor image unallocated";
+			return cppflow::tensor(-1);
+		}
 		const shape_t w = pixels.getWidth();
 		const shape_t h = pixels.getHeight();
 		shape_t c;
@@ -266,9 +274,5 @@ namespace ofxTF2 {
 		
 		return true;
 	}
-
-	/// set TensorFlow log level using ofLogLevel enums
-	/// FIXME: doesn't seem to work yet...
-	void setLogLevel(ofLogLevel level);
 
 }; // end namespace ofxTF2

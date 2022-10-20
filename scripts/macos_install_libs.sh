@@ -32,12 +32,14 @@ VER=$(ls "$SRC" | egrep "libtensorflow\.[0-9]\.[0-9]\.[0-9]" | sed "s/[^0-9]*//"
 VER="$(basename ${VER%.*})"
 
 # copy dylibs to app bundle
-rsync -aved "$SRC"/*.dylib "$DEST"
+rsync -aedl "$SRC"/*.dylib "$DEST"
+
+# note: running install_name_tool is not needed if the rpaths are changed beforehand via download_tensorflow.sh
 
 # change dylib loader path to Frameworks dir in executable
 install_name_tool -change @rpath/libtensorflow.2.dylib @executable_path/../Frameworks/libtensorflow.2.dylib "$APP_PATH/Contents/MacOS/$APP_NAME"
 install_name_tool -change @rpath/libtensorflow_framework.2.dylib @executable_path/../Frameworks/libtensorflow_framework.2.dylib "$APP_PATH/Contents/MacOS/$APP_NAME"
 
 # change dylib loader path to Frameworks dir in dylibs
-install_name_tool -id @executable_path/../Frameworks/libtensorflow.2.dylib -change @rpath/libtensorflow_framework.2.dylib @executable_path/../Frameworks/libtensorflow_framework.2.dylib "$DEST"/libtensorflow.${VER}.dylib
-install_name_tool -id @executable_path/../Frameworks/libtensorflow.2_framework.dylib "$DEST"/libtensorflow_framework.${VER}.dylib
+install_name_tool -id @executable_path/../Frameworks/libtensorflow.2.dylib -change @rpath/libtensorflow_framework.2.dylib @executable_path/../Frameworks/libtensorflow_framework.2.dylib "$DEST/libtensorflow.${VER}.dylib"
+install_name_tool -id @executable_path/../Frameworks/libtensorflow.2_framework.dylib "$DEST/libtensorflow_framework.${VER}.dylib"
