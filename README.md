@@ -278,7 +278,13 @@ To use libtensorflow installed to a system path, ie. from a package manager like
 
 In order to use the helper scripts, it is recommended to install the Msys2 distribution which provides both a Unix command shell and MinGW. Download the Msys2 "x86_64" 64 bit installer from: http://www.msys2.org/
 
-In a Msys2 command shell, the `scripts/download_tensorflow.sh` and `scripts/example_models.sh` can be invoked.
+In a Msys2 command shell, next install the `curl` and `unzip` commands:
+
+```shell
+pacman -S curl unzip
+```
+
+Now the `scripts/download_tensorflow.sh` and `scripts/example_models.sh` can be invoked.
 
 #### CUDA
 
