@@ -125,6 +125,22 @@ cp -Rv $SRC/include $DEST/
 mkdir -p $DEST/lib/${OF_OS}
 cp -Rv $SRC/lib/* $DEST/lib/${OF_OS}/
 
+# platform specifics
+if [ "$OF_OS" = "osx" ] ; then
+
+	# remove exec bit
+	chmod -x $DEST/lib/${OF_OS}/*.dylib
+
+	# change loader path to work within .app bundles
+	# note: done in macos_install_libs.sh for now as including this step here
+	#       would break builds where libtensorflow is installed manually
+	# note: the other .dylibs are symlinks to these
+#	cd $DEST/lib/${OF_OS}
+#	install_name_tool -id @executable_path/../Frameworks/libtensorflow.${VER}.dylib libtensorflow.${VER}.dylib
+#	install_name_tool -id @executable_path/../Frameworks/libtensorflow_framework.${VER}.dylib libtensorflow_framework.${VER}.dylib
+#	cd -
+fi
+
 ##### cleanup
 
 rm -rf $SRC ${DOWNLOAD}.${EXT}
