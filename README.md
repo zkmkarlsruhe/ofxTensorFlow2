@@ -299,6 +299,8 @@ For best performance, it is suggested to install Nvidia CUDA for hardware accele
   * `zlibwapi.dll` downloaded from http://www.winimage.com/zLibDll/zlib123dllx64.zip
 4. Install libtensorflow2 _with **GPU** acceleration_ using either manually or via the `scripts/download_tensorflow.sh`
 
+_Note: the cuDNN version seems to rely on specific CUDA and libtensorflow versions. Check the libtensorflow [tested build configurations chart](https://www.tensorflow.org/install/source_windows#tested_build_configurations)._
+
 Running the Example Projects
 ----------------------------
 
