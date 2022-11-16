@@ -3,7 +3,7 @@
  * https://github.com/Jonathhhan
  * Updated by members of the ZKM | Hertz-Lab 2022
  *
- * Originally from ofxTensorFlow2 example_style_transfer_arbitrary under a
+ * Originally from ofxTensorFlow2 example_yolo_v4 under a
  * BSD Simplified License: https://github.com/zkmkarlsruhe/ofxTensorFlow2
  */
 
@@ -204,7 +204,7 @@ class ofxYolo {
 		/// value to determine which are valid, ex. confidence > 0.5, etc
 		std::vector<Object> & getObjects() {return objects;}
 
-		/// returns a references to the detale object class names
+		/// returns a reference to the detected object class names
 		std::vector<std::string> & getClasses() {return classes_;}
 
 		/// returns input width
