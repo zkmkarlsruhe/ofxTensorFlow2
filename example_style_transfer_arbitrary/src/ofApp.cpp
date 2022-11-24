@@ -6,17 +6,6 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-// help to convert ofPixels to a float image tensor
-template <typename T>
-cppflow::tensor pixelsToFloatTensor(const ofPixels_<T> & pixels) {
-	auto t = ofxTF2::pixelsToTensor(pixels);
-	t = cppflow::expand_dims(t, 0);
-	t = cppflow::cast(t, TF_UINT8, TF_FLOAT);
-	t = cppflow::mul(t, cppflow::tensor({1.0f / 255.f}));
-	return t;
-}
-
-//--------------------------------------------------------------
 void ofApp::setup() {
 	ofSetFrameRate(60);
 	ofSetVerticalSync(true);
@@ -26,20 +15,15 @@ void ofApp::setup() {
 	if(!ofxTF2::setGPUMaxMemory(ofxTF2::GPU_PERCENT_90, true)) {
 		ofLogError() << "failed to set GPU Memory options!";
 	}
-	if(!model.load("model")) {
+
+	// load model
+	if(!styleTransfer.setup(imageWidth, imageHeight)) {
 		std::exit(EXIT_FAILURE);
 	}
-	std::vector<std::string> inputNames = {
-		"serving_default_placeholder",
-		"serving_default_placeholder_1"
-	};
-	std::vector<std::string> outputNames = {
-		"StatefulPartitionedCall"
-	};
-	model.setup(inputNames, outputNames);
+	setStyle(stylePaths[styleIndex]);
+	styleTransfer.startThread();
 
 	// style image
-	inputVector = {cppflow::tensor(0), cppflow::tensor(0)};
 	setStyle(stylePaths[styleIndex]);
 
 	// video
@@ -60,19 +44,11 @@ void ofApp::setup() {
 void ofApp::update() {
 	video.update();
 	if(video.isFrameNew()) {
-
 		// convert video frame to input tensor and resize as needed
-		cppflow::tensor image = pixelsToFloatTensor(video.getPixels());
-		if(video.getHeight() != imageWidth || video.getWidth() != imageHeight) {
-			image = cppflow::resize_bicubic(image, cppflow::tensor({imageHeight, imageWidth}), true);
-		}
-		inputVector[0] = image;
-
-		// run model
-		auto output = model.runMultiModel(inputVector);
-
-		// convert output tensor to image
-		ofxTF2::tensorToImage(output[0], imgOut);
+		styleTransfer.setInput(video.getPixels());
+	}
+	if(styleTransfer.update()) {
+		imgOut = styleTransfer.getOutput();
 		#ifdef USE_LIVE_VIDEO
 			if(mirror) {
 				imgOut.mirror(false, true);
@@ -195,12 +171,6 @@ void ofApp::setStyle(std::string & path) {
 	if(!styleImg.load(path)) {
 		return;
 	}
+	styleTransfer.setStyle(styleImg.getPixels());
 	ofLog() << "style: " << ofFilePath::getFileName(path);
-
-	// convert style image to float tensor
-	style = pixelsToFloatTensor(styleImg.getPixels());
-
-	// resize to expected model input size
-	style = cppflow::resize_bicubic(style, cppflow::tensor({styleWidth, styleHeight}), true);
-	inputVector[1] = style;
 }

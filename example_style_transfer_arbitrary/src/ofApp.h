@@ -7,6 +7,7 @@
 
 #include "ofMain.h"
 #include "ofxTensorFlow2.h"
+#include "ofxStyleTransfer.h"
 
 // uncomment this to use a live camera, otherwise we'll use a video file
 //#define USE_LIVE_VIDEO
@@ -39,10 +40,8 @@ class ofApp : public ofBaseApp {
 		/// set style from given input image
 		void setStyle(std::string & path);
 
-		ofxTF2::Model model;
-		cppflow::tensor style; // style image
-		std::vector<cppflow::tensor> inputVector; // {input image, style image}
-		ofFloatImage imgOut; // output image
+		ofxStyleTransfer styleTransfer; ///< model wrapper
+		ofFloatImage imgOut; ///< output image
 
 		// video source
 		#ifdef USE_LIVE_VIDEO
@@ -52,13 +51,9 @@ class ofApp : public ofBaseApp {
 			ofVideoPlayer video;
 		#endif
 
-		// image input & output size expected by model
+		// image input & output size
 		const static int imageWidth = 640;
 		const static int imageHeight = 480;
-
-		// style image size expected by model
-		static const int styleWidth = 256;
-		static const int styleHeight = 256;
 
 		// paths to available style images
 		std::vector<std::string> stylePaths = {
@@ -67,5 +62,5 @@ class ofApp : public ofBaseApp {
 			"style/chipset.jpg",
 			"style/mondrian.jpg"
 		};
-		std::size_t styleIndex = 0; // current model path index
+		std::size_t styleIndex = 0; ///< current model path index
 };
