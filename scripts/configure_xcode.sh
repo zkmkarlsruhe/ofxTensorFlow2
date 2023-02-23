@@ -30,7 +30,7 @@ fi
 # note: if the oF project template ever changes, then LASTLINE likely needs to be updated
 if ! grep -q "# ofxTensorFlow2" "$PROJECT/project.pbxproj" ; then
 	# escape backslashes \ -> \\
-	LASTLINE='\\n\\necho \\"$GCC_PREPROCESSOR_DEFINITIONS\\";\\n";'
+	LASTLINE='\\n\\necho \\"$GCC_PREPROCESSOR_DEFINITIONS\\";\\n'
 	SCRIPT='\\n\\n# ofxTensorFlow2\\n\\"$OF_PATH\\"/addons/ofxTensorFlow2/scripts/macos_install_libs.sh \\"$TARGET_BUILD_DIR/$PRODUCT_NAME.app\\";'
 	sed -i '' "s|${LASTLINE}|${SCRIPT}${LASTLINE}|" "$PROJECT/project.pbxproj"
 	echo "$PROJECT added macos_install_libs.sh to run script build phase"
