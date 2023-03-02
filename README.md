@@ -5,7 +5,7 @@ ofxTensorFlow2
 
 This is an openFrameworks addon for the TensorFlow 2 ML (Machine Learning) library. The code has been developed by the ZKM | Hertz-Lab as part of the project [»The Intelligent Museum«](#the-intelligent-museum).
 
-Copyright (c) 2021 ZKM | Karlsruhe. 
+Copyright (c) 2021-2023 ZKM | Karlsruhe. 
 
 BSD Simplified License.
 
