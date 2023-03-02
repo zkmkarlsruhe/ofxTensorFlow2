@@ -1,3 +1,14 @@
+1.4.1: 2023 Mar 02
+
+* fixed bad search line in configure_xcode.sh script
+* changed cppflow submodule url to https://, update an existing clone of this
+  repo after pulling with:
+      git submodule deinit libs/cppflow/
+      git submodule update --init --recursive
+      git submodule sync
+
+* added arbitrary style transfer model wrapper class
+
 1.4.0: 2022 Oct 20
 
 * added configure_makefile.sh and configure_xcode.sh scripts to automate project
