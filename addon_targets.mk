@@ -28,12 +28,12 @@ TF2_LIBRARY_PATH=$(OF_ROOT)/addons/ofxTensorFlow2/libs/tensorflow/lib/linux64
 
 # build Debug app and run using tensorflow2 lib path
 RunDebugTF2: Debug
-	export LD_LIBRARY_PATH="$(TF2_LIBRARY_PATH):$$LD_LIBRARY_PATH" && /
+	export LD_LIBRARY_PATH="$(TF2_LIBRARY_PATH):$$LD_LIBRARY_PATH" && \
 	cd bin && ./$(APPNAME)_debug
 
 # build Release app and run using tensorflow2 lib path
 RunReleaseTF2: Release
-	export LD_LIBRARY_PATH="$(TF2_LIBRARY_PATH):$$LD_LIBRARY_PATH" && /
+	export LD_LIBRARY_PATH="$(TF2_LIBRARY_PATH):$$LD_LIBRARY_PATH" && \
 	cd bin && ./$(APPNAME)
 
 endif
