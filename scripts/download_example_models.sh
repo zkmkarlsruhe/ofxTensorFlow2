@@ -45,12 +45,12 @@ download() {
 	local path="download?path=%2F&files=$2"
 	RETCODE=$(curl -LO -w "%{http_code}" $URL/$path)
 	if [ "$RETCODE" != "200" ] ; then
-		echo "download failed: HTTP $RETCODE"
-		rm -rf $path
+		echo "$2 download failed: HTTP $RETCODE"
+		rm -rf download
 		return
 	fi
 	mkdir -p $SRC
-	mv $path $SRC/$2
+	mv download $SRC/$2
 }
 
 ##### parse command line arguments
@@ -98,6 +98,10 @@ for zip in $DOWNLOAD ; do
 	download $URL "$zip"
 done
 
+if [ ! -x "$SRC" ] ; then
+	echo "looks like nothing was downloaded... stopping"
+	exit 0
+fi
 cd "$SRC"
 
 # example_basics
