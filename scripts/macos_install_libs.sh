@@ -28,7 +28,11 @@ DEST="$APP_PATH/Contents/Frameworks"
 echo "ofxTensorFlow2: install tensorflow libs to $APP_PATH $APP_NAME"
 
 # detect tf version from dylib naming: libtensorflow.2.4.0.dylib -> 2.4.0
-VER=$(ls "$SRC" | egrep "libtensorflow\.[0-9]\.[0-9]\.[0-9]" | sed "s/[^0-9]*//")
+VER=$(ls "$SRC" | egrep "libtensorflow\.[0-9]+\.[0-9]+\.[0-9]+" | sed "s/[^0-9]*//")
+if [ "$VER" = "" ] ; then
+	echo "ofxTensorFlow2: could not find libtensorflow dylibs"
+	exit 1
+fi
 VER="$(basename ${VER%.*})"
 
 # copy dylibs to app bundle
