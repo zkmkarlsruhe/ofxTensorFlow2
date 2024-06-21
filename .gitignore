@@ -3,6 +3,7 @@ libs/tensorflow/lib
 libs/tensorflow/include
 libs/tensorflow/LICENSE
 libs/tensorflow/THIRD_PARTY_TF_C_LICENSES
+libs/build
 
 # examples
 example_*/bin/*
@@ -17,6 +18,7 @@ example_*/python/src/__pycache__/
 example_*/Project.xcconfig
 example_*/*.xcodeproj
 example_*/openFrameworks-Info.plist
+example_*/*.entitlements
 
 example_*/bin/data/*.jpg
 example_*/bin/data/*.png
