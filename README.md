@@ -135,6 +135,14 @@ Additionally, to use a specific version, supply it as the first argument:
 
 See <https://www.tensorflow.org/install/gpu> for more information on GPU support for TensorFlow.
 
+#### Building libtensorflow for macOS arm64 (Apple Silicon)
+
+As of Summer 2024, the TensorFlow website *still* does not provide arm64 builds for macOS. The pre-built versions downloaded by the script are provided by third parties on GitHub but they are not up to date ad currently stop at version 2.8.0.
+
+If you want the latest version of libtensorflow and you have some time, you can build it from source using the Makefile included in the `libs` directory.
+
+Instructions are found in `libs/README.md`.
+
 ### Ubuntu / Linux
 
 To run applications using ofxTensorFlow2, the path to the addon's `lib/tensorflow` subfolder needs to be added to the `LD_LIBRARY_PATH` environment variable.
@@ -189,7 +197,7 @@ The cppflow library requires C++14 (minimum) or C++17 which needs to be enabled 
 
 _Note: As of summer 2022, C++17 support is only available for the development version of openFrameworks. If you are using a release version and have build issues, try C++14 instead._
 
-libtensorflow is provided as pre-compiled dynamic libraries. On macOS these `.dylib` files need to be configured and copied into the build macOS .app. These steps are automated via the `scripts/macos_install_libs.sh` script and can be invoked when building, either by Xcode or the Makefiles.
+libtensorflow is provided as pre-compiled dynamic libraries or can be built from source. On macOS these `.dylib` files need to be configured and copied into the build macOS .app. These steps are automated via the `scripts/macos_install_libs.sh` script and can be invoked when building, either by Xcode or the Makefiles.
 
 Alternatively, you can use libtensorflow compiled and installed to the system, ie. `/usr/local` or `/usr/opt`. In this case, the dylibs do not need to be copied into the macOS .app, however the built app will not run on other computers without the same libraries installed to the same location.
 
@@ -498,7 +506,7 @@ Ignoring file ../../../addons/ofxTensorFlow2/libs/tensorflow/lib/osx/libtensorfl
 "_TFE_ContextOptionsSetConfig", referenced from:
 ~~~
 
-To make the build succeed, you can exclude the arm64 architecture in Xcode so the project.See the info in the the "macOS / Xcode build" subsection under the "Installation and Build" section.
+To make the build succeed, you can exclude the arm64 architecture in Xcode so the project. See the info in the the "macOS / Xcode build" subsection under the "Installation and Build" section.
 
 ### dyld: Library not loaded: @rpath/libtensorflow.2.dylib
 
