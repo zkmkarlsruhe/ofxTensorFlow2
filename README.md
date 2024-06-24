@@ -508,6 +508,8 @@ Ignoring file ../../../addons/ofxTensorFlow2/libs/tensorflow/lib/osx/libtensorfl
 
 To make the build succeed, you can exclude the arm64 architecture in Xcode so the project. See the info in the the "macOS / Xcode build" subsection under the "Installation and Build" section.
 
+![Xcode exclude arch](media/xcode_exclude_arch.png)
+
 ### dyld: Library not loaded: @rpath/libtensorflow.2.dylib
 
 On macOS, the libtensorflow dynamic libraries (dylibs) need to be copied into the .app bundle. This error indicates the library loader cannot find the dylibs when the app starts and the build process is missing a step. Please check the "macOS" subsection under the "Installation and Build" section.
