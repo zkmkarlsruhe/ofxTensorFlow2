@@ -137,7 +137,7 @@ See <https://www.tensorflow.org/install/gpu> for more information on GPU support
 
 #### Building libtensorflow for macOS arm64 (Apple Silicon)
 
-As of Summer 2024, the TensorFlow website *still* does not provide arm64 builds for macOS. The pre-built versions downloaded by the script are provided by third parties on GitHub but they are not up to date ad currently stop at version 2.8.0.
+As of Summer 2024, the TensorFlow website *still* does not provide arm64 builds for macOS. The pre-built versions downloaded by the script are provided by third parties on GitHub but they are not up to date and currently stop at version 2.8.0.
 
 If you want the latest version of libtensorflow and you have some time, you can build it from source using the Makefile included in the `libs` directory.
 
@@ -163,7 +163,7 @@ This step can also be automated by additional makefile targets provided by the `
 include $(OF_ROOT)/addons/ofxTensorFlow2/addon_targets.mk
 ```
 
-Additionally, this include can be added to an existing project by running the `configure_makefile.sh` script with the [ath to the project directory as an argument:
+Additionally, this include can be added to an existing project by running the `configure_makefile.sh` script with the path to the project directory as an argument:
 
 ```shell
 scripts/configure_makefile.sh example_yolo_v4
@@ -195,19 +195,13 @@ _Note: When using libtensorflow installed to the system, the `LD_LIBRARY_PATH` e
 
 The cppflow library requires C++14 (minimum) or C++17 which needs to be enabled when building on macOS.
 
-_Note: As of summer 2022, C++17 support is only available for the development version of openFrameworks. If you are using a release version and have build issues, try C++14 instead._
+_As of openFrameworks 0.12, C++17 support is available by default._
 
 libtensorflow is provided as pre-compiled dynamic libraries or can be built from source. On macOS these `.dylib` files need to be configured and copied into the build macOS .app. These steps are automated via the `scripts/macos_install_libs.sh` script and can be invoked when building, either by Xcode or the Makefiles.
 
 Alternatively, you can use libtensorflow compiled and installed to the system, ie. `/usr/local` or `/usr/opt`. In this case, the dylibs do not need to be copied into the macOS .app, however the built app will not run on other computers without the same libraries installed to the same location.
 
 #### Xcode build
-
-Enable C++14 or C++17 features by changing the `CLANG_CXX_LANGUAGE_STANDARD` define in `OF_ROOT/libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig`, for example:
-
-```
-CLANG_CXX_LANGUAGE_STANDARD = c++14
-```
 
 After generating project files using the OF ProjectGenerator, add the following to one of the Run Script build phases in the Xcode project to invoke the `macos_install_libs.sh` script, either via the `configure_xcode.sh` script or manually.
 
@@ -241,12 +235,6 @@ To disable building for a specific architecture, it can be added to a list of "E
   * on an Intel system: arm64
 
 #### Makefile build
-
-Enable C++14 or C++17 features by changing `-std=c++11` to `-std=c++14` or `-std=c++17` on line 142 in `OF_ROOT/libs/openFrameworksCompiled/project/osx/config.osx.default.mk`:
-
-```makefile
-PLATFORM_CXXFLAGS += -std=c++14
-```
 
 When building an application using the makefiles, an additional step is required to install & configure the tensorflow2 dylibs into the project .app. This is partially automated by the `scripts/macos_install_libs.sh` script which is called from the `addon_targets.mk` file. To use it, add the following to the end of the project's `Makefile`:
 
