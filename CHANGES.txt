@@ -1,8 +1,12 @@
-1.5.1: 2024 Jun 26
+1.5.0: 2024 Jun 26
 
-* updated for OF 0.12
+updated for OF 0.12
 
 * added libs/Makefile for building libtensorflow on macOS, see libs/README.md
+* added note to readme about current default version staying at 2.8.0 with
+  recommendation to download newer version (if available)
+* added note and screenshot to readme about dealing with codesign issue without identity
+* added xcode exclude arch screenshot to readme
 
 * fixed model download script downloaded zip path naming,
   added error message if download failed and there is nothig to unzip
@@ -14,10 +18,8 @@
 * configure xcode script now handles OF 0.12
 * updated readme with new macos install lib script location in build phases
 * ignore example xcode entitlements files
-* update readme:
-  - added xcode exclude arch screenshot
-  - added note and screenshot about dealing with codesign issue without identity
-  - removed reference to setting C++ ver in readme as C++17 is now default
+
+* removed readme reference to setting C++ ver in readme as C++17 is now default
 
 1.4.1: 2023 Mar 02
 
