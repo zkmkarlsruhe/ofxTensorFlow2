@@ -28,6 +28,12 @@ If all dependencies are installed, run the make in this directory to download, b
 
 ... otherwise, each of the steps can be done individually (see following sections).
 
+_The build takes about 30 minutes on an M1 Pro laptop._
+
+On success, clean the build directory to save space:
+
+    make clean
+
 ### Download
 
 Download tensorflow via cloning the GitHub repo:
@@ -46,11 +52,15 @@ To override the release version, set the `TF_VER` Makefile variable:
 
     make tensorflow-build TF_VER=2.16.1
 
-To set bazel configure options, use the `TF_OPTS` Makefile variable:
+By default, bazel builds for the current architecture. To override, you can set [additional bazel configure options](https://github.com/tensorflow/tensorflow/issues/52160#issuecomment-1053265856) using the `TF_OPTS` Makefile variable:
+* to build for x86_64 on arm64 machines: `--cpu=darwin_x86_64`
+* to build for arm64 on x86_64 machines: `--cpu=darwin_arm64`
 
-    make tensorflow-build TF_OPTS="--cpu=darwin_arm64"
+For instance, to build for Intel (x86_64) on a host Apple Silicon machine (arm64):
 
-libtensorflow will need to be configured for the platform before building and it does this through a set of questions wich are answered via 'y', 'N' or pressing the Enter / Return key. Here are typical answers, basically saying N to AMD, NVIDIA, and mobile device support:
+    make tensorflow-build TF_OPTS="--cpu=darwin_x86_64"
+
+libtensorflow will need to be configured for the platform before building and it does this through a set of questions which are answered via 'y', 'N' or pressing the Enter / Return key. Here are typical answers, basically saying N to AMD, NVIDIA, and mobile device support:
 ~~~
 You have bazel 6.5.0 installed.
 Please specify the location of python. [Default is /opt/homebrew/opt/python@3.12/bin/python3.12]:

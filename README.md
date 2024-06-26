@@ -484,6 +484,14 @@ If you find any bugs or suggestions please log them to GitHub as well.
 Known Issues
 ------------
 
+### CodeSigning fails for libtensorflow dylibs on macOS
+
+Xcode will try to codesign the libtensorflow dylibs when building the app bundle and this step may fail if there is no code signing identity set, ie. "-" anonymous. The error will look something like: `Command CodeSign failed with a nonzero exit code`.
+
+If you haven't set a signing identity but want to run the app, disable this step in Build Phases -> Copy Files step:
+
+![Xcode nocodesign libs](media/xocde_nocodesign_libs.png)
+
 ### TF_* architecture linker errors on macOS
 
 The default OF-generated Xcode project will try to build for both arm64 and x86_64 in *Release*, so you may see linker errors such as:
