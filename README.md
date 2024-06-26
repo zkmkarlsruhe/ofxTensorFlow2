@@ -133,6 +133,8 @@ Additionally, to use a specific version, supply it as the first argument:
 ./scripts/download_tensorflow.sh 2.7.0
 ```
 
+**As of summer 2024, we will keep the default download version to 2.8.0 as there are builds for all platforms. However it is recommended to use a newer version of libtensorflow if is available or build from source.**
+
 See <https://www.tensorflow.org/install/gpu> for more information on GPU support for TensorFlow.
 
 #### Building libtensorflow for macOS arm64 (Apple Silicon)
@@ -142,6 +144,8 @@ As of Summer 2024, the TensorFlow website *still* does not provide arm64 builds 
 If you want the latest version of libtensorflow and you have some time, you can build it from source using the Makefile included in the `libs` directory.
 
 Instructions are found in `libs/README.md`.
+
+_Note: After a successful build, make sure to run clean otherwise the OF Project Generator will look inside the `libs/build` folder and add the dylibs twice. This will also take a **long time**, so best avoided._
 
 ### Ubuntu / Linux
 

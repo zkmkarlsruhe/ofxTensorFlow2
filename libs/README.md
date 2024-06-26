@@ -34,6 +34,8 @@ On success, clean the build directory to save space:
 
     make clean
 
+_Note: After a successful build, make sure to run clean otherwise the OF Project Generator will look inside the `libs/build` folder and add the dylibs twice. This will also take a **long time**, so best avoided._
+
 ### Download
 
 Download tensorflow via cloning the GitHub repo:
