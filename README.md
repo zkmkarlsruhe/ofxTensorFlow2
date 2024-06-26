@@ -119,6 +119,8 @@ To make this quick, you can use a script which automates the download:
 ./scripts/download_tensorflow.sh
 ```
 
+_As of summer 2024, the default download version will stay 2.8.0 as there are builds for all platforms. **It is recommended to use a newer version of libtensorflow if is available or build from source.** Check the [TensorFlow2 C library](https://www.tensorflow.org/install/lang_c) page for the current release version._
+
 By default, the script will try to auto-detect the system architecture. For example, on an Apple Silicon macOS system, the script will download builds for "arm64" while an Intel machine will use "x86_64".
 
 When opting for GPU support set the `TYPE` script variable:
@@ -132,8 +134,6 @@ Additionally, to use a specific version, supply it as the first argument:
 ```shell
 ./scripts/download_tensorflow.sh 2.7.0
 ```
-
-**As of summer 2024, we will keep the default download version to 2.8.0 as there are builds for all platforms. However it is recommended to use a newer version of libtensorflow if is available or build from source.**
 
 See <https://www.tensorflow.org/install/gpu> for more information on GPU support for TensorFlow.
 
@@ -494,7 +494,7 @@ Xcode will try to codesign the libtensorflow dylibs when building the app bundle
 
 If you haven't set a signing identity but want to run the app, disable this step in Build Phases -> Copy Files step:
 
-![Xcode nocodesign libs](media/xocde_nocodesign_libs.png)
+![Xcode nocodesign libs](media/xcode_nocodesign_libs.png)
 
 ### TF_* architecture linker errors on macOS
 
