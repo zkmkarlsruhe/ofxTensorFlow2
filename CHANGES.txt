@@ -1,3 +1,24 @@
+1.5.1: 2024 Jun 26
+
+* updated for OF 0.12
+
+* added libs/Makefile for building libtensorflow on macOS, see libs/README.md
+
+* fixed model download script downloaded zip path naming,
+  added error message if download failed and there is nothig to unzip
+* fixed mac install install script not handling multiple digits in the version
+  name, ie. libtensorflow.2.4.0.dylib matching but libtensorflow.2.16.1.dylib not
+* fixed linux RunDebugTF2 RunReleaseTF2 export escaping
+
+* updated to cppflow 2.0.0
+* configure xcode script now handles OF 0.12
+* updated readme with new macos install lib script location in build phases
+* ignore example xcode entitlements files
+* update readme:
+  - added xcode exclude arch screenshot
+  - added note and screenshot about dealing with codesign issue without identity
+  - removed reference to setting C++ ver in readme as C++17 is now default
+
 1.4.1: 2023 Mar 02
 
 * fixed bad search line in configure_xcode.sh script
