@@ -1,11 +1,26 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/zkmkarlsruhe/zkm-open-source/main/assets/zkm-logo-light.svg">
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/zkmkarlsruhe/zkm-open-source/main/assets/zkm-logo.svg">
+    <img alt="ZKM" src="https://raw.githubusercontent.com/zkmkarlsruhe/zkm-open-source/main/assets/zkm-logo.svg" width="120">
+  </picture>
+</p>
+
 ofxTensorFlow2
 ==============
+
+[![ZKM](https://img.shields.io/badge/ZKM-Karlsruhe-blue)](https://zkm.de)
+[![License: BSD-2-Clause](https://img.shields.io/badge/License-BSD--2--Clause-blue.svg)](LICENSE.txt)
+
+Part of [ZKM Open Source](https://github.com/zkmkarlsruhe)
+
+---
 
 ![ofxTensorFlow2 thumbnail](ofxaddons_thumbnail.png)
 
 This is an openFrameworks addon for the TensorFlow 2 ML (Machine Learning) library. The code has been developed by the ZKM | Hertz-Lab as part of the project [»The Intelligent Museum«](#the-intelligent-museum).
 
-Copyright (c) 2021-2023 ZKM | Karlsruhe. 
+Copyright (c) 2021-2023 ZKM | Karlsruhe.
 
 BSD Simplified License.
 
